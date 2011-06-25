@@ -10,7 +10,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import com.aetrion.flickr.activity.ActivityInterface;
 import com.aetrion.flickr.auth.Auth;
 import com.aetrion.flickr.auth.AuthInterface;
-import com.aetrion.flickr.auth.OAuthInterface;
 import com.aetrion.flickr.blogs.BlogsInterface;
 import com.aetrion.flickr.commons.CommonsInterface;
 import com.aetrion.flickr.contacts.ContactsInterface;
@@ -38,6 +37,7 @@ import com.aetrion.flickr.tags.TagsInterface;
 import com.aetrion.flickr.test.TestInterface;
 import com.aetrion.flickr.uploader.Uploader;
 import com.aetrion.flickr.urls.UrlsInterface;
+import com.yuyang226.flickr.oauth.OAuthInterface;
 
 /**
  * Main entry point for the Flickrj API.
@@ -244,6 +244,18 @@ public class Flickr {
         setApiKey(apiKey);
         setTransport(transport);
     }
+    
+    /**
+     * Construct a new Flickr gateway instance.
+     *
+     * @param apiKey The API key, must be non-null
+     * @param sharedSecret
+     * @param transport
+     */
+    public Flickr(String apiKey, String sharedSecret) {
+        this(apiKey);
+        setSharedSecret(sharedSecret);
+    }
 
     /**
      * Construct a new Flickr gateway instance.
@@ -349,7 +361,8 @@ public class Flickr {
     
     public OAuthInterface getOAuthInterface() {
     	if (oAuthInterface == null) {
-    		oAuthInterface = new OAuthInterface(apiKey, sharedSecret, transport);
+    		oAuthInterface = new OAuthInterface(apiKey, sharedSecret, 
+    				transport);
         }
         return oAuthInterface;
     }

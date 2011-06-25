@@ -2,7 +2,6 @@ package com.yuyang226.flickr.oauth;
 
 
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,9 +9,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -20,9 +17,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
-import com.aetrion.flickr.REST;
 
 /**
  * a simple program to get flickr token and token secret.
@@ -30,22 +25,17 @@ import com.aetrion.flickr.REST;
  * @author Mark Zang
  * 
  */
-public class OAuthForFlickr {
+public class OAuthUtils {
 	private static final String PARAMETER_SEPARATOR = "&";
 	private static final String NAME_VALUE_SEPARATOR = "=";
 	/** Default charsets */
 	public static final String DEFAULT_CONTENT_CHARSET = "ISO-8859-1";
 
-	private static String key = "da4fadd0084ea1799ad33048f0d6a5c5";
-	private static String secret = "186b04791439c326";
-
 	private static final String HMAC_SHA1 = "HmacSHA1";
 
-	private static final String ENC = "UTF-8";
+	public static final String ENC = "UTF-8";
 	
-	private static final String KEY_OAUTH_CALLBACK_CONFIRMED = "oauth_callback_confirmed";
-	private static final String KEY_OAUTH_TOKEN = "oauth_token";
-	private static final String KEY_OAUTH_TOKEN_SECRET = "oauth_token_secret";
+	
 
 	private static Base64 base64 = new Base64();
 
@@ -60,7 +50,7 @@ public class OAuthForFlickr {
 	 * @throws NoSuchAlgorithmException
 	 * @throws InvalidKeyException
 	 */
-	private static String getSignature(String url, String params)
+	public static String getSignature(String url, String params, String apiSecret)
 	throws UnsupportedEncodingException, NoSuchAlgorithmException,
 	InvalidKeyException {
 		/**
@@ -75,7 +65,7 @@ public class OAuthForFlickr {
 		System.out.println("String for oauth_signature generation:" + base);
 		// yea, don't ask me why, it is needed to append a "&" to the end of
 		// secret key.
-		byte[] keyBytes = (secret + "&").getBytes(ENC);
+		byte[] keyBytes = (apiSecret + "&").getBytes(ENC);
 
 		SecretKey key = new SecretKeySpec(keyBytes, HMAC_SHA1);
 
@@ -192,62 +182,5 @@ public class OAuthForFlickr {
 		return new URI(buffer.toString());
 	}
 
-	/**
-	 * @param args
-	 * @throws IOException
-	 * @throws ClientProtocolException
-	 * @throws URISyntaxException
-	 * @throws NoSuchAlgorithmException
-	 * @throws InvalidKeyException
-	 */
-	public static void main(String[] args) {
-		try {
-			REST transport = new REST();
-			transport.setHost("www.flickr.com");
-			transport.setPort(80);
-			transport.setPath("/services/oauth/request_token");
-			
-			List<Parameter> parameters = new ArrayList<Parameter>();
-			parameters.add(new Parameter("oauth_callback", "http://localhost:8888/flickrcallback.jsp"));
-			parameters.add(new Parameter("oauth_consumer_key", key));
-			parameters.add(new Parameter("oauth_nonce", String.valueOf((int)(Math.random() * 100000000))));
-			parameters.add(new Parameter("oauth_signature_method", "HMAC-SHA1"));
-			parameters.add(new Parameter("oauth_timestamp", String.valueOf((System.currentTimeMillis() / 1000))));
-			parameters.add(new Parameter("oauth_version", "1.0"));
-
-			// generate the oauth_signature
-			String signature = getSignature(URLEncoder.encode(
-					"http://www.flickr.com/services/oauth/request_token", ENC),
-					URLEncoder.encode(format(parameters, ENC), ENC));
-			System.out.println("Signature: " + signature);
-			// This method call must be signed.
-			parameters.add(new Parameter("oauth_signature", signature));
-
-			// generate URI which lead to access_token and token_secret.
-			URI uri = createURI("http", "www.flickr.com", -1,
-					"/services/oauth/request_token",
-					format(parameters, ENC), null);
-
-			System.out.println("Get Token and Token Secrect from:"
-					+ uri.toString());
-
-			Map<String, String> response = transport.getData(transport.getPath(), parameters);
-			if (response.isEmpty()) {
-				throw new FlickrException("Empty Response", "Empty Response");
-			}
-			
-			if (response.containsKey(KEY_OAUTH_CALLBACK_CONFIRMED) == false
-					|| Boolean.valueOf(response.get(KEY_OAUTH_CALLBACK_CONFIRMED)) == false) {
-				throw new FlickrException("Error", "Invalid response: " + response);
-			}
-			String token = response.get(KEY_OAUTH_TOKEN);
-			String token_secret = response.get(KEY_OAUTH_TOKEN_SECRET);
-			System.out.println(response);
-			System.out.println("oauth URL: http://www.flickr.com/services/oauth/authorize?oauth_token=" + token);
-		}
-		catch (Throwable t) {
-			t.printStackTrace();
-		}
-	}
 
 }
