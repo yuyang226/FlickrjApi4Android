@@ -1,0 +1,27 @@
+<html>
+<body>
+<p>This is a Java API which wraps the REST-based Flickr API
+(information available at <a target="_top" href="http://www.flickr.com/services/api/">http://www.flickr.com/services/api/</a>).</p>
+
+<p>This API has been tested with JDK 1.4.</p>
+
+<p>To use the API just construct a instance of the class
+com.aetrion.flickr.Flickr and request the interfaces which you need
+to work with.  For example, to send a test ping to the Flickr service:</p>
+
+<pre>String apiKey = YOUR_API_KEY
+Flickr f = new Flickr(apiKey);
+TestInterface testInterface = f.getTestInterface();
+Collection results = testInterface.echo(Collections.EMPTY_LIST);
+</pre>
+
+<p>An API key is required to use this API.  You should contact Flickr to
+acquire an API key.  More information is available at:
+<a target="_top" href="http://www.flickr.com/services/api/">http://www.flickr.com/services/api/</a></p>
+
+<p>Comments and questions should be sent to
+<a href="mailto:x-mago@users.sourceforge.net">x-mago@users.sourceforge.net</a>
+or <a href="mailto:anthonyeden@gmail.com">anthonyeden@gmail.com</a>
+</p>
+</body>
+</html>
