@@ -6,7 +6,6 @@
 	<classpathentry kind="lib" path="lib/commons-logging-1.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.8.jar"/>
 	<classpathentry kind="lib" path="lib/log4j.properties"/>
-	<classpathentry kind="lib" path="lib/signpost-core-1.2.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
