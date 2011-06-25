@@ -3,9 +3,11 @@
  */
 package com.aetrion.flickr.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -19,6 +21,29 @@ public class StringUtilities {
 
     private StringUtilities() {
 
+    }
+    
+    public static String[] split(String str, String separator) {
+        String[] returnValue;
+        int index = str.indexOf(separator);
+        if (index == -1) {
+            returnValue = new String[]{str};
+        } else {
+            List<String> strList = new ArrayList<String>();
+            int oldIndex = 0;
+            while (index != -1) {
+                String subStr = str.substring(oldIndex, index);
+                strList.add(subStr);
+                oldIndex = index + separator.length();
+                index = str.indexOf(separator, oldIndex);
+            }
+            if (oldIndex != str.length()) {
+                strList.add(str.substring(oldIndex));
+            }
+            returnValue = strList.toArray(new String[strList.size()]);
+        }
+
+        return returnValue;
     }
 
     /**

@@ -39,7 +39,7 @@ public class UrlUtilities {
         StringBuffer buffer = new StringBuffer();
         buffer.append("http://");
         buffer.append(host);
-        if (port > 0) {
+        if (port > 0 & port != 80) {
             buffer.append(":");
             buffer.append(port);
         }

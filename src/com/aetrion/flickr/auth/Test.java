@@ -74,9 +74,9 @@ public class Test {
 			System.out.println(provider.getRequestTokenEndpointUrl());
 			
 	        String url2 = provider.retrieveRequestToken(consumer, "http://localhost");
-	        
 	        System.out.println(url2);
-	        String authToken = url2.substring(url2.indexOf("=") + 1);
+	        System.out.println("Token: " + consumer.getToken());
+	        System.out.println("Token Secret" + consumer.getTokenSecret());
 			Flickr f = new Flickr("cf133e9bab9b574fa5f8166c9ecf6455", 
 					"d9b66ded5812c3a8", new REST());
 			String oauthToken = "72157626086709404-03e6dc2d330746d8";

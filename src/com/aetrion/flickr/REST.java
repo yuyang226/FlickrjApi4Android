@@ -11,7 +11,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,6 +27,7 @@ import com.aetrion.flickr.util.Base64;
 import com.aetrion.flickr.util.DebugInputStream;
 import com.aetrion.flickr.util.DebugOutputStream;
 import com.aetrion.flickr.util.IOUtilities;
+import com.aetrion.flickr.util.StringUtilities;
 import com.aetrion.flickr.util.UrlUtilities;
 
 /**
@@ -81,7 +84,7 @@ public class REST extends Transport {
         setPort(port);
     }
 
-    /**
+	/**
      * Set a proxy for REST-requests.
      *
      * @param proxyHost
@@ -121,7 +124,28 @@ public class REST extends Transport {
      * @throws SAXException
      */
     public Response get(String path, List<Parameter> parameters) throws IOException, SAXException {
-        URL url = UrlUtilities.buildUrl(getHost(), getPort(), path, parameters);
+        InputStream in = null;
+        try {
+            in = getInputStream(path, parameters);
+
+            Response response = null;
+            synchronized (mutex) {
+                Document document = builder.parse(in);
+                response = (Response) responseClass.newInstance();
+                response.parse(document);
+            }
+            return response;
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e); // TODO: Replace with a better exception
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e); // TODO: Replace with a better exception
+        } finally {
+            IOUtilities.close(in);
+        }
+    }
+    
+    private InputStream getInputStream(String path, List<Parameter> parameters) throws IOException {
+    	URL url = UrlUtilities.buildUrl(getHost(), getPort(), path, parameters);
         if (Flickr.debugRequest) System.out.println("GET: " + url);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.addRequestProperty("Cache-Control", "no-cache,max-age=0"); 
@@ -136,24 +160,33 @@ public class REST extends Transport {
         conn.connect();
 
         InputStream in = null;
+        if (Flickr.debugStream) {
+		    in = new DebugInputStream(conn.getInputStream(), System.out);
+		} else {
+		    in = conn.getInputStream();
+		}
+        return in;
+    }
+    
+    public Map<String, String> getData(String path, List<Parameter> parameters) throws IOException {
+    	Map<String, String> result = new LinkedHashMap<String, String>();
+        InputStream in = null;
         try {
-            if (Flickr.debugStream) {
-                in = new DebugInputStream(conn.getInputStream(), System.out);
-            } else {
-                in = conn.getInputStream();
-            }
+            in = getInputStream(path, parameters);
 
-            Response response = null;
-            synchronized (mutex) {
-                Document document = builder.parse(in);
-                response = (Response) responseClass.newInstance();
-                response.parse(document);
-            }
-            return response;
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e); // TODO: Replace with a better exception
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e); // TODO: Replace with a better exception
+            int len;
+			byte[] tmp = new byte[2048];
+			
+			while ((len = in.read(tmp)) != -1) {
+				String data = new String(tmp, 0, len, "UTF-8");
+				for (String string : StringUtilities.split(data, "&")) {
+					String[] values = StringUtilities.split(string, "=");
+					if (values.length == 2) {
+						result.put(values[0], values[1]);
+					}
+				}
+			}
+			return result;
         } finally {
             IOUtilities.close(in);
         }
