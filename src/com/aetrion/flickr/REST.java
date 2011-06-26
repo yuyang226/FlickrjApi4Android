@@ -181,7 +181,6 @@ public class REST extends Transport {
 			while ((len = in.read(tmp)) != -1) {
 				String data = new String(tmp, 0, len, "UTF-8");
 				buf.append(data);
-				buf.append("\n");
 			}
 			return buf.toString().trim();
         } finally {
