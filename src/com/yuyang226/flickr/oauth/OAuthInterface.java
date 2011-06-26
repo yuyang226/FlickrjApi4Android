@@ -6,7 +6,6 @@ package com.yuyang226.flickr.oauth;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -18,6 +17,9 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -50,13 +52,16 @@ public class OAuthInterface {
     
     public static final String HOST_OAUTH = "www.flickr.com";
     public static final String PATH_OAUTH_REQUEST_TOKEN = "/services/oauth/request_token";
+    public static final String PATH_OAUTH_ACCESS_TOKEN = "/services/oauth/access_token";
     public static final String URL_REQUEST_TOKEN = "http://" + HOST_OAUTH + PATH_OAUTH_REQUEST_TOKEN;
+    public static final String URL_ACCESS_TOKEN = "http://" + HOST_OAUTH + PATH_OAUTH_ACCESS_TOKEN;
     
 
     private String apiKey;
     private String sharedSecret;
     private Transport transportAPI;
     private REST oauthTransport;
+    private static final Logger logger = Logger.getLogger(OAuthInterface.class);
 
     /**
      * Construct the AuthInterface.
@@ -75,8 +80,7 @@ public class OAuthInterface {
         try {
 			this.oauthTransport = new REST(HOST_OAUTH);
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getLocalizedMessage(), e);
 		}
     }
 
@@ -153,6 +157,50 @@ public class OAuthInterface {
          return new OAuthToken(oauthToken, tokenSecret);
     }
     
+    public void testLogin(String oauthToken) 
+    throws InvalidKeyException, NoSuchAlgorithmException, FlickrException, IOException, JSONException {
+    	/*http://api.flickr.com/services/rest
+    		?nojsoncallback=1 &oauth_nonce=84354935
+    		&format=json
+    		&oauth_consumer_key=653e7a6ecc1d528c516cc8f92cf98611
+    		&oauth_timestamp=1305583871
+    		&oauth_signature_method=HMAC-SHA1
+    		&oauth_version=1.0
+    		&oauth_token=72157626318069415-087bfc7b5816092c
+    		&oauth_signature=dh3pEH0Xk1qILr82HyhOsxRv1XA%3D
+    		&method=flickr.test.login*/
+    	List<Parameter> parameters = new ArrayList<Parameter>();
+    	parameters.add(new Parameter("nojsoncallback", "1"));
+    	OAuthUtils.addOAuthNonce(parameters);
+    	parameters.add(new Parameter("format", "json"));
+    	parameters.add(new Parameter("oauth_consumer_key", apiKey));
+    	OAuthUtils.addOAuthTimestamp(parameters);
+    	OAuthUtils.addOAuthSignatureMethod(parameters);
+    	OAuthUtils.addOAuthVersion(parameters);
+    	parameters.add(new Parameter("oauth_token", oauthToken));
+    	parameters.add(new Parameter("method", "flickr.test.login"));
+    	// generate the oauth_signature
+		String signature = OAuthUtils.getSignature(URL_REQUEST_TOKEN, 
+				parameters,
+				this.sharedSecret);
+		logger.info("Signature: " + signature);
+		// This method call must be signed.
+		parameters.add(new Parameter("oauth_signature", signature));
+		
+    	String response = ((REST)this.transportAPI).getLine(REST.PATH, parameters);
+		if (response == null || response.length() == 0) {
+			throw new FlickrException("Empty Response", "Empty Response");
+		}
+		
+    	JSONObject jObj = new JSONObject(response);
+		String id = jObj.getString("id");
+		String stat = jObj.getString("stat");
+		String name = jObj.getJSONObject("username").getString("_content");
+		User user = new User();
+		user.setId(id);
+		user.setUsername(name);
+    }
+    
     /**
      * Get a request token.
      *
@@ -165,33 +213,25 @@ public class OAuthInterface {
      * @throws URISyntaxException 
      */
     public OAuthToken getRequestToken(String callbackUrl) throws IOException, FlickrException, 
-    InvalidKeyException, NoSuchAlgorithmException, URISyntaxException {
+    InvalidKeyException, NoSuchAlgorithmException {
     	if (callbackUrl == null)
     		callbackUrl = "oob";
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.add(new Parameter("oauth_callback", callbackUrl));
 		parameters.add(new Parameter("oauth_consumer_key", apiKey));
-		parameters.add(new Parameter("oauth_nonce", String.valueOf((int)(Math.random() * 100000000))));
-		parameters.add(new Parameter("oauth_signature_method", "HMAC-SHA1"));
-		parameters.add(new Parameter("oauth_timestamp", String.valueOf((System.currentTimeMillis() / 1000))));
-		parameters.add(new Parameter("oauth_version", "1.0"));
+		OAuthUtils.addOAuthNonce(parameters);
+		OAuthUtils.addOAuthSignatureMethod(parameters);
+		OAuthUtils.addOAuthTimestamp(parameters);
+		OAuthUtils.addOAuthVersion(parameters);
 
 		// generate the oauth_signature
 		String signature = OAuthUtils.getSignature(
 				URLEncoder.encode(URL_REQUEST_TOKEN, OAuthUtils.ENC),
 				URLEncoder.encode(OAuthUtils.format(parameters, OAuthUtils.ENC), OAuthUtils.ENC),
 				this.sharedSecret);
-		System.out.println("Signature: " + signature);
+		logger.info("Signature: " + signature);
 		// This method call must be signed.
 		parameters.add(new Parameter("oauth_signature", signature));
-
-		// generate URI which lead to access_token and token_secret.
-		URI uri = OAuthUtils.createURI("http", HOST_OAUTH, -1,
-				PATH_OAUTH_REQUEST_TOKEN,
-				OAuthUtils.format(parameters, OAuthUtils.ENC), null);
-
-		System.out.println("Get Token and Token Secrect from:"
-				+ uri.toString());
 
 		Map<String, String> response = this.oauthTransport.getData(PATH_OAUTH_REQUEST_TOKEN, parameters);
 		if (response.isEmpty()) {
@@ -204,9 +244,36 @@ public class OAuthInterface {
 		}
 		String token = response.get(KEY_OAUTH_TOKEN);
 		String token_secret = response.get(KEY_OAUTH_TOKEN_SECRET);
-		System.out.println(response);
-		System.out.println("oauth URL: http://www.flickr.com/services/oauth/authorize?oauth_token=" + token);
+		logger.info("Response: " + response);
+		logger.info("oauth URL: http://www.flickr.com/services/oauth/authorize?oauth_token=" + token);
 		return new OAuthToken(token, token_secret);
+    }
+    
+    public void getAccessToken(String requestToken, String oauthVerifier) 
+    throws InvalidKeyException, NoSuchAlgorithmException, IOException, FlickrException {
+    	List<Parameter> parameters = new ArrayList<Parameter>();
+    	OAuthUtils.addOAuthNonce(parameters);
+    	OAuthUtils.addOAuthTimestamp(parameters);
+    	parameters.add(new Parameter("oauth_verifier", oauthVerifier));
+    	parameters.add(new Parameter("oauth_consumer_key", apiKey));
+		OAuthUtils.addOAuthSignatureMethod(parameters);
+		OAuthUtils.addOAuthVersion(parameters);
+		parameters.add(new Parameter("oauth_token", requestToken));
+		
+		String signature = OAuthUtils.getSignature(
+				URLEncoder.encode(URL_ACCESS_TOKEN, OAuthUtils.ENC),
+				URLEncoder.encode(OAuthUtils.format(parameters, OAuthUtils.ENC), OAuthUtils.ENC),
+				this.sharedSecret);
+		logger.info("Signature: " + signature);
+		// This method call must be signed.
+		parameters.add(new Parameter("oauth_signature", signature));
+		
+		Map<String, String> response = this.oauthTransport.getData(PATH_OAUTH_ACCESS_TOKEN, parameters);
+		if (response.isEmpty()) {
+			throw new FlickrException("Empty Response", "Empty Response");
+		}
+		logger.info("Response: " + response);
+		
     }
 
 

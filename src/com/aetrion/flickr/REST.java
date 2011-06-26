@@ -29,6 +29,7 @@ import com.aetrion.flickr.util.DebugOutputStream;
 import com.aetrion.flickr.util.IOUtilities;
 import com.aetrion.flickr.util.StringUtilities;
 import com.aetrion.flickr.util.UrlUtilities;
+import com.yuyang226.flickr.oauth.OAuthUtils;
 
 /**
  * Transport implementation using the REST interface.
@@ -168,6 +169,26 @@ public class REST extends Transport {
         return in;
     }
     
+    public String getLine(String path, List<Parameter> parameters) throws IOException {
+        InputStream in = null;
+        try {
+        	
+            in = getInputStream(path, parameters);
+            StringBuffer buf = new StringBuffer();
+            int len;
+			byte[] tmp = new byte[2048];
+			
+			while ((len = in.read(tmp)) != -1) {
+				String data = new String(tmp, 0, len, "UTF-8");
+				buf.append(data);
+				buf.append("\n");
+			}
+			return buf.toString().trim();
+        } finally {
+            IOUtilities.close(in);
+        }
+    }
+    
     public Map<String, String> getData(String path, List<Parameter> parameters) throws IOException {
     	Map<String, String> result = new LinkedHashMap<String, String>();
         InputStream in = null;
@@ -182,7 +203,7 @@ public class REST extends Transport {
 				for (String string : StringUtilities.split(data, "&")) {
 					String[] values = StringUtilities.split(string, "=");
 					if (values.length == 2) {
-						result.put(values[0], values[1]);
+						result.put(values[0], OAuthUtils.decode(values[1], OAuthUtils.ENC));
 					}
 				}
 			}

@@ -302,8 +302,8 @@ public class User implements Serializable, BuddyIconable {
             Matcher m = StringUtilities.getterPattern.matcher(method[i].getName());
             if (m.find() && !method[i].getName().equals("getClass")) {
                 try {
-                    Object res = method[i].invoke(this, null);
-                    Object resTest = method[i].invoke(test, null);
+                    Object res = method[i].invoke(this, (Object[])null);
+                    Object resTest = method[i].invoke(test, (Object[])null);
                     String retType = method[i].getReturnType().toString();
                     if (retType.indexOf("class") == 0) {
                         if (res != null && resTest != null) {
@@ -351,7 +351,7 @@ public class User implements Serializable, BuddyIconable {
             if (m.find() && !method[i].getName().equals("getClass")) {
                 Object res = null;
                 try {
-                    res = method[i].invoke(this, null);
+                    res = method[i].invoke(this, (Object[])null);
                 } catch (IllegalAccessException ex) {
                     System.out.println("hashCode " + method[i].getName() + " " + ex);
                 } catch (InvocationTargetException ex) {

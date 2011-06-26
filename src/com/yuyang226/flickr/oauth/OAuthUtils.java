@@ -22,7 +22,7 @@ import com.aetrion.flickr.Parameter;
 /**
  * a simple program to get flickr token and token secret.
  * 
- * @author Mark Zang
+ * @author Mark Zang, Toby Yu
  * 
  */
 public class OAuthUtils {
@@ -36,8 +36,16 @@ public class OAuthUtils {
 	public static final String ENC = "UTF-8";
 	
 	
-
 	private static Base64 base64 = new Base64();
+	
+	
+	public static String getSignature(String url, List<Parameter> parameters, String apiSecret)
+	throws UnsupportedEncodingException, NoSuchAlgorithmException,
+	InvalidKeyException {
+		return getSignature(URLEncoder.encode(url, OAuthUtils.ENC),
+				URLEncoder.encode(OAuthUtils.format(parameters, OAuthUtils.ENC), OAuthUtils.ENC),
+				apiSecret);
+	}
 
 	/**
 	 * 
@@ -101,7 +109,7 @@ public class OAuthUtils {
 		return result.toString();
 	}
 
-	private static String decode (final String content, final String encoding) {
+	public static String decode (final String content, final String encoding) {
 		try {
 			return URLDecoder.decode(content,
 					encoding != null ? encoding : DEFAULT_CONTENT_CHARSET);
@@ -110,13 +118,29 @@ public class OAuthUtils {
 		}
 	}
 
-	private static String encode (final String content, final String encoding) {
+	public static String encode (final String content, final String encoding) {
 		try {
 			return URLEncoder.encode(content,
 					encoding != null ? encoding : DEFAULT_CONTENT_CHARSET);
 		} catch (UnsupportedEncodingException problem) {
 			throw new IllegalArgumentException(problem);
 		}
+	}
+	
+	public static void addOAuthNonce(final List<Parameter> parameters) {
+		parameters.add(new Parameter("oauth_nonce", String.valueOf((int)(Math.random() * 100000000))));
+	}
+	
+	public static void addOAuthSignatureMethod(final List<Parameter> parameters) {
+		parameters.add(new Parameter("oauth_signature_method", "HMAC-SHA1"));
+	}
+	
+	public static void addOAuthTimestamp(final List<Parameter> parameters) {
+		parameters.add(new Parameter("oauth_timestamp", String.valueOf((System.currentTimeMillis() / 1000))));
+	}
+	
+	public static void addOAuthVersion(final List<Parameter> parameters) {
+		parameters.add(new Parameter("oauth_version", "1.0"));
 	}
 
 	/**
