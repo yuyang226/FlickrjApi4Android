@@ -14,10 +14,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Element;
@@ -55,13 +55,12 @@ public class OAuthInterface {
     public static final String PATH_OAUTH_ACCESS_TOKEN = "/services/oauth/access_token";
     public static final String URL_REQUEST_TOKEN = "http://" + HOST_OAUTH + PATH_OAUTH_REQUEST_TOKEN;
     public static final String URL_ACCESS_TOKEN = "http://" + HOST_OAUTH + PATH_OAUTH_ACCESS_TOKEN;
-    
 
     private String apiKey;
     private String sharedSecret;
     private Transport transportAPI;
     private REST oauthTransport;
-    private static final Logger logger = Logger.getLogger(OAuthInterface.class);
+    private static final Logger logger = Logger.getLogger(OAuthInterface.class.getName());
 
     /**
      * Construct the AuthInterface.
@@ -80,8 +79,12 @@ public class OAuthInterface {
         try {
 			this.oauthTransport = new REST(HOST_OAUTH);
 		} catch (ParserConfigurationException e) {
-			logger.error(e.getLocalizedMessage(), e);
+			error(e);
 		}
+    }
+    
+    private void error(Throwable thrown) {
+    	logger.throwing(this.getClass().getName(), "", thrown);
     }
 
     /**
@@ -186,7 +189,7 @@ public class OAuthInterface {
 		logger.info("Signature: " + signature);
 		// This method call must be signed.
 		parameters.add(new Parameter("oauth_signature", signature));
-		
+		//parameters.add(new Parameter("method", "flickr.test.login"));
     	String response = ((REST)this.transportAPI).getLine(REST.PATH, parameters);
 		if (response == null || response.length() == 0) {
 			throw new FlickrException("Empty Response", "Empty Response");
@@ -239,13 +242,13 @@ public class OAuthInterface {
 		}
 		
 		if (response.containsKey(KEY_OAUTH_CALLBACK_CONFIRMED) == false
-				|| Boolean.valueOf(response.get(KEY_OAUTH_CALLBACK_CONFIRMED)) == false) {
+				|| (Boolean.valueOf(response.get(KEY_OAUTH_CALLBACK_CONFIRMED)) == false 
+						&& "tru".equals(response.get(KEY_OAUTH_CALLBACK_CONFIRMED)) == false)) {
 			throw new FlickrException("Error", "Invalid response: " + response);
 		}
 		String token = response.get(KEY_OAUTH_TOKEN);
 		String token_secret = response.get(KEY_OAUTH_TOKEN_SECRET);
 		logger.info("Response: " + response);
-		logger.info("oauth URL: http://www.flickr.com/services/oauth/authorize?oauth_token=" + token);
 		return new OAuthToken(token, token_secret);
     }
     
@@ -288,18 +291,16 @@ public class OAuthInterface {
      * @return The URL
      * @throws MalformedURLException
      */
-    public URL buildAuthenticationUrl(Permission permission, String frob) throws MalformedURLException {
+    public URL buildAuthenticationUrl(Permission permission, OAuthToken oauthToken) throws MalformedURLException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        parameters.add(new Parameter("api_key", apiKey));
-        parameters.add(new Parameter("perms", permission.toString()));
-        parameters.add(new Parameter("frob", frob));
-
-        // The parameters in the url must be signed
-        parameters.add(new Parameter("api_sig", AuthUtilities.getSignature(sharedSecret, parameters)));
+        parameters.add(new Parameter("oauth_token", oauthToken.getOauthToken()));
+        if (permission != null) {
+        	parameters.add(new Parameter("perms", permission.toString()));
+    	}
 
         String host = "www.flickr.com";
         int port = transportAPI.getPort();
-        String path = "/services/oauth/";
+        String path = "/services/oauth/authorize";
 
         return UrlUtilities.buildUrl(host, port, path, parameters);
     }
