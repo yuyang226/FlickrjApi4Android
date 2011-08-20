@@ -4,7 +4,6 @@
 
 package com.aetrion.flickr.photos.notes;
 
-import java.awt.Rectangle;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +17,7 @@ import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
 import com.aetrion.flickr.auth.AuthUtilities;
 import com.aetrion.flickr.photos.Note;
+import com.aetrion.flickr.photos.Rectangle;
 
 /**
  * @author Anthony Eden

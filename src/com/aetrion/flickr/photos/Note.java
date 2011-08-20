@@ -3,7 +3,6 @@
  */
 package com.aetrion.flickr.photos;
 
-import java.awt.Rectangle;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.regex.Matcher;
@@ -122,7 +121,6 @@ public class Note {
         if(id != null) hash += id.hashCode();
         if(author != null) hash += author.hashCode();
         if(authorName != null) hash += authorName.hashCode();
-        if(bounds != null) hash += bounds.hashCode();
         if(text != null) hash += text.hashCode();
         return hash;
     }
