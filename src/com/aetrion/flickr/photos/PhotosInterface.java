@@ -3,7 +3,6 @@
  */
 package com.aetrion.flickr.photos;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -16,8 +15,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
-import javax.imageio.ImageIO;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -32,7 +29,6 @@ import com.aetrion.flickr.Transport;
 import com.aetrion.flickr.auth.AuthUtilities;
 import com.aetrion.flickr.people.User;
 import com.aetrion.flickr.photos.geo.GeoInterface;
-import com.aetrion.flickr.util.IOUtilities;
 import com.aetrion.flickr.util.StringUtilities;
 import com.aetrion.flickr.util.XMLUtilities;
 
@@ -1479,50 +1475,5 @@ public class PhotosInterface {
         }
         conn.connect();
         return conn.getInputStream();
-    }
-
-    /**
-     * Request an image from the Flickr-servers.<p>
-     *
-     * At {@link Size} you can find constants for the available sizes.
-     *
-     * @param photo A photo-object
-     * @param size The size
-     * @return An Image
-     * @throws IOException
-     * @throws FlickrException
-     */
-    public BufferedImage getImage(Photo photo, int size)
-      throws IOException, FlickrException {
-        return ImageIO.read(getImageAsStream(photo, size));
-    }
-
-    /**
-     * Download of an image by URL.
-     *
-     * @param urlStr The URL of a Photo
-     * @return BufferedImage The The Image
-     * @throws IOException
-     */
-    public BufferedImage getImage(String urlStr)
-      throws IOException {
-        URL url = new URL(urlStr);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        if (transport instanceof REST) {
-            if (((REST) transport).isProxyAuth()) {
-                conn.setRequestProperty(
-                    "Proxy-Authorization",
-                    "Basic " + ((REST) transport).getProxyCredentials()
-                );
-            }
-        }
-        conn.connect();
-        InputStream in = null;
-        try {
-            in = conn.getInputStream();
-            return ImageIO.read(in);
-        } finally {
-            IOUtilities.close(in);
-        }
     }
 }
