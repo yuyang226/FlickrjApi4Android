@@ -3,8 +3,6 @@ package com.yuyang226.flickr.oauth;
 
 
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
@@ -12,7 +10,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.crypto.Mac;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
@@ -35,54 +32,35 @@ public class OAuthUtils {
 
 	public static final String ENC = "UTF-8";
 	
-	
-	private static Base64 base64 = new Base64();
+	public static final String REQUEST_METHOD_GET = "GET";
 	
 	
 	public static String getSignature(String url, List<Parameter> parameters, String apiSecret)
 	throws UnsupportedEncodingException, NoSuchAlgorithmException,
 	InvalidKeyException {
-		return getSignature(URLEncoder.encode(url, OAuthUtils.ENC),
-				URLEncoder.encode(OAuthUtils.format(parameters, OAuthUtils.ENC), OAuthUtils.ENC),
-				apiSecret);
+		String baseString = getRequestBaseString(REQUEST_METHOD_GET, url, parameters);
+		System.out.println("Signature Base String: " + baseString);
+		return hmacsha1(baseString, apiSecret);
 	}
-
-	/**
-	 * 
-	 * @param url
-	 *            the url for "request_token" URLEncoded.
-	 * @param params
-	 *            parameters string, URLEncoded.
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 * @throws NoSuchAlgorithmException
-	 * @throws InvalidKeyException
-	 */
-	public static String getSignature(String url, String params, String apiSecret)
-	throws UnsupportedEncodingException, NoSuchAlgorithmException,
-	InvalidKeyException {
-		/**
-		 * base has three parts, they are connected by "&": 1) protocol 2) URL
-		 * (need to be URLEncoded) 3) Parameter List (need to be URLEncoded).
-		 */
-		StringBuilder base = new StringBuilder();
-		base.append("GET&");
-		base.append(url);
-		base.append("&");
-		base.append(params);
-		System.out.println("String for oauth_signature generation:" + base);
-		// yea, don't ask me why, it is needed to append a "&" to the end of
-		// secret key.
-		byte[] keyBytes = (apiSecret + "&").getBytes(ENC);
-
-		SecretKey key = new SecretKeySpec(keyBytes, HMAC_SHA1);
-
+	
+	public static String getRequestBaseString(String oauth_request_method, String url, List<Parameter> parameters) throws UnsupportedEncodingException {
+		StringBuffer result = new StringBuffer();
+		result.append(oauth_request_method);
+		result.append(PARAMETER_SEPARATOR);
+		result.append(URLEncoder.encode(url, ENC));
+		result.append(PARAMETER_SEPARATOR);
+		
+		return result.toString() + URLEncoder.encode(format(parameters, ENC), ENC);
+	}
+	
+	public static String hmacsha1(String data, String key) throws IllegalStateException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
+		byte[] byteHMAC = null;
 		Mac mac = Mac.getInstance(HMAC_SHA1);
-		mac.init(key);
+		SecretKeySpec spec = new SecretKeySpec((key + PARAMETER_SEPARATOR).getBytes(), HMAC_SHA1);
+		mac.init(spec);
+		byteHMAC = mac.doFinal(data.getBytes(ENC));
 
-		// encode it, base64 it, change it to string and return.
-		return new String(base64.encode(mac.doFinal(base.toString().getBytes(
-				ENC))), ENC).trim();
+		return new String(Base64.encodeBase64(byteHMAC));
 	}
 
 	/**
@@ -128,7 +106,7 @@ public class OAuthUtils {
 	}
 	
 	public static void addOAuthNonce(final List<Parameter> parameters) {
-		parameters.add(new Parameter("oauth_nonce", String.valueOf((int)(Math.random() * 100000000))));
+		parameters.add(new Parameter("oauth_nonce", Long.toString(System.nanoTime())));
 	}
 	
 	public static void addOAuthSignatureMethod(final List<Parameter> parameters) {
@@ -142,69 +120,5 @@ public class OAuthUtils {
 	public static void addOAuthVersion(final List<Parameter> parameters) {
 		parameters.add(new Parameter("oauth_version", "1.0"));
 	}
-
-	/**
-	 * Constructs a {@link URI} using all the parameters. This should be
-	 * used instead of
-	 * {@link URI#URI(String, String, String, int, String, String, String)}
-	 * or any of the other URI multi-argument URI constructors.
-	 *
-	 * @param scheme
-	 *            Scheme name
-	 * @param host
-	 *            Host name
-	 * @param port
-	 *            Port number
-	 * @param path
-	 *            Path
-	 * @param query
-	 *            Query
-	 * @param fragment
-	 *            Fragment
-	 *
-	 * @throws URISyntaxException
-	 *             If both a scheme and a path are given but the path is
-	 *             relative, if the URI string constructed from the given
-	 *             components violates RFC&nbsp;2396, or if the authority
-	 *             component of the string is present but cannot be parsed
-	 *             as a server-based authority
-	 */
-	public static URI createURI(
-			final String scheme,
-			final String host,
-			int port,
-			final String path,
-			final String query,
-			final String fragment) throws URISyntaxException {
-
-		StringBuilder buffer = new StringBuilder();
-		if (host != null) {
-			if (scheme != null) {
-				buffer.append(scheme);
-				buffer.append("://");
-			}
-			buffer.append(host);
-			if (port > 0) {
-				buffer.append(':');
-				buffer.append(port);
-			}
-		}
-		if (path == null || !path.startsWith("/")) {
-			buffer.append('/');
-		}
-		if (path != null) {
-			buffer.append(path);
-		}
-		if (query != null) {
-			buffer.append('?');
-			buffer.append(query);
-		}
-		if (fragment != null) {
-			buffer.append('#');
-			buffer.append(fragment);
-		}
-		return new URI(buffer.toString());
-	}
-
 
 }

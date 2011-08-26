@@ -1,4 +1,10 @@
 Contributors:
+Toby Yu (yuyang226@gmail.com)
+Charles Zhang (charleszq@gmail.com)
+Mark Zang (deepnighttwo@gmail.com)
+
+
+Original Contributors:
 
 Anthony Eden (me at anthonyeden.com)
 Martin Goebel (x-mago at gmx.de)

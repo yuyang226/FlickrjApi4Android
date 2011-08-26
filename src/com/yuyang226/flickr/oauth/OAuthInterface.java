@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -49,12 +48,16 @@ public class OAuthInterface {
     public static final String KEY_OAUTH_CALLBACK_CONFIRMED = "oauth_callback_confirmed";
 	public static final String KEY_OAUTH_TOKEN = "oauth_token";
 	public static final String KEY_OAUTH_TOKEN_SECRET = "oauth_token_secret";
+	public static final String KEY_OAUTH_VERIFIER = "oauth_verifier";
     
     public static final String HOST_OAUTH = "www.flickr.com";
     public static final String PATH_OAUTH_REQUEST_TOKEN = "/services/oauth/request_token";
     public static final String PATH_OAUTH_ACCESS_TOKEN = "/services/oauth/access_token";
     public static final String URL_REQUEST_TOKEN = "http://" + HOST_OAUTH + PATH_OAUTH_REQUEST_TOKEN;
     public static final String URL_ACCESS_TOKEN = "http://" + HOST_OAUTH + PATH_OAUTH_ACCESS_TOKEN;
+    
+    public static final String PARAM_OAUTH_CONSUMER_KEY = "oauth_consumer_key";
+    public static final String PARAM_OAUTH_TOKEN = "oauth_token";
 
     private String apiKey;
     private String sharedSecret;
@@ -155,7 +158,7 @@ public class OAuthInterface {
          }
          Element authElement = response.getPayload();
          Element tokenElement = XMLUtilities.getChild(authElement, "access_token");
-         String oauthToken = tokenElement.getAttribute("oauth_token");
+         String oauthToken = tokenElement.getAttribute(PARAM_OAUTH_TOKEN);
          String tokenSecret = tokenElement.getAttribute("oauth_token_secret");
          return new OAuthToken(oauthToken, tokenSecret);
     }
@@ -176,12 +179,12 @@ public class OAuthInterface {
     	parameters.add(new Parameter("nojsoncallback", "1"));
     	OAuthUtils.addOAuthNonce(parameters);
     	parameters.add(new Parameter("format", "json"));
-    	parameters.add(new Parameter("oauth_consumer_key", apiKey));
+    	parameters.add(new Parameter(PARAM_OAUTH_CONSUMER_KEY, apiKey));
     	OAuthUtils.addOAuthTimestamp(parameters);
     	OAuthUtils.addOAuthSignatureMethod(parameters);
     	OAuthUtils.addOAuthVersion(parameters);
-    	parameters.add(new Parameter("oauth_token", oauthToken));
-    	parameters.add(new Parameter("method", "flickr.test.login"));
+    	parameters.add(new Parameter(PARAM_OAUTH_TOKEN, oauthToken));
+    	parameters.add(new Parameter("method", METHOD_CHECK_TOKEN)); //"flickr.test.login"));
     	// generate the oauth_signature
 		String signature = OAuthUtils.getSignature(URL_REQUEST_TOKEN, 
 				parameters,
@@ -221,17 +224,14 @@ public class OAuthInterface {
     		callbackUrl = "oob";
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.add(new Parameter("oauth_callback", callbackUrl));
-		parameters.add(new Parameter("oauth_consumer_key", apiKey));
+		parameters.add(new Parameter(PARAM_OAUTH_CONSUMER_KEY, apiKey));
 		OAuthUtils.addOAuthNonce(parameters);
 		OAuthUtils.addOAuthSignatureMethod(parameters);
 		OAuthUtils.addOAuthTimestamp(parameters);
 		OAuthUtils.addOAuthVersion(parameters);
 
 		// generate the oauth_signature
-		String signature = OAuthUtils.getSignature(
-				URLEncoder.encode(URL_REQUEST_TOKEN, OAuthUtils.ENC),
-				URLEncoder.encode(OAuthUtils.format(parameters, OAuthUtils.ENC), OAuthUtils.ENC),
-				this.sharedSecret);
+		String signature = OAuthUtils.getSignature(URL_REQUEST_TOKEN, parameters, this.sharedSecret);
 		logger.info("Signature: " + signature);
 		// This method call must be signed.
 		parameters.add(new Parameter("oauth_signature", signature));
@@ -252,21 +252,35 @@ public class OAuthInterface {
 		return new OAuthToken(token, token_secret);
     }
     
+    /**
+     * @param requestToken
+     * @param oauthVerifier
+     * @throws InvalidKeyException
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     * @throws FlickrException
+     */
     public void getAccessToken(String requestToken, String oauthVerifier) 
     throws InvalidKeyException, NoSuchAlgorithmException, IOException, FlickrException {
+    	/*http://www.flickr.com/services/oauth/access_token
+    		?oauth_nonce=37026218
+    		&oauth_timestamp=1305586309
+    		&oauth_verifier=5d1b96a26b494074
+    		&oauth_consumer_key=653e7a6ecc1d528c516cc8f92cf98611
+    		&oauth_signature_method=HMAC-SHA1
+    		&oauth_version=1.0
+    		&oauth_token=72157626737672178-022bbd2f4c2f3432
+    		&oauth_signature=UD9TGXzrvLIb0Ar5ynqvzatM58U%3D*/
     	List<Parameter> parameters = new ArrayList<Parameter>();
     	OAuthUtils.addOAuthNonce(parameters);
     	OAuthUtils.addOAuthTimestamp(parameters);
-    	parameters.add(new Parameter("oauth_verifier", oauthVerifier));
-    	parameters.add(new Parameter("oauth_consumer_key", apiKey));
+    	parameters.add(new Parameter(KEY_OAUTH_VERIFIER, oauthVerifier));
+    	parameters.add(new Parameter(PARAM_OAUTH_CONSUMER_KEY, apiKey));
 		OAuthUtils.addOAuthSignatureMethod(parameters);
 		OAuthUtils.addOAuthVersion(parameters);
-		parameters.add(new Parameter("oauth_token", requestToken));
+		parameters.add(new Parameter(PARAM_OAUTH_TOKEN, requestToken));
 		
-		String signature = OAuthUtils.getSignature(
-				URLEncoder.encode(URL_ACCESS_TOKEN, OAuthUtils.ENC),
-				URLEncoder.encode(OAuthUtils.format(parameters, OAuthUtils.ENC), OAuthUtils.ENC),
-				this.sharedSecret);
+		String signature = OAuthUtils.getSignature(URL_ACCESS_TOKEN, parameters, this.sharedSecret);
 		logger.info("Signature: " + signature);
 		// This method call must be signed.
 		parameters.add(new Parameter("oauth_signature", signature));
@@ -276,7 +290,6 @@ public class OAuthInterface {
 			throw new FlickrException("Empty Response", "Empty Response");
 		}
 		logger.info("Response: " + response);
-		
     }
 
 
@@ -293,7 +306,7 @@ public class OAuthInterface {
      */
     public URL buildAuthenticationUrl(Permission permission, OAuthToken oauthToken) throws MalformedURLException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        parameters.add(new Parameter("oauth_token", oauthToken.getOauthToken()));
+        parameters.add(new Parameter(PARAM_OAUTH_TOKEN, oauthToken.getOauthToken()));
         if (permission != null) {
         	parameters.add(new Parameter("perms", permission.toString()));
     	}
