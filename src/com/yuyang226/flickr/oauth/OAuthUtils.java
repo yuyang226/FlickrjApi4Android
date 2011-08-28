@@ -7,7 +7,10 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -33,14 +36,22 @@ public class OAuthUtils {
 	public static final String ENC = "UTF-8";
 	
 	public static final String REQUEST_METHOD_GET = "GET";
+	public static final String REQUEST_METHOD_POST = "POST";
 	
-	
-	public static String getSignature(String url, List<Parameter> parameters, String apiSecret)
+	public static String getSignature(String requestMethod, String url, List<Parameter> parameters
+			, String apiSecret, String tokenSecret)
 	throws UnsupportedEncodingException, NoSuchAlgorithmException,
 	InvalidKeyException {
-		String baseString = getRequestBaseString(REQUEST_METHOD_GET, url, parameters);
+		String baseString = getRequestBaseString(requestMethod, url.toLowerCase(Locale.US), parameters);
 		System.out.println("Signature Base String: " + baseString);
-		return hmacsha1(baseString, apiSecret);
+		return hmacsha1(baseString, apiSecret, tokenSecret);
+	}
+	
+	public static String getSignature(String url, List<Parameter> parameters
+			, String apiSecret, String tokenSecret)
+	throws UnsupportedEncodingException, NoSuchAlgorithmException,
+	InvalidKeyException {
+		return getSignature(REQUEST_METHOD_GET, url, parameters, apiSecret, tokenSecret);
 	}
 	
 	public static String getRequestBaseString(String oauth_request_method, String url, List<Parameter> parameters) throws UnsupportedEncodingException {
@@ -50,13 +61,29 @@ public class OAuthUtils {
 		result.append(URLEncoder.encode(url, ENC));
 		result.append(PARAMETER_SEPARATOR);
 		
+		Collections.sort(parameters, new Comparator<Parameter>() {
+
+			@Override
+			public int compare(Parameter o1, Parameter o2) {
+				int result = o1.getName().compareTo(o2.getName());
+				if (result == 0) {
+					result = o1.getValue().toString().compareTo(o2.getValue().toString());
+				}
+				return result;
+			}
+			
+		});
+		
 		return result.toString() + URLEncoder.encode(format(parameters, ENC), ENC);
 	}
 	
-	public static String hmacsha1(String data, String key) throws IllegalStateException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
+	public static String hmacsha1(String data, String key, String tokenSecret) throws IllegalStateException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
 		byte[] byteHMAC = null;
 		Mac mac = Mac.getInstance(HMAC_SHA1);
-		SecretKeySpec spec = new SecretKeySpec((key + PARAMETER_SEPARATOR).getBytes(), HMAC_SHA1);
+		if (tokenSecret == null) {
+			tokenSecret = "";
+		}
+		SecretKeySpec spec = new SecretKeySpec((key + PARAMETER_SEPARATOR + tokenSecret).getBytes(), HMAC_SHA1);
 		mac.init(spec);
 		byteHMAC = mac.doFinal(data.getBytes(ENC));
 

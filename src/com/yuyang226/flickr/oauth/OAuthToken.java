@@ -3,11 +3,17 @@
  */
 package com.yuyang226.flickr.oauth;
 
+import java.io.Serializable;
+
 /**
  * @author Toby Yu(yuyang226@gmail.com)
  *
  */
-public class OAuthToken {
+public class OAuthToken implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String oauthToken;
 	private String oauthTokenSecret;
 

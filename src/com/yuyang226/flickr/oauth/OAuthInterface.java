@@ -27,7 +27,6 @@ import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.REST;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.Auth;
 import com.aetrion.flickr.auth.AuthUtilities;
 import com.aetrion.flickr.auth.Permission;
 import com.aetrion.flickr.people.User;
@@ -42,186 +41,139 @@ import com.aetrion.flickr.util.XMLUtilities;
  */
 public class OAuthInterface {
 
-    public static final String METHOD_CHECK_TOKEN = "flickr.auth.checkToken";
-    public static final String METHOD_GET_ACCESS_TOKEN = "flickr.auth.oauth.getAccessToken";
-    
-    public static final String KEY_OAUTH_CALLBACK_CONFIRMED = "oauth_callback_confirmed";
+	public static final String METHOD_CHECK_TOKEN = "flickr.auth.checkToken";
+	public static final String METHOD_GET_ACCESS_TOKEN = "flickr.auth.oauth.getAccessToken";
+
+	public static final String KEY_OAUTH_CALLBACK_CONFIRMED = "oauth_callback_confirmed";
 	public static final String KEY_OAUTH_TOKEN = "oauth_token";
 	public static final String KEY_OAUTH_TOKEN_SECRET = "oauth_token_secret";
 	public static final String KEY_OAUTH_VERIFIER = "oauth_verifier";
-    
-    public static final String HOST_OAUTH = "www.flickr.com";
-    public static final String PATH_OAUTH_REQUEST_TOKEN = "/services/oauth/request_token";
-    public static final String PATH_OAUTH_ACCESS_TOKEN = "/services/oauth/access_token";
-    public static final String URL_REQUEST_TOKEN = "http://" + HOST_OAUTH + PATH_OAUTH_REQUEST_TOKEN;
-    public static final String URL_ACCESS_TOKEN = "http://" + HOST_OAUTH + PATH_OAUTH_ACCESS_TOKEN;
-    
-    public static final String PARAM_OAUTH_CONSUMER_KEY = "oauth_consumer_key";
-    public static final String PARAM_OAUTH_TOKEN = "oauth_token";
 
-    private String apiKey;
-    private String sharedSecret;
-    private Transport transportAPI;
-    private REST oauthTransport;
-    private static final Logger logger = Logger.getLogger(OAuthInterface.class.getName());
+	public static final String HOST_FLICKR = "www.flickr.com";
+	public static final String PATH_OAUTH_REQUEST_TOKEN = "/services/oauth/request_token";
+	public static final String PATH_OAUTH_ACCESS_TOKEN = "/services/oauth/access_token";
+	public static final String PATH_REST = "/services/rest";
+	public static final String URL_REQUEST_TOKEN = "http://" + HOST_FLICKR + PATH_OAUTH_REQUEST_TOKEN;
+	public static final String URL_ACCESS_TOKEN = "http://" + HOST_FLICKR + PATH_OAUTH_ACCESS_TOKEN;
 
-    /**
-     * Construct the AuthInterface.
-     *
-     * @param apiKey The API key
-     * @param transport The Transport interface
-     */
-    public OAuthInterface(
-        String apiKey,
-        String sharedSecret,
-        Transport transport
-    ) {
-        this.apiKey = apiKey;
-        this.sharedSecret = sharedSecret;
-        this.transportAPI = transport;
-        try {
-			this.oauthTransport = new REST(HOST_OAUTH);
+	public static final String URL_REST = "http://" + HOST_FLICKR + PATH_REST;
+
+	public static final String PARAM_OAUTH_CONSUMER_KEY = "oauth_consumer_key";
+	public static final String PARAM_OAUTH_TOKEN = "oauth_token";
+
+	private String apiKey;
+	private String sharedSecret;
+	private Transport transportAPI;
+	private REST oauthTransport;
+	private static final Logger logger = Logger.getLogger(OAuthInterface.class.getName());
+
+	/**
+	 * Construct the AuthInterface.
+	 *
+	 * @param apiKey The API key
+	 * @param transport The Transport interface
+	 */
+	public OAuthInterface(
+			String apiKey,
+			String sharedSecret,
+			Transport transport
+	) {
+		this.apiKey = apiKey;
+		this.sharedSecret = sharedSecret;
+		this.transportAPI = transport;
+		try {
+			this.oauthTransport = new REST(HOST_FLICKR);
 		} catch (ParserConfigurationException e) {
 			error(e);
 		}
-    }
-    
-    private void error(Throwable thrown) {
-    	logger.throwing(this.getClass().getName(), "", thrown);
-    }
+	}
 
-    /**
-     * Check the authentication token for validity.
-     *
-     * @param authToken The authentication token
-     * @return The Auth object
-     * @throws IOException
-     * @throws SAXException
-     * @throws FlickrException
-     */
-    public Auth checkToken(String authToken) throws IOException, SAXException, FlickrException {
-        List<Parameter> parameters = new ArrayList<Parameter>();
-        parameters.add(new Parameter("method", METHOD_CHECK_TOKEN));
-        parameters.add(new Parameter("api_key", apiKey));
+	private void error(Throwable thrown) {
+		logger.throwing(this.getClass().getName(), "", thrown);
+	}
 
-        parameters.add(new Parameter("auth_token", authToken));
+	/**
+	 * Exchange an auth token from the old Authentication API, to an OAuth access token. 
+	 * Calling this method will delete the auth token used to make the request.
+	 *
+	 * @return the new oauth token
+	 * @throws IOException
+	 * @throws SAXException
+	 * @throws FlickrException
+	 */
+	public OAuthToken exchangeOAuthRequestToken(String userOAuthToken) throws IOException, SAXException, FlickrException {
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		parameters.add(new Parameter("method", METHOD_GET_ACCESS_TOKEN));
+		parameters.add(new Parameter("api_key", apiKey));
+		parameters.add(new Parameter("auth_token", userOAuthToken));
 
-        // This method call must be signed.
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+		// This method call must be signed.
+		parameters.add(new Parameter("api_sig", AuthUtilities.getSignature(sharedSecret, parameters)));
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
-        if (response.isError()) {
-            throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
-        }
-        Auth auth = new Auth();
+		Response response = transportAPI.get(transportAPI.getPath(), parameters);
+		if (response.isError()) {
+			throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
+		}
+		Element authElement = response.getPayload();
+		Element tokenElement = XMLUtilities.getChild(authElement, "access_token");
+		String oauthToken = tokenElement.getAttribute(PARAM_OAUTH_TOKEN);
+		String tokenSecret = tokenElement.getAttribute("oauth_token_secret");
+		return new OAuthToken(oauthToken, tokenSecret);
+	}
 
-        Element authElement = response.getPayload();
-        auth.setToken(XMLUtilities.getChildValue(authElement, "token"));
-        auth.setPermission(Permission.fromString(XMLUtilities.getChildValue(authElement, "perms")));
-
-        Element userElement = XMLUtilities.getChild(authElement, "user");
-        User user = new User();
-        user.setId(userElement.getAttribute("nsid"));
-        user.setUsername(userElement.getAttribute("username"));
-        user.setRealName(userElement.getAttribute("fullname"));
-        auth.setUser(user);
-
-        return auth;
-    }
-
-    /**
-     * Exchange an auth token from the old Authentication API, to an OAuth access token. 
-     * Calling this method will delete the auth token used to make the request.
-     *
-     * @return the new oauth token
-     * @throws IOException
-     * @throws SAXException
-     * @throws FlickrException
-     */
-    public OAuthToken exchangeOAuthRequestToken(String userOAuthToken) throws IOException, SAXException, FlickrException {
-    	 List<Parameter> parameters = new ArrayList<Parameter>();
-         parameters.add(new Parameter("method", METHOD_GET_ACCESS_TOKEN));
-         parameters.add(new Parameter("api_key", apiKey));
-         parameters.add(new Parameter("auth_token", userOAuthToken));
-
-         // This method call must be signed.
-         parameters.add(new Parameter("api_sig", AuthUtilities.getSignature(sharedSecret, parameters)));
-
-         Response response = transportAPI.get(transportAPI.getPath(), parameters);
-         if (response.isError()) {
-             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
-         }
-         Element authElement = response.getPayload();
-         Element tokenElement = XMLUtilities.getChild(authElement, "access_token");
-         String oauthToken = tokenElement.getAttribute(PARAM_OAUTH_TOKEN);
-         String tokenSecret = tokenElement.getAttribute("oauth_token_secret");
-         return new OAuthToken(oauthToken, tokenSecret);
-    }
-    
-    public void testLogin(String oauthToken) 
-    throws InvalidKeyException, NoSuchAlgorithmException, FlickrException, IOException, JSONException {
-    	/*http://api.flickr.com/services/rest
-    		?nojsoncallback=1 &oauth_nonce=84354935
-    		&format=json
-    		&oauth_consumer_key=653e7a6ecc1d528c516cc8f92cf98611
-    		&oauth_timestamp=1305583871
-    		&oauth_signature_method=HMAC-SHA1
-    		&oauth_version=1.0
-    		&oauth_token=72157626318069415-087bfc7b5816092c
-    		&oauth_signature=dh3pEH0Xk1qILr82HyhOsxRv1XA%3D
-    		&method=flickr.test.login*/
-    	List<Parameter> parameters = new ArrayList<Parameter>();
-    	parameters.add(new Parameter("nojsoncallback", "1"));
-    	OAuthUtils.addOAuthNonce(parameters);
-    	parameters.add(new Parameter("format", "json"));
-    	parameters.add(new Parameter(PARAM_OAUTH_CONSUMER_KEY, apiKey));
-    	OAuthUtils.addOAuthTimestamp(parameters);
-    	OAuthUtils.addOAuthSignatureMethod(parameters);
-    	OAuthUtils.addOAuthVersion(parameters);
-    	parameters.add(new Parameter(PARAM_OAUTH_TOKEN, oauthToken));
-    	parameters.add(new Parameter("method", METHOD_CHECK_TOKEN)); //"flickr.test.login"));
-    	// generate the oauth_signature
-		String signature = OAuthUtils.getSignature(URL_REQUEST_TOKEN, 
+	public User testLogin(OAuthToken oauthToken) 
+	throws InvalidKeyException, NoSuchAlgorithmException, FlickrException, IOException, JSONException, SAXException {
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		parameters.add(new Parameter("nojsoncallback", "1"));
+		OAuthUtils.addOAuthNonce(parameters);
+		parameters.add(new Parameter("format", "json"));
+		parameters.add(new Parameter(PARAM_OAUTH_CONSUMER_KEY, apiKey));
+		OAuthUtils.addOAuthTimestamp(parameters);
+		OAuthUtils.addOAuthSignatureMethod(parameters);
+		OAuthUtils.addOAuthVersion(parameters);
+		parameters.add(new Parameter(PARAM_OAUTH_TOKEN, oauthToken.getOauthToken()));
+		parameters.add(new Parameter("method", "flickr.test.login"));
+		// generate the oauth_signature
+		String signature = OAuthUtils.getSignature(
+				OAuthUtils.REQUEST_METHOD_POST, 
+				URL_REST, 
 				parameters,
-				this.sharedSecret);
+				this.sharedSecret, oauthToken.getOauthTokenSecret());
 		logger.info("Signature: " + signature);
 		// This method call must be signed.
 		parameters.add(new Parameter("oauth_signature", signature));
-		//parameters.add(new Parameter("method", "flickr.test.login"));
-    	String response = ((REST)this.transportAPI).getLine(REST.PATH, parameters);
-		if (response == null || response.length() == 0) {
+
+		String response = this.oauthTransport.sendPost(PATH_REST, parameters);
+		if (response == null) {
 			throw new FlickrException("Empty Response", "Empty Response");
 		}
-		
-    	JSONObject jObj = new JSONObject(response);
-		String id = jObj.getString("id");
+
+		JSONObject jObj = new JSONObject(response);
 		String stat = jObj.getString("stat");
-		String name = jObj.getJSONObject("username").getString("_content");
+		JSONObject userObj = jObj.getJSONObject("user");
+		String id = userObj.getString("id");
+		String name = userObj.getJSONObject("username").getString("_content");
 		User user = new User();
 		user.setId(id);
 		user.setUsername(name);
-    }
-    
-    /**
-     * Get a request token.
-     *
-     * @return the frob
-     * @throws IOException
-     * @throws SAXException
-     * @throws FlickrException
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
-     * @throws URISyntaxException 
-     */
-    public OAuthToken getRequestToken(String callbackUrl) throws IOException, FlickrException, 
-    InvalidKeyException, NoSuchAlgorithmException {
-    	if (callbackUrl == null)
-    		callbackUrl = "oob";
+		return user;
+	}
+
+	/**
+	 * Get a request token.
+	 *
+	 * @return the frob
+	 * @throws IOException
+	 * @throws SAXException
+	 * @throws FlickrException
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
+	 * @throws URISyntaxException 
+	 */
+	public OAuthToken getRequestToken(String callbackUrl) throws IOException, FlickrException, 
+	InvalidKeyException, NoSuchAlgorithmException {
+		if (callbackUrl == null)
+			callbackUrl = "oob";
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.add(new Parameter("oauth_callback", callbackUrl));
 		parameters.add(new Parameter(PARAM_OAUTH_CONSUMER_KEY, apiKey));
@@ -231,91 +183,91 @@ public class OAuthInterface {
 		OAuthUtils.addOAuthVersion(parameters);
 
 		// generate the oauth_signature
-		String signature = OAuthUtils.getSignature(URL_REQUEST_TOKEN, parameters, this.sharedSecret);
+		String signature = OAuthUtils.getSignature(URL_REQUEST_TOKEN, parameters, this.sharedSecret, null);
 		logger.info("Signature: " + signature);
 		// This method call must be signed.
 		parameters.add(new Parameter("oauth_signature", signature));
 
-		Map<String, String> response = this.oauthTransport.getData(PATH_OAUTH_REQUEST_TOKEN, parameters);
+		Map<String, String> response = this.oauthTransport.getMapData(true, PATH_OAUTH_REQUEST_TOKEN, parameters);
 		if (response.isEmpty()) {
 			throw new FlickrException("Empty Response", "Empty Response");
 		}
-		
+
 		if (response.containsKey(KEY_OAUTH_CALLBACK_CONFIRMED) == false
-				|| (Boolean.valueOf(response.get(KEY_OAUTH_CALLBACK_CONFIRMED)) == false 
-						&& "tru".equals(response.get(KEY_OAUTH_CALLBACK_CONFIRMED)) == false)) {
+				|| Boolean.valueOf(response.get(KEY_OAUTH_CALLBACK_CONFIRMED)) == false) {
 			throw new FlickrException("Error", "Invalid response: " + response);
 		}
 		String token = response.get(KEY_OAUTH_TOKEN);
 		String token_secret = response.get(KEY_OAUTH_TOKEN_SECRET);
 		logger.info("Response: " + response);
 		return new OAuthToken(token, token_secret);
-    }
-    
-    /**
-     * @param requestToken
-     * @param oauthVerifier
-     * @throws InvalidKeyException
-     * @throws NoSuchAlgorithmException
-     * @throws IOException
-     * @throws FlickrException
-     */
-    public void getAccessToken(String requestToken, String oauthVerifier) 
-    throws InvalidKeyException, NoSuchAlgorithmException, IOException, FlickrException {
-    	/*http://www.flickr.com/services/oauth/access_token
-    		?oauth_nonce=37026218
-    		&oauth_timestamp=1305586309
-    		&oauth_verifier=5d1b96a26b494074
-    		&oauth_consumer_key=653e7a6ecc1d528c516cc8f92cf98611
-    		&oauth_signature_method=HMAC-SHA1
-    		&oauth_version=1.0
-    		&oauth_token=72157626737672178-022bbd2f4c2f3432
-    		&oauth_signature=UD9TGXzrvLIb0Ar5ynqvzatM58U%3D*/
-    	List<Parameter> parameters = new ArrayList<Parameter>();
-    	OAuthUtils.addOAuthNonce(parameters);
-    	OAuthUtils.addOAuthTimestamp(parameters);
-    	parameters.add(new Parameter(KEY_OAUTH_VERIFIER, oauthVerifier));
-    	parameters.add(new Parameter(PARAM_OAUTH_CONSUMER_KEY, apiKey));
+	}
+
+	/**
+	 * @param requestToken
+	 * @param oauthVerifier
+	 * @throws InvalidKeyException
+	 * @throws NoSuchAlgorithmException
+	 * @throws IOException
+	 * @throws FlickrException
+	 * @throws SAXException 
+	 */
+	public OAuth getAccessToken(OAuthToken oauthToken, String oauthVerifier) 
+	throws InvalidKeyException, NoSuchAlgorithmException, IOException, FlickrException {
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		OAuthUtils.addOAuthNonce(parameters);
+		OAuthUtils.addOAuthTimestamp(parameters);
+		parameters.add(new Parameter(KEY_OAUTH_VERIFIER, oauthVerifier));
+		parameters.add(new Parameter(PARAM_OAUTH_CONSUMER_KEY, apiKey));
 		OAuthUtils.addOAuthSignatureMethod(parameters);
 		OAuthUtils.addOAuthVersion(parameters);
-		parameters.add(new Parameter(PARAM_OAUTH_TOKEN, requestToken));
-		
-		String signature = OAuthUtils.getSignature(URL_ACCESS_TOKEN, parameters, this.sharedSecret);
+		parameters.add(new Parameter(PARAM_OAUTH_TOKEN, oauthToken.getOauthToken()));
+
+		String signature = OAuthUtils.getSignature(OAuthUtils.REQUEST_METHOD_POST, 
+				URL_ACCESS_TOKEN, parameters, this.sharedSecret, oauthToken.getOauthTokenSecret());
 		logger.info("Signature: " + signature);
 		// This method call must be signed.
 		parameters.add(new Parameter("oauth_signature", signature));
-		
-		Map<String, String> response = this.oauthTransport.getData(PATH_OAUTH_ACCESS_TOKEN, parameters);
+
+		Map<String, String> response = this.oauthTransport.getMapData(false, PATH_OAUTH_ACCESS_TOKEN, parameters);
 		if (response.isEmpty()) {
 			throw new FlickrException("Empty Response", "Empty Response");
 		}
 		logger.info("Response: " + response);
-    }
+		OAuth result = new OAuth();
+		User user = new User();
+		user.setId(response.get("user_nsid"));
+		user.setUsername(response.get("username"));
+		user.setRealName(response.get("fullname"));
+		result.setUser(user);
+		result.setToken(new OAuthToken(
+				response.get("oauth_token"), response.get("oauth_token_secret")));
+		return result;
+	}
 
 
-    /**
-     * Build the authentication URL using the given permission and frob.
-     *
-     * The hostname used here is www.flickr.com. It differs from the api-default
-     * api.flickr.com.
-     * 
-     * @param permission The Permission
-     * @param frob The frob returned from getFrob()
-     * @return The URL
-     * @throws MalformedURLException
-     */
-    public URL buildAuthenticationUrl(Permission permission, OAuthToken oauthToken) throws MalformedURLException {
-        List<Parameter> parameters = new ArrayList<Parameter>();
-        parameters.add(new Parameter(PARAM_OAUTH_TOKEN, oauthToken.getOauthToken()));
-        if (permission != null) {
-        	parameters.add(new Parameter("perms", permission.toString()));
-    	}
+	/**
+	 * Build the authentication URL using the given permission and frob.
+	 *
+	 * The hostname used here is www.flickr.com. It differs from the api-default
+	 * api.flickr.com.
+	 * 
+	 * @param permission The Permission
+	 * @param frob The frob returned from getFrob()
+	 * @return The URL
+	 * @throws MalformedURLException
+	 */
+	public URL buildAuthenticationUrl(Permission permission, OAuthToken oauthToken) throws MalformedURLException {
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		parameters.add(new Parameter(PARAM_OAUTH_TOKEN, oauthToken.getOauthToken()));
+		if (permission != null) {
+			parameters.add(new Parameter("perms", permission.toString()));
+		}
 
-        String host = "www.flickr.com";
-        int port = transportAPI.getPort();
-        String path = "/services/oauth/authorize";
+		int port = transportAPI.getPort();
+		String path = "/services/oauth/authorize";
 
-        return UrlUtilities.buildUrl(host, port, path, parameters);
-    }
+		return UrlUtilities.buildUrl(HOST_FLICKR, port, path, parameters);
+	}
 
 }

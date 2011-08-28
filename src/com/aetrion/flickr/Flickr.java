@@ -9,7 +9,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import com.aetrion.flickr.activity.ActivityInterface;
 import com.aetrion.flickr.auth.Auth;
-import com.aetrion.flickr.auth.AuthInterface;
 import com.aetrion.flickr.blogs.BlogsInterface;
 import com.aetrion.flickr.commons.CommonsInterface;
 import com.aetrion.flickr.contacts.ContactsInterface;
@@ -80,7 +79,6 @@ public class Flickr {
     private Transport transport;
     private Auth auth;
 
-    private AuthInterface authInterface;
     private OAuthInterface oAuthInterface;
     private ActivityInterface activityInterface;
     private BlogsInterface blogsInterface;
@@ -344,19 +342,6 @@ public class Flickr {
             throw new IllegalArgumentException("Transport must not be null");
         }
         this.transport = transport;
-    }
-
-    /**
-     * Get the AuthInterface.
-     *
-     * @return The AuthInterface
-     * @deprecated please use getOAuthInterface instead
-     */
-    public AuthInterface getAuthInterface() {
-        if (authInterface == null) {
-            authInterface = new AuthInterface(apiKey, sharedSecret, transport);
-        }
-        return authInterface;
     }
     
     public OAuthInterface getOAuthInterface() {
