@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Matcher;
 
-import com.aetrion.flickr.contacts.OnlineStatus;
 import com.aetrion.flickr.util.BuddyIconable;
 import com.aetrion.flickr.util.StringUtilities;
 import com.aetrion.flickr.util.UrlUtilities;
@@ -38,14 +37,13 @@ public class User implements Serializable, BuddyIconable {
     private int iconServer;
     private String realName;
     private String location;
+    private String pathAlias;
     private Date photosFirstDate;
     private Date photosFirstDateTaken;
     private Date faveDate;
     private int photosCount;
-    private OnlineStatus online;
-    private String awayMessage;
-    private long bandwidthMax;
-    private long bandwidthUsed;
+    private Bandwidth bandwidth;
+   
     private long filesizeMax;
     private String mbox_sha1sum;
     private String photosurl;
@@ -125,8 +123,22 @@ public class User implements Serializable, BuddyIconable {
     public String getLocation() {
         return location;
     }
-
+    
     /**
+	 * @return the pathAlias
+	 */
+	public String getPathAlias() {
+		return pathAlias;
+	}
+
+	/**
+	 * @param pathAlias the pathAlias to set
+	 */
+	public void setPathAlias(String pathAlias) {
+		this.pathAlias = pathAlias;
+	}
+
+	/**
      * Construct the BuddyIconUrl.<p>
      * If none available, return the 
      * <a href="http://www.flickr.com/images/buddyicon.jpg">default</a>,
@@ -223,51 +235,21 @@ public class User implements Serializable, BuddyIconable {
         }
     }
 
-    public OnlineStatus getOnline() {
-        return online;
-    }
+    /**
+	 * @return the bandwidth
+	 */
+	public Bandwidth getBandwidth() {
+		return bandwidth;
+	}
 
-    public void setOnline(OnlineStatus online) {
-        this.online = online;
-    }
+	/**
+	 * @param bandwidth the bandwidth to set
+	 */
+	public void setBandwidth(Bandwidth bandwidth) {
+		this.bandwidth = bandwidth;
+	}
 
-    public String getAwayMessage() {
-        return awayMessage;
-    }
-
-    public void setAwayMessage(String awayMessage) {
-        this.awayMessage = awayMessage;
-    }
-
-    public long getBandwidthMax() {
-        return bandwidthMax;
-    }
-
-    public void setBandwidthMax(long bandwidthMax) {
-        this.bandwidthMax = bandwidthMax;
-    }
-
-    public void setBandwidthMax(String bandwidthMax) {
-        if (bandwidthMax != null) {
-            setBandwidthMax(Long.parseLong(bandwidthMax));
-        }
-    }
-
-    public long getBandwidthUsed() {
-        return bandwidthUsed;
-    }
-
-    public void setBandwidthUsed(long bandwidthUsed) {
-        this.bandwidthUsed = bandwidthUsed;
-    }
-
-    public void setBandwidthUsed(String bandwidthUsed) {
-        if (bandwidthUsed != null) {
-            setBandwidthUsed(Long.parseLong(bandwidthUsed));
-        }
-    }
-
-    public long getFilesizeMax() {
+	public long getFilesizeMax() {
         return filesizeMax;
     }
 
@@ -370,9 +352,6 @@ public class User implements Serializable, BuddyIconable {
                     } else if (res instanceof Long) {
                         Long lon = (Long) res;
                         hash += lon.hashCode();
-                    } else if (res instanceof OnlineStatus) {
-                        OnlineStatus os = (OnlineStatus) res;
-                        hash += os.hashCode();
                     } else {
                         System.out.println("User hashCode unrecognised object: " + res.getClass().getName());
                     }
@@ -453,4 +432,14 @@ public class User implements Serializable, BuddyIconable {
     {
         return revFamily;
     }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", username=" + username + "]";
+	}
+    
+    
 }

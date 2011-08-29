@@ -4,21 +4,20 @@
 package com.aetrion.flickr.contacts;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
-import com.aetrion.flickr.util.XMLUtilities;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Interface for working with Flickr contacts.
@@ -51,44 +50,35 @@ public class ContactsInterface {
      *
      * @return The Collection of Contact objects
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public Collection<Contact> getList() throws IOException, SAXException, FlickrException {
+    public Collection<Contact> getList() throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Contact> contacts = new ArrayList<Contact>();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
-        parameters.add(new Parameter("api_key", apiKey));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
-
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element contactsElement = response.getPayload();
-        NodeList contactNodes = contactsElement.getElementsByTagName("contact");
-        for (int i = 0; i < contactNodes.getLength(); i++) {
-            Element contactElement = (Element) contactNodes.item(i);
+        JSONObject contactsElement = response.getData().getJSONObject("contacts");
+        JSONArray contactNodes = contactsElement.getJSONArray("contact");
+        for (int i = 0; i < contactNodes.length(); i++) {
+        	JSONObject contactElement = contactNodes.getJSONObject(i);
             Contact contact = new Contact();
-            contact.setId(contactElement.getAttribute("nsid"));
-            contact.setUsername(contactElement.getAttribute("username"));
-            contact.setRealName(contactElement.getAttribute("realname"));
-            contact.setFriend("1".equals(contactElement.getAttribute("friend")));
-            contact.setFamily("1".equals(contactElement.getAttribute("family")));
-            contact.setIgnored("1".equals(contactElement.getAttribute("ignored")));
-            contact.setOnline(OnlineStatus.fromType(contactElement.getAttribute("online")));
-            contact.setIconFarm(contactElement.getAttribute("iconfarm"));
-            contact.setIconServer(contactElement.getAttribute("iconserver"));
-            if (contact.getOnline() == OnlineStatus.AWAY) {
-                contactElement.normalize();
-                contact.setAwayMessage(XMLUtilities.getValue(contactElement));
-            }
+            contact.setId(contactElement.getString("nsid"));
+            contact.setUsername(contactElement.getString("username"));
+            contact.setRealName(contactElement.getString("realname"));
+            contact.setFriend("1".equals(contactElement.getString("friend")));
+            contact.setFamily("1".equals(contactElement.getString("family")));
+            contact.setIgnored("1".equals(contactElement.getString("ignored")));
+            contact.setPathAlias(contactElement.getString("path_alias"));
+            contact.setLocation(contactElement.getString("location"));
+            contact.setIconFarm(contactElement.getString("iconfarm"));
+            contact.setIconServer(contactElement.getString("iconserver"));
             contacts.add(contact);
         }
         return contacts;
@@ -103,16 +93,17 @@ public class ContactsInterface {
      *
      * @return List of Contacts
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public Collection<Contact> getListRecentlyUploaded(Date lastUpload, String filter)
-      throws IOException, SAXException, FlickrException {
+      throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Contact> contacts = new ArrayList<Contact>();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST_RECENTLY_UPLOADED));
-        parameters.add(new Parameter("api_key", apiKey));
 
         if (lastUpload != null) {
             parameters.add(new Parameter("date_lastupload", lastUpload.getTime() / 1000L));
@@ -121,36 +112,26 @@ public class ContactsInterface {
             parameters.add(new Parameter("filter", filter));
         }
 
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
-
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element contactsElement = response.getPayload();
-        NodeList contactNodes = contactsElement.getElementsByTagName("contact");
-        for (int i = 0; i < contactNodes.getLength(); i++) {
-            Element contactElement = (Element) contactNodes.item(i);
+        JSONObject contactsElement = response.getData().getJSONObject("contacts");
+        JSONArray contactNodes = contactsElement.getJSONArray("contact");
+        for (int i = 0; i < contactNodes.length(); i++) {
+        	JSONObject contactElement = contactNodes.getJSONObject(i);
             Contact contact = new Contact();
-            contact.setId(contactElement.getAttribute("nsid"));
-            contact.setUsername(contactElement.getAttribute("username"));
-            contact.setRealName(contactElement.getAttribute("realname"));
-            contact.setFriend("1".equals(contactElement.getAttribute("friend")));
-            contact.setFamily("1".equals(contactElement.getAttribute("family")));
-            contact.setIgnored("1".equals(contactElement.getAttribute("ignored")));
-            contact.setOnline(OnlineStatus.fromType(contactElement.getAttribute("online")));
-            contact.setIconFarm(contactElement.getAttribute("iconfarm"));
-            contact.setIconServer(contactElement.getAttribute("iconserver"));
-            if (contact.getOnline() == OnlineStatus.AWAY) {
-                contactElement.normalize();
-                contact.setAwayMessage(XMLUtilities.getValue(contactElement));
+            contact.setId(contactElement.getString("nsid"));
+            contact.setUsername(contactElement.getString("username"));
+            contact.setRealName(contactElement.getString("realname"));
+            contact.setFriend("1".equals(contactElement.getString("friend")));
+            contact.setFamily("1".equals(contactElement.getString("family")));
+            if (contactElement.has("ignored")) {
+            	contact.setIgnored("1".equals(contactElement.getString("ignored")));
             }
+            contact.setIconFarm(contactElement.getString("iconfarm"));
+            contact.setIconServer(contactElement.getString("iconserver"));
             contacts.add(contact);
         }
         return contacts;
@@ -164,38 +145,34 @@ public class ContactsInterface {
      * @param userId The user ID
      * @return The Collection of Contact objects
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public Collection<Contact> getPublicList(String userId) throws IOException, SAXException, FlickrException {
+    public Collection<Contact> getPublicList(String userId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Contact> contacts = new ArrayList<Contact>();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PUBLIC_LIST));
-        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("user_id", userId));
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element contactsElement = response.getPayload();
-        NodeList contactNodes = contactsElement.getElementsByTagName("contact");
-        for (int i = 0; i < contactNodes.getLength(); i++) {
-            Element contactElement = (Element) contactNodes.item(i);
+        JSONObject contactsElement = response.getData().getJSONObject("contacts");
+        JSONArray contactNodes = contactsElement.getJSONArray("contact");
+        for (int i = 0; i < contactNodes.length(); i++) {
+        	JSONObject contactElement = contactNodes.getJSONObject(i);
             Contact contact = new Contact();
-            contact.setId(contactElement.getAttribute("nsid"));
-            contact.setUsername(contactElement.getAttribute("username"));
-            contact.setIgnored("1".equals(contactElement.getAttribute("ignored")));
-            contact.setOnline(OnlineStatus.fromType(contactElement.getAttribute("online")));
-            contact.setIconFarm(contactElement.getAttribute("iconfarm"));
-            contact.setIconServer(contactElement.getAttribute("iconserver"));
-            if (contact.getOnline() == OnlineStatus.AWAY) {
-                contactElement.normalize();
-                contact.setAwayMessage(XMLUtilities.getValue(contactElement));
-            }
+            contact.setId(contactElement.getString("nsid"));
+            contact.setUsername(contactElement.getString("username"));
+            contact.setIgnored("1".equals(contactElement.getString("ignored")));
+            contact.setIconFarm(contactElement.getString("iconfarm"));
+            contact.setIconServer(contactElement.getString("iconserver"));
             contacts.add(contact);
         }
         return contacts;

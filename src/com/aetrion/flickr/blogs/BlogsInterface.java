@@ -4,21 +4,22 @@
 package com.aetrion.flickr.blogs;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
 import com.aetrion.flickr.photos.Photo;
-import com.aetrion.flickr.util.XMLUtilities;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Interface for working with Flickr blog configurations.
@@ -49,27 +50,29 @@ public class BlogsInterface {
      *
      * @return List of Services
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public Collection<Service> getServices()
-      throws IOException, SAXException, FlickrException {
+      throws IOException, SAXException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Service> list = new ArrayList<Service>();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_SERVICES));
-        parameters.add(new Parameter("api_key", apiKey));
 
-        Response response = transportAPI.post(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element servicesElement = response.getPayload();
-        NodeList serviceNodes = servicesElement.getElementsByTagName("service");
-        for (int i = 0; i < serviceNodes.getLength(); i++) {
-            Element serviceElement = (Element) serviceNodes.item(i);
+        
+        JSONObject servicesElement = response.getData().getJSONObject("services");
+        JSONArray serviceNodes = servicesElement.getJSONArray("service");
+        for (int i = 0; i < serviceNodes.length(); i++) {
+            JSONObject serviceElement = serviceNodes.getJSONObject(i);
             Service srv = new Service();
-            srv.setId(serviceElement.getAttribute("id"));
-            srv.setName(XMLUtilities.getValue(serviceElement));
+            srv.setId(serviceElement.getString("id"));
+            srv.setName(serviceElement.getString("_content"));
             list.add(srv);
         }
         return list;
@@ -83,13 +86,14 @@ public class BlogsInterface {
      * @param blogId The blog ID
      * @param blogPassword The blog password
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public void postPhoto(Photo photo, String blogId, String blogPassword) throws IOException, SAXException, FlickrException {
+    public void postPhoto(Photo photo, String blogId, String blogPassword) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_POST_PHOTO));
-        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("blog_id", blogId));
         parameters.add(new Parameter("photo_id", photo.getId()));
@@ -98,14 +102,8 @@ public class BlogsInterface {
         if (blogPassword != null) {
             parameters.add(new Parameter("blog_password", blogPassword));
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
 
-        Response response = transportAPI.post(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(this.apiKey, this.sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -117,10 +115,12 @@ public class BlogsInterface {
      * @param photo The photo metadata
      * @param blogId The blog ID
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public void postPhoto(Photo photo, String blogId) throws IOException, SAXException, FlickrException {
+    public void postPhoto(Photo photo, String blogId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         postPhoto(photo, blogId, null);
     }
 
@@ -129,35 +129,29 @@ public class BlogsInterface {
      *
      * @return The Collection of configured blogs
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public Collection<Blog> getList() throws IOException, SAXException, FlickrException {
+    public Collection<Blog> getList() throws IOException, FlickrException, JSONException, InvalidKeyException, NoSuchAlgorithmException {
         List<Blog> blogs = new ArrayList<Blog>();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
-        parameters.add(new Parameter("api_key", apiKey));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
-
-        Response response = transportAPI.post(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element blogsElement = response.getPayload();
-        NodeList blogNodes = blogsElement.getElementsByTagName("blog");
-        for (int i = 0; i < blogNodes.getLength(); i++) {
-            Element blogElement = (Element) blogNodes.item(i);
+        JSONObject blogsElement = response.getData().getJSONObject("blogs");
+        JSONArray blogNodes = blogsElement.getJSONArray("blog");
+        for (int i = 0; i < blogNodes.length(); i++) {
+        	JSONObject blogElement = blogNodes.getJSONObject(i);
             Blog blog = new Blog();
-            blog.setId(blogElement.getAttribute("id"));
-            blog.setName(blogElement.getAttribute("name"));
-            blog.setNeedPassword("1".equals(blogElement.getAttribute("needspassword")));
-            blog.setUrl(blogElement.getAttribute("url"));
+            blog.setId(blogElement.getString("id"));
+            blog.setName(blogElement.getString("name"));
+            blog.setNeedPassword("1".equals(blogElement.getString("needspassword")));
+            blog.setUrl(blogElement.getString("url"));
             blogs.add(blog);
         }
         return blogs;

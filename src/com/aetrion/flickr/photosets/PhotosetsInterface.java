@@ -122,7 +122,7 @@ public class PhotosetsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosetElement = (Element) response.getPayload();
+        Element photosetElement = (Element) response.getData();
         Photoset photoset = new Photoset();
         photoset.setId(photosetElement.getAttribute("id"));
         photoset.setUrl(photosetElement.getAttribute("url"));
@@ -310,7 +310,7 @@ public class PhotosetsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosetElement = (Element)response.getPayload();
+        Element photosetElement = (Element)response.getData();
         Photoset photoset = new Photoset();
         photoset.setId(photosetElement.getAttribute("id"));
 
@@ -374,7 +374,7 @@ public class PhotosetsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
         Photosets photosetsObject = new Photosets();
-        Element photosetsElement = response.getPayload();
+        Element photosetsElement = response.getData();
         List<Photoset> photosets = new ArrayList<Photoset>();
         NodeList photosetElements = photosetsElement.getElementsByTagName("photoset");
         for (int i = 0; i < photosetElements.getLength(); i++) {
@@ -469,7 +469,7 @@ public class PhotosetsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element photoset = response.getPayload();
+        Element photoset = response.getData();
         NodeList photoElements = photoset.getElementsByTagName("photo");
         photos.setPage(photoset.getAttribute("page"));
         photos.setPages(photoset.getAttribute("pages"));

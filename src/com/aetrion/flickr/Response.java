@@ -4,17 +4,15 @@
 
 package com.aetrion.flickr;
 
-import java.util.Collection;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * @author Anthony Eden
  */
 public interface Response {
 
-    void parse(Document document);
+    void parse(String rawMessage) throws JSONException;
 
     boolean isError();
 
@@ -22,7 +20,8 @@ public interface Response {
 
     String getErrorMessage();
     
-    Element getPayload();
+    JSONObject getData();
     
-    Collection<Element> getPayloadCollection();
+    String getRawResponse();
+    
 }

@@ -78,7 +78,7 @@ public class ReflectionInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element methodElement = response.getPayload();
+        Element methodElement = response.getData();
         Method method = new Method();
         method.setName(methodElement.getAttribute("name"));
         method.setNeedsLogin("1".equals(methodElement.getAttribute("needslogin")));
@@ -204,7 +204,7 @@ public class ReflectionInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element methodsElement = response.getPayload();
+        Element methodsElement = response.getData();
 
         List<String> methods = new ArrayList<String>();
         NodeList methodElements = methodsElement.getElementsByTagName("method");

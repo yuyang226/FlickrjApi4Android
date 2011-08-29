@@ -65,7 +65,7 @@ public class PandaInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element pandaElement = response.getPayload();
+        Element pandaElement = response.getData();
         NodeList pandaNodes = pandaElement.getElementsByTagName("panda");
         for (int i = 0; i < pandaNodes.getLength(); i++) {
             pandaElement = (Element) pandaNodes.item(i);
@@ -113,7 +113,7 @@ public class PandaInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getPayload();
+        Element photosElement = response.getData();
         PhotoList photos = PhotoUtils.createPhotoList(photosElement);
         return photos;
     }

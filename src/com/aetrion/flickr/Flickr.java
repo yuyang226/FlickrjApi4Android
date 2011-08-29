@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 
 import com.aetrion.flickr.activity.ActivityInterface;
-import com.aetrion.flickr.auth.Auth;
 import com.aetrion.flickr.blogs.BlogsInterface;
 import com.aetrion.flickr.commons.CommonsInterface;
 import com.aetrion.flickr.contacts.ContactsInterface;
@@ -36,6 +35,7 @@ import com.aetrion.flickr.tags.TagsInterface;
 import com.aetrion.flickr.test.TestInterface;
 import com.aetrion.flickr.uploader.Uploader;
 import com.aetrion.flickr.urls.UrlsInterface;
+import com.yuyang226.flickr.oauth.OAuth;
 import com.yuyang226.flickr.oauth.OAuthInterface;
 
 /**
@@ -57,7 +57,9 @@ public class Flickr {
     /**
      * The default endpoint host.
      */
-    public static final String DEFAULT_HOST = "api.flickr.com";
+    public static final String DEFAULT_HOST = "www.flickr.com";
+    
+    public static final String DEFAULT_API_HOST = "api.flickr.com";
 
     /**
      * Set to true to enable response debugging (print the response stream)
@@ -77,7 +79,7 @@ public class Flickr {
     private String apiKey;
     private String sharedSecret;
     private Transport transport;
-    private Auth auth;
+    private OAuth oauth;
 
     private OAuthInterface oAuthInterface;
     private ActivityInterface activityInterface;
@@ -289,17 +291,17 @@ public class Flickr {
         this.apiKey = apiKey;
     }
 
-    public void setAuth(Auth auth) {
-        this.auth = auth;
+    public void setOAuth(OAuth oauth) {
+        this.oauth = oauth;
     }
 
     /**
-     * Get the Auth-object.
+     * Get the OAuth-object.
      *
-     * @return The Auth-object
+     * @return The OAuth-object
      */
-    public Auth getAuth() {
-        return auth;
+    public OAuth getOAuth() {
+        return oauth;
     }
 
     /**

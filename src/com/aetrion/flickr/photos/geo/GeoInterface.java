@@ -78,7 +78,7 @@ public class GeoInterface {
 		//  <location latitude="-17.685895" longitude="-63.36914" accuracy="6" />
 		// </photo>
 
-        Element photoElement = response.getPayload();
+        Element photoElement = response.getData();
 
         Element locationElement = XMLUtilities.getChild(photoElement, "location");
         String latStr = locationElement.getAttribute("latitude");
@@ -124,7 +124,7 @@ public class GeoInterface {
         // response:
         // <perms id="240935723" ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
         GeoPermissions perms = new GeoPermissions();
-        Element permsElement = response.getPayload();
+        Element permsElement = response.getData();
         perms.setPublic("1".equals(permsElement.getAttribute("ispublic")));
         perms.setContact("1".equals(permsElement.getAttribute("iscontact")));
         perms.setFriend("1".equals(permsElement.getAttribute("isfriend")));
@@ -372,7 +372,7 @@ public class GeoInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getPayload();
+        Element photosElement = response.getData();
         photos.setPage(photosElement.getAttribute("page"));
         photos.setPages(photosElement.getAttribute("pages"));
         photos.setPerPage(photosElement.getAttribute("perpage"));

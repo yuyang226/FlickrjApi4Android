@@ -1,4 +1,4 @@
-package org.json;
+package com.yuyang226.flickr.org.json;
 
 /*
 Copyright (c) 2008 JSON.org

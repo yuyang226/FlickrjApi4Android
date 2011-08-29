@@ -83,9 +83,9 @@ public class UploaderResponse implements Response {
     }
 
     /**
-     * @see com.aetrion.flickr.Response#getPayload()
+     * @see com.aetrion.flickr.Response#getData()
      */
-    public Element getPayload() {
+    public Element getData() {
         return responsePayLoad;
     }
 

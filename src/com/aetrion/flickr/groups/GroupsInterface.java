@@ -75,7 +75,7 @@ public class GroupsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element categoryElement = response.getPayload();
+        Element categoryElement = response.getData();
 
         Category category = new Category();
         category.setName(categoryElement.getAttribute("name"));
@@ -129,7 +129,7 @@ public class GroupsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element groupElement = response.getPayload();
+        Element groupElement = response.getData();
         Group group = new Group();
         group.setId(groupElement.getAttribute("id"));
         group.setIconFarm(groupElement.getAttribute("iconfarm"));
@@ -200,7 +200,7 @@ public class GroupsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element groupsElement = response.getPayload();
+        Element groupsElement = response.getData();
         NodeList groupNodes = groupsElement.getElementsByTagName("group");
         groupList.setPage(XMLUtilities.getIntAttribute(groupsElement, "page"));
         groupList.setPages(XMLUtilities.getIntAttribute(groupsElement, "pages"));

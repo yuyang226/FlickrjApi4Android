@@ -78,7 +78,7 @@ public class NotesInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element noteElement = response.getPayload();
+        Element noteElement = response.getData();
         note.setId(noteElement.getAttribute("id"));
         return note;
     }

@@ -71,7 +71,7 @@ public class UrlsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element payload = response.getPayload();
+        Element payload = response.getData();
         return payload.getAttribute("url");
     }
 
@@ -96,7 +96,7 @@ public class UrlsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element payload = response.getPayload();
+        Element payload = response.getData();
         return payload.getAttribute("url");
     }
 
@@ -121,7 +121,7 @@ public class UrlsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element payload = response.getPayload();
+        Element payload = response.getData();
         return payload.getAttribute("url");
     }
 
@@ -147,7 +147,7 @@ public class UrlsInterface {
         }
 
         Group group = new Group();
-        Element payload = response.getPayload();
+        Element payload = response.getData();
         Element groupnameElement = (Element) payload.getElementsByTagName("groupname").item(0);
         group.setId(payload.getAttribute("id"));
         group.setName(((Text) groupnameElement.getFirstChild()).getData());
@@ -176,7 +176,7 @@ public class UrlsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element payload = response.getPayload();
+        Element payload = response.getData();
         Element groupnameElement = (Element) payload.getElementsByTagName("username").item(0);
         return ((Text) groupnameElement.getFirstChild()).getData();
     }

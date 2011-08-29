@@ -18,21 +18,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import com.aetrion.flickr.auth.Auth;
 import com.aetrion.flickr.util.Base64;
 import com.aetrion.flickr.util.DebugInputStream;
-import com.aetrion.flickr.util.DebugOutputStream;
 import com.aetrion.flickr.util.IOUtilities;
 import com.aetrion.flickr.util.StringUtilities;
 import com.aetrion.flickr.util.UrlUtilities;
 import com.yuyang226.flickr.oauth.OAuthUtils;
+import com.yuyang226.flickr.org.json.JSONException;
 
 /**
  * Transport implementation using the REST interface.
@@ -47,7 +43,6 @@ public class REST extends Transport {
 	private boolean proxyAuth = false;
 	private String proxyUser = "";
 	private String proxyPassword = "";
-	private DocumentBuilder builder;
 	private static Object mutex = new Object();
 
 	/**
@@ -60,8 +55,6 @@ public class REST extends Transport {
 		setHost(Flickr.DEFAULT_HOST);
 		setPath(PATH);
 		setResponseClass(RESTResponse.class);
-		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-		builder = builderFactory.newDocumentBuilder();
 	}
 
 	/**
@@ -125,27 +118,11 @@ public class REST extends Transport {
 	 * @param parameters The parameters (collection of Parameter objects)
 	 * @return The Response
 	 * @throws IOException
-	 * @throws SAXException
+	 * @throws JSONException
 	 */
-	public Response get(String path, List<Parameter> parameters) throws IOException, SAXException {
-		InputStream in = null;
-		try {
-			in = getInputStream(path, parameters);
-
-			Response response = null;
-			synchronized (mutex) {
-				Document document = builder.parse(in);
-				response = (Response) responseClass.newInstance();
-				response.parse(document);
-			}
-			return response;
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e); // TODO: Replace with a better exception
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e); // TODO: Replace with a better exception
-		} finally {
-			IOUtilities.close(in);
-		}
+	public Response get(String path, List<Parameter> parameters) throws IOException, JSONException {
+		String data = getLine(path, parameters);
+		return new RESTResponse(data);
 	}
 
 	private InputStream getInputStream(String path, List<Parameter> parameters) throws IOException {
@@ -197,7 +174,7 @@ public class REST extends Transport {
 			IOUtilities.close(rd);
 		}
 	}
-
+	
 	/**
 	 * <p>A helper method for sending a GET request to the provided URL with the given parameters, 
 	 * then return the response as a Map.</p>
@@ -285,8 +262,18 @@ public class REST extends Transport {
 			if (conn != null)
 				conn.disconnect() ;
 		}
-	}    
+	}  
+	
 
+	/* (non-Javadoc)
+	 * @see com.aetrion.flickr.Transport#post(java.lang.String, java.util.List, boolean)
+	 */
+	@Override
+	public Response post(String path, List<Parameter> parameters,
+			boolean multipart) throws IOException, JSONException {
+		String data = sendPost(path, parameters);
+		return new RESTResponse(data);
+	}
 
 	/**
 	 * Invoke an HTTP POST request on a remote host.
@@ -298,7 +285,7 @@ public class REST extends Transport {
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	public Response post(String path, List<Parameter> parameters, boolean multipart) throws IOException, SAXException {
+	/*public Response post(String path, List<Parameter> parameters, boolean multipart) throws IOException, SAXException {
 		// see: AuthUtilities.getSignature()
 		//AuthUtilities.addAuthToken(parameters);
 
@@ -347,7 +334,7 @@ public class REST extends Transport {
 
 						writeParam(p.getName(), p.getValue(), out, boundary);
 					}
-					/*                    Auth auth = requestContext.getAuth();
+					                    Auth auth = requestContext.getAuth();
                     if (auth != null) {
                         writeParam(
                             "api_sig",
@@ -355,7 +342,7 @@ public class REST extends Transport {
                             out,
                             boundary
                         );
-                    } */
+                    } 
 				} else {
 					Iterator<?> iter = parameters.iterator();
 					while (iter.hasNext()) {
@@ -417,7 +404,7 @@ public class REST extends Transport {
 				conn.disconnect();
 			}
 		}
-	}
+	}*/
 
 	private void writeParam(String name, Object value, DataOutputStream out, String boundary)
 	throws IOException {

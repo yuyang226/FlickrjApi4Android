@@ -63,7 +63,7 @@ public class LicensesInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
         List<License> licenses = new ArrayList<License>();
-        Element licensesElement = response.getPayload();
+        Element licensesElement = response.getData();
         NodeList licenseElements = licensesElement.getElementsByTagName("license");
         for (int i = 0; i < licenseElements.getLength(); i++) {
             Element licenseElement = (Element) licenseElements.item(i);

@@ -4,9 +4,14 @@
 package com.aetrion.flickr;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import org.xml.sax.SAXException;
+
+import com.yuyang226.flickr.oauth.OAuthInterface;
+import com.yuyang226.flickr.oauth.OAuthUtils;
+import com.yuyang226.flickr.org.json.JSONException;
 
 /**
  * The abstract Transport class provides a common interface for transporting requests to the Flickr servers. Flickr
@@ -19,7 +24,6 @@ import org.xml.sax.SAXException;
 public abstract class Transport {
 
     public static final String REST = "REST";
-    public static final String SOAP = "SOAP";
 
     private String transportType;
     protected Class<?> responseClass;
@@ -58,9 +62,9 @@ public abstract class Transport {
      * @param parameters The parameters (collection of Parameter objects)
      * @return The Response
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException
      */
-    public abstract Response get(String path, List<Parameter> parameters) throws IOException, SAXException;
+    public abstract Response get(String path, List<Parameter> parameters) throws IOException, JSONException;
 
     /**
      * Invoke an HTTP POST request on a remote host.
@@ -69,12 +73,20 @@ public abstract class Transport {
      * @param parameters The parameters (collection of Parameter objects)
      * @return The Response object
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException
      */
-    public Response post(String path, List<Parameter> parameters) throws IOException, SAXException {
+    public Response post(String path, List<Parameter> parameters) throws IOException, JSONException {
         return post(path, parameters, false);
     }
-
+    
+    public Response postOAuthJSON(String apiKey, String apiSharedSecret, 
+    		List<Parameter> parameters) throws IOException, JSONException, InvalidKeyException, NoSuchAlgorithmException {
+    	parameters.add(new Parameter("nojsoncallback", "1"));
+		parameters.add(new Parameter("format", "json"));
+		OAuthUtils.addOAuthParams(apiKey, apiSharedSecret, OAuthInterface.URL_REST, parameters);
+    	return post(OAuthInterface.PATH_REST, parameters, false);
+    }
+    
     /**
      * Invoke an HTTP POST request on a remote host.
      *
@@ -83,10 +95,10 @@ public abstract class Transport {
      * @param multipart Use multipart
      * @return The Response object
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException
      */
     public abstract Response post(String path, List<Parameter> parameters, boolean multipart) throws IOException,
-            SAXException;
+    JSONException;
 
     /**
      * @return Returns the path.

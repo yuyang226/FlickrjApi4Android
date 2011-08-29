@@ -89,7 +89,7 @@ public class TestInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element userElement = response.getPayload();
+        Element userElement = response.getData();
         User user = new User();
         user.setId(userElement.getAttribute("id"));
 

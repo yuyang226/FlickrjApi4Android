@@ -262,7 +262,7 @@ public class MachinetagsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element nsElement = response.getPayload();
+        Element nsElement = response.getData();
         NodeList nsNodes = nsElement.getElementsByTagName("namespace");
         nsList.setPage("1");
         nsList.setPages("1");
@@ -314,7 +314,7 @@ public class MachinetagsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element nsElement = response.getPayload();
+        Element nsElement = response.getData();
         NodeList nsNodes = nsElement.getElementsByTagName("pair");
         nsList.setPage(nsElement.getAttribute("page"));
         nsList.setPages(nsElement.getAttribute("pages"));
@@ -362,7 +362,7 @@ public class MachinetagsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element nsElement = response.getPayload();
+        Element nsElement = response.getData();
         NodeList nsNodes = nsElement.getElementsByTagName("predicate");
         nsList.setPage(nsElement.getAttribute("page"));
         nsList.setPages(nsElement.getAttribute("pages"));
@@ -413,7 +413,7 @@ public class MachinetagsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element nsElement = response.getPayload();
+        Element nsElement = response.getData();
         NodeList nsNodes = nsElement.getElementsByTagName("value");
         valuesList.setPage(nsElement.getAttribute("page"));
         valuesList.setPages(nsElement.getAttribute("pages"));
@@ -463,7 +463,7 @@ public class MachinetagsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element nsElement = response.getPayload();
+        Element nsElement = response.getData();
         NodeList nsNodes = nsElement.getElementsByTagName("value");
         valuesList.setPage(nsElement.getAttribute("page"));
         valuesList.setPages(nsElement.getAttribute("pages"));

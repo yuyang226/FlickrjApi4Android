@@ -21,11 +21,11 @@ public class Contact implements BuddyIconable {
     private boolean friend;
     private boolean family;
     private boolean ignored;
-    private OnlineStatus online;
-    private String awayMessage;
+    private String pathAlias;
     private int iconFarm;
     private int iconServer;
-
+    private String location;
+    
     public Contact() {
 
     }
@@ -78,27 +78,6 @@ public class Contact implements BuddyIconable {
         this.ignored = ignored;
     }
 
-    public OnlineStatus getOnline() {
-        return online;
-    }
-
-    public void setOnline(OnlineStatus online) {
-        this.online = online;
-    }
-
-    /**
-     * Get the contact's away message.  This method may return null if the contact online status is not 'away'.
-     *
-     * @return The away message or null
-     */
-    public String getAwayMessage() {
-        return awayMessage;
-    }
-
-    public void setAwayMessage(String awayMessage) {
-        this.awayMessage = awayMessage;
-    }
-
     /**
      * Construct the BuddyIconUrl.<p>
      * If none available, return the
@@ -135,4 +114,43 @@ public class Contact implements BuddyIconable {
     public void setIconServer(String iconServer) {
         setIconServer(Integer.parseInt(iconServer));
     }
+
+	/**
+	 * @return the pathAlias
+	 */
+	public String getPathAlias() {
+		return pathAlias;
+	}
+
+	/**
+	 * @param pathAlias the pathAlias to set
+	 */
+	public void setPathAlias(String pathAlias) {
+		this.pathAlias = pathAlias;
+	}
+
+	/**
+	 * @return the location
+	 */
+	public String getLocation() {
+		return location;
+	}
+
+	/**
+	 * @param location the location to set
+	 */
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Contact [id=" + id + ", username=" + username + ", realName="
+				+ realName + "]";
+	}
+	
+    
 }

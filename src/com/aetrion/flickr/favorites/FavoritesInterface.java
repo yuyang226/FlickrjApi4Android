@@ -115,7 +115,7 @@ public class FavoritesInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element photosElement = response.getPayload();
+        Element photosElement = response.getData();
         photos.setPage(photosElement.getAttribute("page"));
 		photos.setPages(photosElement.getAttribute("pages"));
 		photos.setPerPage(photosElement.getAttribute("perpage"));
@@ -168,7 +168,7 @@ public class FavoritesInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element photosElement = response.getPayload();
+        Element photosElement = response.getData();
         photos.setPage(photosElement.getAttribute("page"));
 		photos.setPages(photosElement.getAttribute("pages"));
 		photos.setPerPage(photosElement.getAttribute("perpage"));

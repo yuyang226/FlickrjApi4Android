@@ -79,7 +79,7 @@ public class CommentsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element commentElement = (Element)response.getPayload();
+        Element commentElement = (Element)response.getData();
         return commentElement.getAttribute("id");
     }
 
@@ -172,7 +172,7 @@ public class CommentsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
         List<Comment> comments = new ArrayList<Comment>();
-        Element commentsElement = response.getPayload();
+        Element commentsElement = response.getData();
         NodeList commentNodes = commentsElement.getElementsByTagName("comment");
         int n = commentNodes.getLength();
         for (int i = 0; i < n; i++) {
@@ -258,7 +258,7 @@ public class CommentsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getPayload();
+        Element photosElement = response.getData();
         photos.setPage(photosElement.getAttribute("page"));
         photos.setPages(photosElement.getAttribute("pages"));
         photos.setPerPage(photosElement.getAttribute("perpage"));

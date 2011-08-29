@@ -84,7 +84,7 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
         ClusterList clusters = new ClusterList();
-        Element clustersElement = response.getPayload();
+        Element clustersElement = response.getData();
         NodeList clusterElements = clustersElement.getElementsByTagName("cluster");
         for (int i = 0; i < clusterElements.getLength(); i++) {
             Cluster cluster = new Cluster();
@@ -129,7 +129,7 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element photosElement = response.getPayload();
+        Element photosElement = response.getData();
         NodeList photoNodes = photosElement.getElementsByTagName("photo");
         photos.setPage("1");
 		photos.setPages("1");
@@ -164,7 +164,7 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element tagsElement = response.getPayload();
+        Element tagsElement = response.getData();
 
         List<HotlistTag> tags = new ArrayList<HotlistTag>();
         NodeList tagElements = tagsElement.getElementsByTagName("tag");
@@ -198,7 +198,7 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element photoElement = response.getPayload();
+        Element photoElement = response.getData();
         Photo photo = new Photo();
         photo.setId(photoElement.getAttribute("id"));
 
@@ -242,7 +242,7 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element whoElement = response.getPayload();
+        Element whoElement = response.getData();
 
         List<Tag> tags = new ArrayList<Tag>();
         Element tagsElement = (Element) whoElement.getElementsByTagName("tags").item(0);
@@ -279,7 +279,7 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element whoElement = response.getPayload();
+        Element whoElement = response.getData();
 
         List<Tag> tags = new ArrayList<Tag>();
         Element tagsElement = (Element) whoElement.getElementsByTagName("tags").item(0);
@@ -319,7 +319,7 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element whoElement = response.getPayload();
+        Element whoElement = response.getData();
 
         List<TagRaw> tags = new ArrayList<TagRaw>();
         Element tagsElement = (Element) whoElement.getElementsByTagName("tags").item(0);
@@ -361,7 +361,7 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element tagsElement = response.getPayload();
+        Element tagsElement = response.getData();
 
         RelatedTagsList tags = new RelatedTagsList();
         tags.setSource(tagsElement.getAttribute("source"));

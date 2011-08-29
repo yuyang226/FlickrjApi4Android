@@ -6,12 +6,10 @@ package com.yuyang226.flickr.oauth;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.aetrion.flickr.Flickr;
-import com.aetrion.flickr.Parameter;
-import com.aetrion.flickr.auth.Permission;
+import com.aetrion.flickr.RequestContext;
+import com.aetrion.flickr.people.User;
 
 
 
@@ -36,38 +34,43 @@ public class OAuthTest {
 		return String.valueOf(br.readLine()).trim();
 	}
 	
-	private static void test() throws Exception {
-		List<Parameter> parameters = new ArrayList<Parameter>();
-		parameters.add(new Parameter("oauth_nonce", "kllo9940pd9333jh"));
-		parameters.add(new Parameter("oauth_timestamp", "1191242096"));
-		
-		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, "dpf43f3p2l4k3l03"));
-		OAuthUtils.addOAuthSignatureMethod(parameters);
-		OAuthUtils.addOAuthVersion(parameters);
-		parameters.add(new Parameter("file", "vacation.jpg"));
-		parameters.add(new Parameter("size", "original"));
-		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_TOKEN, "nnch734d00sl2jdk"));
-		String baseString = OAuthUtils.getRequestBaseString(OAuthUtils.REQUEST_METHOD_GET, "http://photos.example.net/photos", parameters);
-		
-		String expected = "GET&http%3A%2F%2Fphotos.example.net%2Fphotos&file%3Dvacation.jpg%26oauth_consumer_key%3Ddpf43f3p2l4k3l03%26oauth_nonce%3Dkllo9940pd9333jh%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1191242096%26oauth_token%3Dnnch734d00sl2jdk%26oauth_version%3D1.0%26size%3Doriginal";
-		if (baseString.equals(expected) == false) {
-			System.out.println("Generated Base String: " + baseString);
-			throw new RuntimeException("baseString not match");
-		}
-	}
-
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		try {
 			Flickr f = new Flickr("cf133e9bab9b574fa5f8166c9ecf6455", "d9b66ded5812c3a8");
-			OAuthToken oauthToken = f.getOAuthInterface().getRequestToken("http://localhost");
+			/*OAuthToken oauthToken = f.getOAuthInterface().getRequestToken("http://localhost");
 			System.out.println(oauthToken);
 			System.out.println(f.getOAuthInterface().buildAuthenticationUrl(Permission.READ, oauthToken));
 			String tokenVerifier = readParamFromCommand("Enter Token Verifier: ");
-			OAuth oauth = f.getOAuthInterface().getAccessToken(oauthToken, tokenVerifier);
-			f.getOAuthInterface().testLogin(oauth.getToken());
+			f.getOAuthInterface().getAccessToken(oauthToken, tokenVerifier);
+			f.getOAuthInterface().testLogin();*/
+			
+			//oauth_token=72157626911878883-7288bed42b42e288, oauth_token_secret=9b5e1fc9a8d33997
+			OAuth auth = new OAuth();
+			User user = new User();
+			user.setId("id=8308954@N06");
+			user.setUsername("Yang and Yun's Album");
+			auth.setToken(new OAuthToken("72157626911878883-7288bed42b42e288", "9b5e1fc9a8d33997"));
+			RequestContext.getRequestContext().setOAuth(auth);
+			
+			System.out.println(f.getOAuthInterface().testLogin());
+//			System.out.println(f.getActivityInterface().userComments(0, 0));
+//			System.out.println(f.getActivityInterface().userPhotos(1, 1, null));
+//			System.out.println(f.getBlogsInterface().getServices());
+//			System.out.println(f.getBlogsInterface().getList());
+//			System.out.println(f.getCommonsInterface().getInstitutions());
+//			System.out.println(f.getContactsInterface().getList());
+//			System.out.println(f.getContactsInterface().getPublicList("8308954@N06"));
+//			System.out.println(f.getContactsInterface().getListRecentlyUploaded(
+//					new Date(System.currentTimeMillis() - 24L * 60L * 60L * 1000L), null));
+			System.out.println(f.getPeopleInterface().findByEmail("wanyun892@yahoo.cn"));
+			System.out.println(f.getPeopleInterface().findByUsername("Yang and Yun's Album"));
+			System.out.println(f.getPeopleInterface().getInfo("8308954@N06"));
+			System.out.println(f.getPeopleInterface().getPublicGroups("8308954@N06"));
+			System.out.println(f.getPeopleInterface().getUploadStatus());
+			System.out.println(f.getPeopleInterface().getPublicPhotos("8308954@N06", 0, 0));
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

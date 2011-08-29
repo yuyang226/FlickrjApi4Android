@@ -88,7 +88,7 @@ public class UploadInterface {
         // </uploader>
 
         List<Ticket> list = new ArrayList<Ticket>();
-        Element uploaderElement = response.getPayload();
+        Element uploaderElement = response.getData();
         NodeList ticketNodes = uploaderElement.getElementsByTagName("ticket");
         int n = ticketNodes.getLength();
         for (int i = 0; i < n; i++) {

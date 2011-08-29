@@ -88,7 +88,7 @@ public class MembersInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element mElement = response.getPayload();
+        Element mElement = response.getData();
         members.setPage(mElement.getAttribute("page"));
         members.setPages(mElement.getAttribute("pages"));
         members.setPerPage(mElement.getAttribute("perpage"));

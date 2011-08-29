@@ -150,7 +150,7 @@ public class PoolsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element groupsElement = response.getPayload();
+        Element groupsElement = response.getData();
         NodeList groupNodes = groupsElement.getElementsByTagName("group");
         for (int i = 0; i < groupNodes.getLength(); i++) {
             Element groupElement = (Element) groupNodes.item(i);
@@ -221,7 +221,7 @@ public class PoolsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getPayload();
+        Element photosElement = response.getData();
         photos.setPage(photosElement.getAttribute("page"));
         photos.setPages(photosElement.getAttribute("pages"));
         photos.setPerPage(photosElement.getAttribute("perpage"));

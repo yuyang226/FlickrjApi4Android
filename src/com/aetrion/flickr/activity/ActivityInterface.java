@@ -1,20 +1,20 @@
 package com.aetrion.flickr.activity;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
-import com.aetrion.flickr.util.XMLUtilities;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Gather activity information belonging to the calling user.
@@ -49,44 +49,39 @@ public class ActivityInterface {
      * @param page
      * @return ItemList
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException
      * @throws FlickrException
+     * @throws InvalidKeyException 
+     * @throws NoSuchAlgorithmException 
      */
     public ItemList userComments(int perPage, int page)
-      throws IOException, SAXException, FlickrException {
+      throws IOException, FlickrException, JSONException, InvalidKeyException, NoSuchAlgorithmException {
         ItemList items = new ItemList();
         List<Parameter> parameters = new ArrayList<Parameter>();
-        parameters.add(new Parameter("method", METHOD_USER_COMMENTS));
-        parameters.add(new Parameter("api_key", apiKey));
-
-        if (perPage > 0) {
-            parameters.add(new Parameter("per_page", "" + perPage));
+		parameters.add(new Parameter("method", METHOD_USER_COMMENTS));
+		if (perPage > 0) {
+            parameters.add(new Parameter("per_page", String.valueOf(perPage)));
         }
 
         if (page > 0) {
-            parameters.add(new Parameter("page", "" + page));
+            parameters.add(new Parameter("page", String.valueOf(page)));
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+		Response response = this.transportAPI.postOAuthJSON(this.apiKey, this.sharedSecret, parameters);
+		if (response.isError()) {
+			throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
+		}
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
-        if (response.isError()) {
-            throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
-        }
+        JSONObject jObj = response.getData();
+        JSONObject itemElements = jObj.getJSONObject("items");
+        items.setPage(itemElements.getInt("page"));
+        items.setPages(itemElements.getInt("pages"));
+        items.setPerPage(itemElements.getInt("perpage"));
+        items.setTotal(itemElements.getInt("total"));
 
-        Element itemList = response.getPayload();
-        NodeList itemElements = itemList.getElementsByTagName("item");
-        items.setPage(itemList.getAttribute("page"));
-        items.setPages(itemList.getAttribute("pages"));
-        items.setPerPage(itemList.getAttribute("perpage"));
-        items.setTotal(itemList.getAttribute("total"));
-
-        for (int i = 0; i < itemElements.getLength(); i++) {
-            Element itemElement = (Element) itemElements.item(i);
+        JSONArray children = itemElements.getJSONArray("item");
+        
+        for (int i = 0; i < children.length(); i++) {
+        	JSONObject itemElement = children.getJSONObject(i);
             items.add(createItem(itemElement));
         }
 
@@ -102,15 +97,16 @@ public class ActivityInterface {
      * @param timeframe
      * @return ItemList
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException
      * @throws FlickrException
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public ItemList userPhotos(int perPage, int page, String timeframe)
-      throws IOException, SAXException, FlickrException {
+      throws IOException, JSONException, FlickrException, InvalidKeyException, NoSuchAlgorithmException {
         ItemList items = new ItemList();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_USER_PHOTOS));
-        parameters.add(new Parameter("api_key", apiKey));
 
         if (perPage > 0) {
             parameters.add(new Parameter("per_page", "" + perPage));
@@ -127,83 +123,80 @@ public class ActivityInterface {
             	throw new FlickrException("0","Timeframe-argument to getUserPhotos() not valid");
             }
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(this.apiKey, this.sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element itemList = response.getPayload();
-        NodeList itemElements = itemList.getElementsByTagName("item");
-        items.setPage(itemList.getAttribute("page"));
-        items.setPages(itemList.getAttribute("pages"));
-        items.setPerPage(itemList.getAttribute("perpage"));
-        items.setTotal(itemList.getAttribute("total"));
+        JSONObject jObj = response.getData();
+        JSONObject itemElements = jObj.getJSONObject("items");
+        items.setPage(itemElements.getInt("page"));
+        items.setPages(itemElements.getInt("pages"));
+        items.setPerPage(itemElements.getInt("perpage"));
+        items.setTotal(itemElements.getInt("total"));
 
-        for (int i = 0; i < itemElements.getLength(); i++) {
-            Element itemElement = (Element) itemElements.item(i);
+        JSONArray children = itemElements.getJSONArray("item");
+        
+        for (int i = 0; i < children.length(); i++) {
+        	JSONObject itemElement = children.getJSONObject(i);
             items.add(createItem(itemElement));
         }
 
         return items;
     }
 
-    private Item createItem(Element itemElement) {
-        Item item = new Item();
-        item.setId(itemElement.getAttribute("id"));
-        item.setSecret(itemElement.getAttribute("secret"));
-        item.setType(itemElement.getAttribute("type"));
-        item.setTitle(XMLUtilities.getChildValue(itemElement, "title"));
-        item.setFarm(itemElement.getAttribute("farm"));
-        item.setServer(itemElement.getAttribute("server"));
-        // userComments
-        try {
-            item.setComments(XMLUtilities.getIntAttribute(itemElement, "comments"));
-            item.setNotes(XMLUtilities.getIntAttribute(itemElement, "notes"));
-        } catch (Exception e) {}
-        // userPhotos
-        try {
-            item.setCommentsOld(XMLUtilities.getIntAttribute(itemElement, "commentsold"));
-            item.setCommentsNew(XMLUtilities.getIntAttribute(itemElement, "commentsnew"));
-            item.setNotesOld(XMLUtilities.getIntAttribute(itemElement, "notesold"));
-            item.setNotesNew(XMLUtilities.getIntAttribute(itemElement, "notesnew"));
-        } catch (Exception e) {}
-        item.setViews(XMLUtilities.getIntAttribute(itemElement, "views"));
-        item.setFaves(XMLUtilities.getIntAttribute(itemElement, "faves"));
-        item.setMore(XMLUtilities.getIntAttribute(itemElement, "more"));
+    private Item createItem(JSONObject itemElement) throws JSONException {
+    	Item item = new Item();
+		item.setId(itemElement.getString("id"));
+		item.setSecret(itemElement.getString("secret"));
+		item.setType(itemElement.getString("type"));
+		JSONObject title = itemElement.optJSONObject("title");
+		if (title != null) {
+			item.setTitle(title.getString("_content"));
+		}
+		item.setFarm(itemElement.getString("farm"));
+		item.setServer(itemElement.getString("server"));
+		// userComments
+		item.setComments(itemElement.optInt("comments"));
+		item.setComments(itemElement.optInt("notes"));
+		// userPhotos
+		item.setComments(itemElement.optInt("commentsold"));
+		item.setComments(itemElement.optInt("commentsnew"));
+		item.setComments(itemElement.optInt("notesold"));
+		item.setComments(itemElement.optInt("notesnew"));
 
-        try {
-            Element activityElement = (Element) itemElement.getElementsByTagName("activity").item(0);
-            List<Event> events = new ArrayList<Event>();
-            NodeList eventNodes = activityElement.getElementsByTagName("event");
-            for (int i = 0; i < eventNodes.getLength(); i++) {
-                Element eventElement = (Element) eventNodes.item(i);
-                Event event = new Event();
-                event.setType(eventElement.getAttribute("type"));
-                if (event.getType().equals("comment")) {
-                    event.setId(eventElement.getAttribute("commentid"));
-                } else if (event.getType().equals("note")) {
-                    event.setId(eventElement.getAttribute("noteid"));
-                } else if (event.getType().equals("fave")) {
-                    // has no id
-                }
-                event.setUser(eventElement.getAttribute("user"));
-                event.setUsername(eventElement.getAttribute("username"));
-                event.setDateadded(eventElement.getAttribute("dateadded"));
-                event.setValue(XMLUtilities.getValue(eventElement));
-                events.add(event);
-            }
-            item.setEvents(events);
-        } catch (NullPointerException e) {
-            // nop
-        }
-        return item;
+		item.setViews(itemElement.getInt("views"));
+		item.setFaves(itemElement.getInt("faves"));
+		item.setMore(itemElement.optInt("more"));
+
+		try {
+			JSONObject activityElement = itemElement.getJSONObject("activity");
+			List<Event> events = new ArrayList<Event>();
+
+			JSONArray eventNodes = activityElement.getJSONArray("event");
+			for (int i = 0; i < eventNodes.length(); i++) {
+				JSONObject eventElement = eventNodes.getJSONObject(i);
+				Event event = new Event();
+				event.setType(eventElement.getString("type"));
+				if (event.getType().equals("comment")) {
+					event.setId(eventElement.getString("commentid"));
+				} else if (event.getType().equals("note")) {
+					event.setId(eventElement.getString("noteid"));
+				} else if (event.getType().equals("fave")) {
+					// has no id
+				}
+				event.setUser(eventElement.getString("user"));
+				event.setUsername(eventElement.getString("username"));
+				event.setDateadded(eventElement.getString("dateadded"));
+				event.setValue(eventElement.getString("_content"));
+				events.add(event);
+			}
+			item.setEvents(events);
+		} catch (NullPointerException e) {
+			// nop
+		}
+		return item;
     }
 
     /**

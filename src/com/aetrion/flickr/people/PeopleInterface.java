@@ -4,26 +4,26 @@
 package com.aetrion.flickr.people;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
 import com.aetrion.flickr.groups.Group;
 import com.aetrion.flickr.photos.Extras;
 import com.aetrion.flickr.photos.PhotoList;
 import com.aetrion.flickr.photos.PhotoUtils;
+import com.aetrion.flickr.util.JSONUtils;
 import com.aetrion.flickr.util.StringUtilities;
-import com.aetrion.flickr.util.XMLUtilities;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Interface for finding Flickr users.
@@ -63,25 +63,22 @@ public class PeopleInterface {
      * @param email The email address
      * @return The User
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public User findByEmail(String email) throws IOException, SAXException, FlickrException {
+    public User findByEmail(String email) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_FIND_BY_EMAIL));
-        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("find_email", email));
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element userElement = response.getPayload();
-        User user = new User();
-        user.setId(userElement.getAttribute("nsid"));
-        user.setUsername(XMLUtilities.getChildValue(userElement, "username"));
-        return user;
+        return createUser(response.getData());
     }
 
     /**
@@ -92,24 +89,29 @@ public class PeopleInterface {
      * @param username The username
      * @return The User object
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public User findByUsername(String username) throws IOException, SAXException, FlickrException {
+    public User findByUsername(String username) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_FIND_BY_USERNAME));
-        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("username", username));
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element userElement = response.getPayload();
+        return createUser(response.getData());
+    }
+    
+    private User createUser(JSONObject rootObject) throws JSONException {
+    	JSONObject userElement = rootObject.getJSONObject("user");
         User user = new User();
-        user.setId(userElement.getAttribute("nsid"));
-        user.setUsername(XMLUtilities.getChildValue(userElement, "username"));
+        user.setId(userElement.getString("nsid"));
+        user.setUsername(JSONUtils.getChildValue(userElement, "username"));
         return user;
     }
 
@@ -121,48 +123,39 @@ public class PeopleInterface {
      * @param userId The user ID
      * @return The User object
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public User getInfo(String userId) throws IOException, SAXException, FlickrException {
+    public User getInfo(String userId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_INFO));
-        parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("user_id", userId));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element userElement = response.getPayload();
+        JSONObject userElement = response.getData().getJSONObject("person");
         User user = new User();
-        user.setId(userElement.getAttribute("nsid"));
-        user.setAdmin("1".equals(userElement.getAttribute("isadmin")));
-        user.setPro("1".equals(userElement.getAttribute("ispro")));
-        user.setIconFarm(userElement.getAttribute("iconfarm"));
-        user.setIconServer(userElement.getAttribute("iconserver"));
-        user.setRevContact("1".equals(userElement.getAttribute("revcontact")));
-        user.setRevFriend("1".equals(userElement.getAttribute("revfriend")));
-        user.setRevFamily("1".equals(userElement.getAttribute("revfamily")));
-        user.setUsername(XMLUtilities.getChildValue(userElement, "username"));
-        user.setRealName(XMLUtilities.getChildValue(userElement, "realname"));
-        user.setLocation(XMLUtilities.getChildValue(userElement, "location"));
-        user.setMbox_sha1sum(XMLUtilities.getChildValue(userElement, "mbox_sha1sum"));
-        user.setPhotosurl(XMLUtilities.getChildValue(userElement, "photosurl"));
-        user.setProfileurl(XMLUtilities.getChildValue(userElement, "profileurl"));
-        user.setMobileurl(XMLUtilities.getChildValue(userElement, "mobileurl"));
+        user.setId(userElement.getString("nsid"));
+        user.setPro("1".equals(userElement.getString("ispro")));
+        user.setIconFarm(userElement.getString("iconfarm"));
+        user.setIconServer(userElement.getString("iconserver"));
+        user.setUsername(JSONUtils.getChildValue(userElement, "username"));
+        user.setRealName(JSONUtils.getChildValue(userElement, "realname"));
+        user.setLocation(JSONUtils.getChildValue(userElement, "location"));
+        user.setPathAlias(userElement.getString("path_alias"));
+        user.setMbox_sha1sum(JSONUtils.getChildValue(userElement, "mbox_sha1sum"));
+        user.setPhotosurl(JSONUtils.getChildValue(userElement, "photosurl"));
+        user.setProfileurl(JSONUtils.getChildValue(userElement, "profileurl"));
+        user.setMobileurl(JSONUtils.getChildValue(userElement, "mobileurl"));
 
-        Element photosElement = XMLUtilities.getChild(userElement, "photos");
-        user.setPhotosFirstDate(XMLUtilities.getChildValue(photosElement, "firstdate"));
-        user.setPhotosFirstDateTaken(XMLUtilities.getChildValue(photosElement, "firstdatetaken"));
-        user.setPhotosCount(XMLUtilities.getChildValue(photosElement, "count"));
+        JSONObject photosElement = userElement.getJSONObject("photos");
+        user.setPhotosFirstDate(JSONUtils.getChildValue(photosElement, "firstdate"));
+        user.setPhotosFirstDateTaken(JSONUtils.getChildValue(photosElement, "firstdatetaken"));
+        user.setPhotosCount(JSONUtils.getChildValue(photosElement, "count"));
 
         return user;
     }
@@ -179,39 +172,41 @@ public class PeopleInterface {
      * @param userId The user ID
      * @return The public groups
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public Collection<Group> getPublicGroups(String userId)
-      throws IOException, SAXException, FlickrException {
+      throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Group> groups = new ArrayList<Group>();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PUBLIC_GROUPS));
-        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("user_id", userId));
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element groupsElement = response.getPayload();
-        NodeList groupNodes = groupsElement.getElementsByTagName("group");
-        for (int i = 0; i < groupNodes.getLength(); i++) {
-            Element groupElement = (Element) groupNodes.item(i);
+        JSONObject groupsElement = response.getData().getJSONObject("groups");
+        JSONArray groupNodes = groupsElement.getJSONArray("group");
+        for (int i = 0; i < groupNodes.length(); i++) {
+        	JSONObject groupElement = groupNodes.getJSONObject(i);
             Group group = new Group();
-            group.setId(groupElement.getAttribute("nsid"));
-            group.setName(groupElement.getAttribute("name"));
-            group.setAdmin("1".equals(groupElement.getAttribute("admin")));
-            group.setEighteenPlus(groupElement.getAttribute("eighteenplus").equals("0") ? false : true);
+            group.setId(groupElement.getString("nsid"));
+            group.setName(groupElement.getString("name"));
+            group.setAdmin("1".equals(groupElement.getString("admin")));
+            group.setEighteenPlus("1".equals(groupElement.getString("eighteenplus")));
+            group.setInvitationOnly("1".equals(groupElement.getString("invitation_only")));
             groups.add(group);
         }
         return groups;
     }
 
     public PhotoList getPublicPhotos(String userId, int perPage, int page)
-    throws IOException, SAXException, FlickrException {
+    throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         return getPublicPhotos(userId, Extras.MIN_EXTRAS, perPage, page);
     }
 
@@ -227,16 +222,17 @@ public class PeopleInterface {
      * @param page The page offset
      * @return The PhotoList collection
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public PhotoList getPublicPhotos(String userId, Set<String> extras, int perPage, int page) throws IOException, SAXException,
-            FlickrException {
+    public PhotoList getPublicPhotos(String userId, Set<String> extras, int perPage, int page) 
+    throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         PhotoList photos = new PhotoList();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PUBLIC_PHOTOS));
-        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("user_id", userId));
 
@@ -251,19 +247,19 @@ public class PeopleInterface {
             parameters.add(new Parameter(Extras.KEY_EXTRAS, StringUtilities.join(extras, ",")));
         }
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getPayload();
-        photos.setPage(photosElement.getAttribute("page"));
-		photos.setPages(photosElement.getAttribute("pages"));
-		photos.setPerPage(photosElement.getAttribute("perpage"));
-		photos.setTotal(photosElement.getAttribute("total"));
+        JSONObject photosElement = response.getData().getJSONObject("photos");
+        photos.setPage(photosElement.getInt("page"));
+		photos.setPages(photosElement.getInt("pages"));
+		photos.setPerPage(photosElement.getInt("perpage"));
+		photos.setTotal(photosElement.getInt("total"));
 
-        NodeList photoNodes = photosElement.getElementsByTagName("photo");
-        for (int i = 0; i < photoNodes.getLength(); i++) {
-            Element photoElement = (Element) photoNodes.item(i);
+        JSONArray photoNodes = photosElement.getJSONArray("photo");
+        for (int i = 0; i < photoNodes.length(); i++) {
+            JSONObject photoElement = photoNodes.getJSONObject(i);
             photos.add(PhotoUtils.createPhoto(photoElement));
         }
         return photos;
@@ -276,36 +272,41 @@ public class PeopleInterface {
      *
      * @return A User object with upload status data fields filled
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public User getUploadStatus() throws IOException, SAXException, FlickrException {
+    public User getUploadStatus() throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_UPLOAD_STATUS));
-        parameters.add(new Parameter("api_key", apiKey));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element userElement = response.getPayload();
+        JSONObject userElement = response.getData().getJSONObject("user");
         User user = new User();
-        user.setId(userElement.getAttribute("id"));
-        user.setPro("1".equals(userElement.getAttribute("ispro")));
-        user.setUsername(XMLUtilities.getChildValue(userElement, "username"));
+        user.setId(userElement.getString("id"));
+        user.setPro("1".equals(userElement.getString("ispro")));
+        user.setUsername(JSONUtils.getChildValue(userElement, "username"));
 
-        Element bandwidthElement = XMLUtilities.getChild(userElement, "bandwidth");
-        user.setBandwidthMax(bandwidthElement.getAttribute("max"));
-        user.setBandwidthUsed(bandwidthElement.getAttribute("used"));
-
-        Element filesizeElement = XMLUtilities.getChild(userElement, "filesize");
-        user.setFilesizeMax(filesizeElement.getAttribute("max"));
+        JSONObject bandwidthElement = userElement.getJSONObject("bandwidth");
+        Bandwidth bandwidth = new Bandwidth();
+        bandwidth.setMax(bandwidthElement.getLong("max"));
+        bandwidth.setUsed(bandwidthElement.getLong("used"));
+        bandwidth.setUsed(bandwidthElement.getLong("used"));
+        bandwidth.setMaxBytes(bandwidthElement.getLong("maxbytes"));
+        bandwidth.setUsedBytes(bandwidthElement.getLong("usedbytes"));
+        bandwidth.setRemainingBytes(bandwidthElement.getLong("remainingbytes"));
+        bandwidth.setMaxKb(bandwidthElement.getLong("maxkb"));
+        bandwidth.setUsedKb(bandwidthElement.getLong("usedkb"));
+        bandwidth.setRemainingKb(bandwidthElement.getLong("remainingkb"));
+        bandwidth.setUnlimited("1".equals(bandwidthElement.getString("unlimited")));
+        user.setBandwidth(bandwidth);
+        
+        JSONObject filesizeElement = userElement.getJSONObject("filesize");
+        user.setFilesizeMax(filesizeElement.getString("max"));
 
         return user;
     }

@@ -76,7 +76,7 @@ public class PrefsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element personElement = response.getPayload();
+        Element personElement = response.getData();
         return personElement.getAttribute("content_type");
     }
 
@@ -111,7 +111,7 @@ public class PrefsInterface {
         }
 
         int perm = -1;
-        Element personElement = response.getPayload();
+        Element personElement = response.getData();
         String geoPerms = personElement.getAttribute("geoperms");
         try {
             perm = Integer.parseInt(geoPerms);
@@ -145,7 +145,7 @@ public class PrefsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element personElement = response.getPayload();
+        Element personElement = response.getData();
         return personElement.getAttribute("hidden").equals("1") ? true : false ;
     }
 
@@ -176,7 +176,7 @@ public class PrefsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element personElement = response.getPayload();
+        Element personElement = response.getData();
         return personElement.getAttribute("safety_level");
     }
 
@@ -210,7 +210,7 @@ public class PrefsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element personElement = response.getPayload();
+        Element personElement = response.getData();
         return Integer.parseInt(personElement.getAttribute("privacy"));
     }
 }

@@ -154,7 +154,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getPayload();
+        Element placesElement = response.getData();
         NodeList placesNodes = placesElement.getElementsByTagName("place");
         placesList.setPage("1");
         placesList.setPages("1");
@@ -248,7 +248,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getPayload();
+        Element placesElement = response.getData();
         NodeList placesNodes = placesElement.getElementsByTagName("place");
         placesList.setPage("1");
         placesList.setPages("1");
@@ -292,7 +292,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getPayload();
+        Element placesElement = response.getData();
         NodeList placesNodes = placesElement.getElementsByTagName("place");
         placesList.setPage("1");
         placesList.setPages("1");
@@ -335,7 +335,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element locationElement = response.getPayload();
+        Element locationElement = response.getData();
         return parseLocation(locationElement);
     }
 
@@ -363,7 +363,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element locationElement = response.getPayload();
+        Element locationElement = response.getData();
         return parseLocation(locationElement);
     }
 
@@ -389,7 +389,7 @@ public class PlacesInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
         List<PlaceType> placeTypeList = new ArrayList<PlaceType>();
-        Element placeTypeElement = response.getPayload();
+        Element placeTypeElement = response.getData();
         NodeList placeTypeNodes = placeTypeElement.getElementsByTagName("place_type");
         for (int i = 0; i < placeTypeNodes.getLength(); i++) {
             placeTypeElement = (Element) placeTypeNodes.item(i);
@@ -435,7 +435,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element shapeElement = response.getPayload();
+        Element shapeElement = response.getData();
         return shapeList;
     }
 
@@ -479,7 +479,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getPayload();
+        Element placesElement = response.getData();
         NodeList placesNodes = placesElement.getElementsByTagName("place");
         placesList.setPage("1");
         placesList.setPages("1");
@@ -530,7 +530,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getPayload();
+        Element placesElement = response.getData();
         NodeList placesNodes = placesElement.getElementsByTagName("place");
         placesList.setPage("1");
         placesList.setPages("1");
@@ -592,7 +592,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getPayload();
+        Element placesElement = response.getData();
         NodeList placesNodes = placesElement.getElementsByTagName("place");
         placesList.setPage("1");
         placesList.setPages("1");
@@ -684,7 +684,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getPayload();
+        Element placesElement = response.getData();
         NodeList placesNodes = placesElement.getElementsByTagName("place");
         placesList.setPage("1");
         placesList.setPages("1");
@@ -759,7 +759,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getPayload();
+        Element placesElement = response.getData();
         NodeList placesNodes = placesElement.getElementsByTagName("place");
         placesList.setPage("1");
         placesList.setPages("1");
@@ -801,7 +801,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element locationElement = response.getPayload();
+        Element locationElement = response.getData();
         return parseLocation(locationElement);
     }
 
@@ -837,7 +837,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element locationElement = response.getPayload();
+        Element locationElement = response.getData();
         return parseLocation(locationElement);
     }
 
@@ -892,7 +892,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element tagsElement = response.getPayload();
+        Element tagsElement = response.getData();
         NodeList tagsNodes = tagsElement.getElementsByTagName("tag");
         for (int i = 0; i < tagsNodes.getLength(); i++) {
             Element tagElement = (Element) tagsNodes.item(i);

@@ -33,6 +33,7 @@ public class Group implements BuddyIconable {
     private boolean admin;
     private int photoCount;
     private boolean eighteenPlus;
+    private boolean invitationOnly;
 
     public Group() {
 
@@ -199,7 +200,6 @@ public class Group implements BuddyIconable {
     }
 
     /**
-     * @deprecated
      * @return boolean
      */
     public boolean isEighteenPlus() {
@@ -207,14 +207,27 @@ public class Group implements BuddyIconable {
     }
 
     /**
-     * @deprecated
      * @param eighteenPlus
      */
     public void setEighteenPlus(boolean eighteenPlus) {
         this.eighteenPlus = eighteenPlus;
     }
+    
+    /**
+	 * @return the invitationOnly
+	 */
+	public boolean isInvitationOnly() {
+		return invitationOnly;
+	}
 
-    public String getDescription() {
+	/**
+	 * @param invitationOnly the invitationOnly to set
+	 */
+	public void setInvitationOnly(boolean invitationOnly) {
+		this.invitationOnly = invitationOnly;
+	}
+
+	public String getDescription() {
         return description;
     }
 

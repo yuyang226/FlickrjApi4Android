@@ -3,13 +3,8 @@
  */
 package com.aetrion.flickr;
 
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import com.aetrion.flickr.util.XMLUtilities;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Flickr Response object.
@@ -19,40 +14,45 @@ import com.aetrion.flickr.util.XMLUtilities;
 public class RESTResponse implements Response {
 
     private String stat;
-    private Collection<Element> payload;
-
+    
+    private JSONObject jsonObj;
+    private String rawResponse;
     private String errorCode;
     private String errorMessage;
+    
+    /**
+	 * @param rawResponse
+     * @throws JSONException 
+	 */
+	public RESTResponse(String rawResponse) throws JSONException {
+		super();
+		this.rawResponse = rawResponse;
+		parse(this.rawResponse);
+	}
 
-    public void parse(Document document) {
-        Element rspElement = document.getDocumentElement();
-        rspElement.normalize();
-        stat = rspElement.getAttribute("stat");
-        if ("ok".equals(stat)) {
-            // TODO: Verify that the payload is always a single XML node
-            payload = XMLUtilities.getChildElements(rspElement);
+	/* (non-Javadoc)
+	 * @see com.aetrion.flickr.Response#parse(java.lang.String)
+	 */
+	@Override
+	public void parse(String rawMessage) throws JSONException {
+		this.rawResponse = rawMessage;
+		this.jsonObj = new JSONObject(rawMessage);
+		stat = this.jsonObj.getString("stat");
+		if ("ok".equals(stat)) {
+            
         } else if ("fail".equals(stat)) {
-            Element errElement = (Element) rspElement.getElementsByTagName("err").item(0);
-            errorCode = errElement.getAttribute("code");
-            errorMessage = errElement.getAttribute("msg");
+        	this.errorCode = this.jsonObj.getString("code");
+        	this.errorMessage = this.jsonObj.getString("message");
         }
-    }
+	}
 
     public String getStat() {
         return stat;
     }
 
-    public Element getPayload() {
-        Iterator<Element> iter = payload.iterator();
-        if (iter.hasNext()) {
-            return (Element) iter.next();
-        } else {
-            throw new RuntimeException("REST response payload has no elements");
-        }
-    }
-
-    public Collection<Element> getPayloadCollection() {
-        return payload;
+    @Override
+    public JSONObject getData() {
+        return this.jsonObj;
     }
 
     public boolean isError() {
@@ -67,6 +67,12 @@ public class RESTResponse implements Response {
         return errorMessage;
     }
 
-
+	/* (non-Javadoc)
+	 * @see com.aetrion.flickr.Response#getRawResponse()
+	 */
+	@Override
+	public String getRawResponse() {
+		return rawResponse;
+	}
 
 }

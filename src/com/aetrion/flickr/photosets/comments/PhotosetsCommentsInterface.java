@@ -74,7 +74,7 @@ public class PhotosetsCommentsInterface {
         }
         // response:
         // <comment id="97777-12492-72057594037942601" />
-        Element commentElement = response.getPayload();
+        Element commentElement = response.getData();
         return commentElement.getAttribute("id");
     }
 
@@ -187,7 +187,7 @@ public class PhotosetsCommentsInterface {
 		//      </comment>
 		//     </comments>
         List<Comment> comments = new ArrayList<Comment>();
-        Element commentsElement = response.getPayload();
+        Element commentsElement = response.getData();
         NodeList commentNodes = commentsElement.getElementsByTagName("comment");
         int n = commentNodes.getLength();
         for (int i = 0; i < n; i++) {
