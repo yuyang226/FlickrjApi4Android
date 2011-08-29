@@ -8,8 +8,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-
 import com.yuyang226.flickr.oauth.OAuthInterface;
+import com.yuyang226.flickr.oauth.OAuthTokenParameter;
 import com.yuyang226.flickr.oauth.OAuthUtils;
 import com.yuyang226.flickr.org.json.JSONException;
 
@@ -79,11 +79,20 @@ public abstract class Transport {
         return post(path, parameters, false);
     }
     
-    public Response postOAuthJSON(String apiKey, String apiSharedSecret, 
+    public Response postJSON(String apiKey, String apiSharedSecret, 
     		List<Parameter> parameters) throws IOException, JSONException, InvalidKeyException, NoSuchAlgorithmException {
+    	boolean isOAuth = false;
+    	for (int i = parameters.size() - 1; i >= 0; i--) {
+    		if (parameters.get(i) instanceof OAuthTokenParameter) {
+    			isOAuth = true;
+    			break;
+    		}
+    	}
     	parameters.add(new Parameter("nojsoncallback", "1"));
 		parameters.add(new Parameter("format", "json"));
-		OAuthUtils.addOAuthParams(apiKey, apiSharedSecret, OAuthInterface.URL_REST, parameters);
+		if (isOAuth) {
+			OAuthUtils.addOAuthParams(apiKey, apiSharedSecret, OAuthInterface.URL_REST, parameters);
+		}
     	return post(OAuthInterface.PATH_REST, parameters, false);
     }
     

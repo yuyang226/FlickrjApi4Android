@@ -3,25 +3,24 @@
  */
 package com.yuyang226.flickr.oauth;
 
+import com.aetrion.flickr.FlickrException;
+
 /**
  * @author Toby Yu(yuyang226@gmail.com)
  *
  */
-public class OAuthException extends Exception {
+public class OAuthException extends FlickrException {
 
 	/**
 	 * 
 	 */
-	public OAuthException() {
-		// TODO Auto-generated constructor stub
-	}
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @param message
 	 */
 	public OAuthException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -29,7 +28,6 @@ public class OAuthException extends Exception {
 	 */
 	public OAuthException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -38,7 +36,6 @@ public class OAuthException extends Exception {
 	 */
 	public OAuthException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }

@@ -17,6 +17,7 @@ import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
 import com.aetrion.flickr.photos.Photo;
+import com.yuyang226.flickr.oauth.OAuthUtils;
 import com.yuyang226.flickr.org.json.JSONArray;
 import com.yuyang226.flickr.org.json.JSONException;
 import com.yuyang226.flickr.org.json.JSONObject;
@@ -60,8 +61,9 @@ public class BlogsInterface {
         List<Service> list = new ArrayList<Service>();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_SERVICES));
+        parameters.add(new Parameter("api_key", apiKey));
 
-        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -103,7 +105,7 @@ public class BlogsInterface {
             parameters.add(new Parameter("blog_password", blogPassword));
         }
 
-        Response response = transportAPI.postOAuthJSON(this.apiKey, this.sharedSecret, parameters);
+        Response response = transportAPI.postJSON(this.apiKey, this.sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -135,10 +137,10 @@ public class BlogsInterface {
      */
     public Collection<Blog> getList() throws IOException, FlickrException, JSONException, InvalidKeyException, NoSuchAlgorithmException {
         List<Blog> blogs = new ArrayList<Blog>();
-
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
-        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
+        OAuthUtils.addOAuthToken(parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

@@ -4,6 +4,8 @@
 package com.aetrion.flickr.groups;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,8 +18,10 @@ import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
-import com.aetrion.flickr.util.XMLUtilities;
+import com.yuyang226.flickr.oauth.OAuthUtils;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Interface for working with Flickr Groups.
@@ -49,57 +53,51 @@ public class GroupsInterface {
      * @param catId The optional category id.  Null value will be ignored.
      * @return The Collection of Photo objects
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
-     * @deprecated Flickr returns just empty results
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public Category browse(String catId) throws IOException, SAXException, FlickrException {
+    public Category browse(String catId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Subcategory> subcategories = new ArrayList<Subcategory>();
         List<Group> groups = new ArrayList<Group>();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_BROWSE));
-        parameters.add(new Parameter("api_key", apiKey));
 
         if (catId != null) {
             parameters.add(new Parameter("cat_id", catId));
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element categoryElement = response.getData();
+        JSONObject categoryElement = response.getData().getJSONObject("category");
 
         Category category = new Category();
-        category.setName(categoryElement.getAttribute("name"));
-        category.setPath(categoryElement.getAttribute("path"));
-        category.setPathIds(categoryElement.getAttribute("pathids"));
+        category.setName(categoryElement.getString("name"));
+        category.setPath(categoryElement.getString("path"));
+        category.setPathIds(categoryElement.getString("pathids"));
 
-        NodeList subcatNodes = categoryElement.getElementsByTagName("subcat");
-        for (int i = 0; i < subcatNodes.getLength(); i++) {
-            Element node = (Element) subcatNodes.item(i);
+        JSONArray subcatNodes = categoryElement.optJSONArray("subcat");
+        for (int i = 0; subcatNodes != null && i < subcatNodes.length(); i++) {
+        	JSONObject node = subcatNodes.getJSONObject(i);
             Subcategory subcategory = new Subcategory();
-            subcategory.setId(Integer.parseInt(node.getAttribute("id")));
-            subcategory.setName(node.getAttribute("name"));
-            subcategory.setCount(Integer.parseInt(node.getAttribute("count")));
-
+            subcategory.setId(node.getInt("id"));
+            subcategory.setName(node.getString("name"));
+            subcategory.setCount(node.getInt("count"));
             subcategories.add(subcategory);
         }
 
-        NodeList groupNodes = categoryElement.getElementsByTagName("group");
-        for (int i = 0; i < groupNodes.getLength(); i++) {
-            Element node = (Element) groupNodes.item(i);
+        JSONArray groupNodes = categoryElement.optJSONArray("group");
+        for (int i = 0; groupNodes != null && i < groupNodes.length(); i++) {
+        	JSONObject node = groupNodes.getJSONObject(i);
             Group group = new Group();
-            group.setId(node.getAttribute("nsid"));
-            group.setName(node.getAttribute("name"));
-            group.setMembers(node.getAttribute("members"));
+            group.setId(node.getString("nsid"));
+            group.setName(node.getString("name"));
+            group.setMembers(node.getString("members"));
 
             groups.add(group);
         }
@@ -122,20 +120,19 @@ public class GroupsInterface {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_INFO));
         parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("group_id", groupId));
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element groupElement = response.getData();
+        JSONObject groupElement = response.getData().getJSONObject("group");
         Group group = new Group();
-        group.setId(groupElement.getAttribute("id"));
-        group.setIconFarm(groupElement.getAttribute("iconfarm"));
-        group.setIconServer(groupElement.getAttribute("iconserver"));
-        group.setLang(groupElement.getAttribute("lang"));
-        group.setPoolModerated(groupElement.getAttribute("ispoolmoderated").equals("0") ? false : true);
+        group.setId(groupElement.getString("id"));
+        group.setIconFarm(groupElement.getString("iconfarm"));
+        group.setIconServer(groupElement.getString("iconserver"));
+        group.setLang(groupElement.getString("lang"));
+        group.setPoolModerated("1".equals(groupElement.getString("ispoolmoderated")));
 
         group.setName(XMLUtilities.getChildValue(groupElement, "name"));
         group.setDescription(XMLUtilities.getChildValue(groupElement, "description"));

@@ -21,6 +21,7 @@ import com.aetrion.flickr.photos.PhotoList;
 import com.aetrion.flickr.photos.PhotoUtils;
 import com.aetrion.flickr.util.JSONUtils;
 import com.aetrion.flickr.util.StringUtilities;
+import com.yuyang226.flickr.oauth.OAuthUtils;
 import com.yuyang226.flickr.org.json.JSONArray;
 import com.yuyang226.flickr.org.json.JSONException;
 import com.yuyang226.flickr.org.json.JSONObject;
@@ -72,10 +73,10 @@ public class PeopleInterface {
     public User findByEmail(String email) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_FIND_BY_EMAIL));
-
+        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("find_email", email));
 
-        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -98,10 +99,10 @@ public class PeopleInterface {
     public User findByUsername(String username) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_FIND_BY_USERNAME));
-
+        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("username", username));
 
-        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -133,8 +134,8 @@ public class PeopleInterface {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_INFO));
         parameters.add(new Parameter("user_id", userId));
-
-        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
+        parameters.add(new Parameter("api_key", apiKey));
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -184,10 +185,10 @@ public class PeopleInterface {
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PUBLIC_GROUPS));
-
+        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("user_id", userId));
 
-        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -234,7 +235,7 @@ public class PeopleInterface {
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PUBLIC_PHOTOS));
-
+        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("user_id", userId));
 
         if (perPage > 0) {
@@ -248,7 +249,7 @@ public class PeopleInterface {
             parameters.add(new Parameter(Extras.KEY_EXTRAS, StringUtilities.join(extras, ",")));
         }
 
-        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -281,8 +282,8 @@ public class PeopleInterface {
     public User getUploadStatus() throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_UPLOAD_STATUS));
-
-        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
+        OAuthUtils.addOAuthToken(parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -346,9 +347,10 @@ public class PeopleInterface {
 			parameters.add(new Parameter(Extras.KEY_EXTRAS, StringUtilities
 					.join(extras, ",")));
 		}
+		OAuthUtils.addOAuthToken(parameters);
 
 		Response response = transportAPI
-				.postOAuthJSON(apiKey, sharedSecret, parameters);
+				.postJSON(apiKey, sharedSecret, parameters);
 		if (response.isError()) {
 			throw new FlickrException(response.getErrorCode(), response
 					.getErrorMessage());

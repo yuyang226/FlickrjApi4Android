@@ -4,22 +4,23 @@
 package com.aetrion.flickr.favorites;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
 import com.aetrion.flickr.photos.PhotoList;
 import com.aetrion.flickr.photos.PhotoUtils;
 import com.aetrion.flickr.util.StringUtilities;
+import com.yuyang226.flickr.oauth.OAuthUtils;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Interface for working with Flickr favorites.
@@ -49,23 +50,18 @@ public class FavoritesInterface {
      *
      * @param photoId The photo ID
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public void add(String photoId) throws IOException, SAXException, FlickrException {
+    public void add(String photoId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_ADD));
-        parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("photo_id", photoId));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.post(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -81,16 +77,16 @@ public class FavoritesInterface {
      * @return The Collection of Photo objects
      * @see com.aetrion.flickr.photos.Extras
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public PhotoList getList(String userId, int perPage, int page, Set<String> extras) throws IOException,
-            SAXException, FlickrException {
+             FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         PhotoList photos = new PhotoList();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
-        parameters.add(new Parameter("api_key", apiKey));
-
         if (userId != null) {
             parameters.add(new Parameter("user_id", userId));
         }
@@ -103,26 +99,21 @@ public class FavoritesInterface {
         if (page > 0) {
             parameters.add(new Parameter("page", new Integer(page)));
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element photosElement = response.getData();
-        photos.setPage(photosElement.getAttribute("page"));
-		photos.setPages(photosElement.getAttribute("pages"));
-		photos.setPerPage(photosElement.getAttribute("perpage"));
-		photos.setTotal(photosElement.getAttribute("total"));
-        NodeList photoNodes = photosElement.getElementsByTagName("photo");
-        for (int i = 0; i < photoNodes.getLength(); i++) {
-            Element photoElement = (Element) photoNodes.item(i);
+        JSONObject photosElement = response.getData().getJSONObject("photos");
+        photos.setPage(photosElement.getInt("page"));
+		photos.setPages(photosElement.getInt("pages"));
+		photos.setPerPage(photosElement.getInt("perpage"));
+		photos.setTotal(photosElement.getInt("total"));
+        JSONArray photoNodes = photosElement.getJSONArray("photo");
+        for (int i = 0; i < photoNodes.length(); i++) {
+        	JSONObject photoElement = photoNodes.getJSONObject(i);
             photos.add(PhotoUtils.createPhoto(photoElement));
         }
         return photos;
@@ -139,12 +130,14 @@ public class FavoritesInterface {
      * @param extras A Set of extra parameters to send
      * @return A Collection of Photo objects
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      * @see com.aetrion.flickr.photos.Extras
      */
     public PhotoList getPublicList(String userId, int perPage, int page, Set<String> extras)
-            throws IOException, SAXException, FlickrException {
+            throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         PhotoList photos = new PhotoList();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
@@ -163,19 +156,19 @@ public class FavoritesInterface {
             parameters.add(new Parameter("page", new Integer(page)));
         }
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element photosElement = response.getData();
-        photos.setPage(photosElement.getAttribute("page"));
-		photos.setPages(photosElement.getAttribute("pages"));
-		photos.setPerPage(photosElement.getAttribute("perpage"));
-		photos.setTotal(photosElement.getAttribute("total"));
-        NodeList photoNodes = photosElement.getElementsByTagName("photo");
-        for (int i = 0; i < photoNodes.getLength(); i++) {
-            Element photoElement = (Element) photoNodes.item(i);
+        JSONObject photosElement = response.getData().getJSONObject("photos");
+        photos.setPage(photosElement.getInt("page"));
+		photos.setPages(photosElement.getInt("pages"));
+		photos.setPerPage(photosElement.getInt("perpage"));
+		photos.setTotal(photosElement.getInt("total"));
+        JSONArray photoNodes = photosElement.getJSONArray("photo");
+        for (int i = 0; i < photoNodes.length(); i++) {
+        	JSONObject photoElement = photoNodes.getJSONObject(i);
             photos.add(PhotoUtils.createPhoto(photoElement));
         }
         return photos;
@@ -185,21 +178,18 @@ public class FavoritesInterface {
      * Remove the specified photo from the user's favorites.
      *
      * @param photoId The photo id
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public void remove(String photoId) throws IOException, SAXException, FlickrException {
+    public void remove(String photoId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_REMOVE));
         parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("photo_id", photoId));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.post(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

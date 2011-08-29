@@ -15,6 +15,7 @@ import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
+import com.yuyang226.flickr.oauth.OAuthUtils;
 import com.yuyang226.flickr.org.json.JSONArray;
 import com.yuyang226.flickr.org.json.JSONException;
 import com.yuyang226.flickr.org.json.JSONObject;
@@ -59,7 +60,8 @@ public class ContactsInterface {
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
-        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
+        OAuthUtils.addOAuthToken(parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -111,8 +113,9 @@ public class ContactsInterface {
         if (filter != null) {
             parameters.add(new Parameter("filter", filter));
         }
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -155,10 +158,10 @@ public class ContactsInterface {
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PUBLIC_LIST));
-
+        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("user_id", userId));
 
-        Response response = transportAPI.postOAuthJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

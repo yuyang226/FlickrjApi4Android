@@ -42,10 +42,14 @@ public class OAuthUtils {
 	public static void addOAuthParams(String apiKey, String apiSharedSecret, String url, List<Parameter> parameters) 
 	throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException {
 		addBasicOAuthParams(apiKey, apiSharedSecret, parameters);
-		OAuth oauth = RequestContext.getRequestContext().getOAuth();
-		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_TOKEN, oauth.getToken().getOauthToken()));
-		
 		signPost(apiSharedSecret, url, parameters);
+	}
+	
+	public static void addOAuthToken(List<Parameter> parameters) throws OAuthException {
+		OAuth oauth = RequestContext.getRequestContext().getOAuth();
+		if (oauth == null || oauth.getToken() == null)
+			throw new OAuthException("OAuth token not set");
+		parameters.add(new OAuthTokenParameter(oauth.getToken().getOauthToken()));
 	}
 	
 	public static void signGet(String apiSharedSecret, String url, List<Parameter>  parameters) throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException {

@@ -52,8 +52,9 @@ public class CommonsInterface {
         List<Institution> institutions = new ArrayList<Institution>();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_INSTITUTIONS));
+        parameters.add(new Parameter("api_key", apiKey));
 
-        Response response = transportAPI.postOAuthJSON(this.apiKey, this.sharedSecret, parameters);
+        Response response = transportAPI.postJSON(this.apiKey, this.sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

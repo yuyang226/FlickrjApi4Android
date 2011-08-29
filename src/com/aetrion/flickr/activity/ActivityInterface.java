@@ -12,6 +12,7 @@ import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
+import com.yuyang226.flickr.oauth.OAuthUtils;
 import com.yuyang226.flickr.org.json.JSONArray;
 import com.yuyang226.flickr.org.json.JSONException;
 import com.yuyang226.flickr.org.json.JSONObject;
@@ -66,7 +67,9 @@ public class ActivityInterface {
         if (page > 0) {
             parameters.add(new Parameter("page", String.valueOf(page)));
         }
-		Response response = this.transportAPI.postOAuthJSON(this.apiKey, this.sharedSecret, parameters);
+        OAuthUtils.addOAuthToken(parameters);
+        
+		Response response = this.transportAPI.postJSON(this.apiKey, this.sharedSecret, parameters);
 		if (response.isError()) {
 			throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
 		}
@@ -123,8 +126,9 @@ public class ActivityInterface {
             	throw new FlickrException("0","Timeframe-argument to getUserPhotos() not valid");
             }
         }
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.postOAuthJSON(this.apiKey, this.sharedSecret, parameters);
+        Response response = transportAPI.postJSON(this.apiKey, this.sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

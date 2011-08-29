@@ -81,14 +81,13 @@ public class OAuthInterface {
 	throws InvalidKeyException, NoSuchAlgorithmException, FlickrException, IOException, JSONException, SAXException {
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.add(new Parameter("method", METHOD_TEST_LOGIN));
-
-		Response response = this.oauthTransport.postOAuthJSON(this.apiKey, this.sharedSecret, parameters);
+		OAuthUtils.addOAuthToken(parameters);
+		Response response = this.oauthTransport.postJSON(this.apiKey, this.sharedSecret, parameters);
 		if (response.isError()) {
 			throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
 		}
 
 		JSONObject jObj = response.getData();
-		String stat = jObj.getString("stat");
 		JSONObject userObj = jObj.getJSONObject("user");
 		String id = userObj.getString("id");
 		String name = userObj.getJSONObject("username").getString("_content");
@@ -148,6 +147,7 @@ public class OAuthInterface {
 	public OAuth getAccessToken(OAuthToken oauthToken, String oauthVerifier) 
 	throws InvalidKeyException, NoSuchAlgorithmException, IOException, FlickrException {
 		List<Parameter> parameters = new ArrayList<Parameter>();
+		OAuthUtils.addOAuthToken(parameters);
 		parameters.add(new Parameter(KEY_OAUTH_VERIFIER, oauthVerifier));
 		OAuthUtils.addOAuthParams(apiKey, this.sharedSecret, URL_ACCESS_TOKEN, parameters);
 
