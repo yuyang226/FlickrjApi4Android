@@ -53,8 +53,8 @@ public final class PhotoUtils {
 		photo.setRotation(photoElement.optString("rotation", null));
 		photo.setFavorite("1".equals(photoElement.optString("isfavorite")));
 		photo.setLicense(photoElement.optString("license"));
-		photo.setOriginalFormat(photoElement.getString("originalformat"));
-		photo.setOriginalSecret(photoElement.getString("originalsecret"));
+		photo.setOriginalFormat(photoElement.optString("originalformat"));
+		photo.setOriginalSecret(photoElement.optString("originalsecret"));
 		photo.setIconServer(photoElement.optString("iconserver", null));
 		photo.setIconFarm(photoElement.optString("iconfarm", null));
 		photo.setDateTaken(photoElement.optString("datetaken"));

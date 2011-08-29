@@ -70,7 +70,8 @@ public class OAuthTest {
 			System.out.println(f.getPeopleInterface().getInfo("8308954@N06"));
 			System.out.println(f.getPeopleInterface().getPublicGroups("8308954@N06"));
 			System.out.println(f.getPeopleInterface().getUploadStatus());
-			System.out.println(f.getPeopleInterface().getPublicPhotos("8308954@N06", 0, 0));
+//			System.out.println(f.getPeopleInterface().getPublicPhotos("8308954@N06", 0, 0));
+			System.out.println(f.getPeopleInterface().getPhotos("8308954@N06", null, 0, 0));
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
