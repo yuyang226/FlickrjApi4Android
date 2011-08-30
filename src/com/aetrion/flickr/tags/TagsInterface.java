@@ -116,7 +116,6 @@ public class TagsInterface {
      */
     public PhotoList getClusterPhotos(String tag, String clusterId)
       throws IOException, SAXException, FlickrException {
-        PhotoList photos = new PhotoList();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_CLUSTER_PHOTOS));
         parameters.add(new Parameter("api_key", apiKey));
@@ -128,18 +127,7 @@ public class TagsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-
-        Element photosElement = response.getData();
-        NodeList photoNodes = photosElement.getElementsByTagName("photo");
-        photos.setPage("1");
-		photos.setPages("1");
-		photos.setPerPage("" + photoNodes.getLength());
-		photos.setTotal("" + photoNodes.getLength());
-        for (int i = 0; i < photoNodes.getLength(); i++) {
-            Element photoElement = (Element) photoNodes.item(i);
-            photos.add(PhotoUtils.createPhoto(photoElement));
-        }
-        return photos;
+        return PhotoUtils.createPhotoList(response.getData());
     }
 
     /**

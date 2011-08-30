@@ -1,19 +1,19 @@
 package com.aetrion.flickr.machinetags;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.util.XMLUtilities;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * A more precise way to tag and to search photos.
@@ -239,10 +239,12 @@ public class MachinetagsInterface {
      * @return NamespacesList
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public NamespacesList getNamespaces(String predicate, int perPage, int page)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         NamespacesList nsList = new NamespacesList();
         parameters.add(new Parameter("method", METHOD_GET_NAMESPACES));
@@ -258,18 +260,18 @@ public class MachinetagsInterface {
             parameters.add(new Parameter("page", "" + page));
         }
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element nsElement = response.getData();
-        NodeList nsNodes = nsElement.getElementsByTagName("namespace");
-        nsList.setPage("1");
-        nsList.setPages("1");
-        nsList.setPerPage("" + nsNodes.getLength());
-        nsList.setTotal("" + nsNodes.getLength());
-        for (int i = 0; i < nsNodes.getLength(); i++) {
-            Element element = (Element) nsNodes.item(i);
+        JSONObject nsElement = response.getData().getJSONObject("namespaces");
+        JSONArray nsNodes = nsElement.getJSONArray("namespace");
+        nsList.setPage(1);
+        nsList.setPages(1);
+        nsList.setPerPage(nsNodes.length());
+        nsList.setTotal(nsNodes.length());
+        for (int i = 0; i < nsNodes.length(); i++) {
+        	JSONObject element = nsNodes.getJSONObject(i);
             nsList.add(parseNamespace(element));
         }
         return nsList;
@@ -288,10 +290,12 @@ public class MachinetagsInterface {
      * @return NamespacesList containing Pair-objects
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public NamespacesList getPairs(String namespace, String predicate, int perPage, int page)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         NamespacesList nsList = new NamespacesList();
         parameters.add(new Parameter("method", METHOD_GET_PAIRS));
@@ -310,19 +314,19 @@ public class MachinetagsInterface {
             parameters.add(new Parameter("page", "" + page));
         }
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element nsElement = response.getData();
-        NodeList nsNodes = nsElement.getElementsByTagName("pair");
-        nsList.setPage(nsElement.getAttribute("page"));
-        nsList.setPages(nsElement.getAttribute("pages"));
-        nsList.setPerPage(nsElement.getAttribute("perPage"));
-        nsList.setTotal("" + nsNodes.getLength());
-        for (int i = 0; i < nsNodes.getLength(); i++) {
-            Element element = (Element) nsNodes.item(i);
-            nsList.add(parsePair(element));
+        JSONObject nsElement = response.getData().getJSONObject("pairs");
+        JSONArray nsNodes = nsElement.getJSONArray("pair");
+        nsList.setPage(nsElement.getInt("page"));
+        nsList.setPages(nsElement.getInt("pages"));
+        nsList.setPerPage(nsElement.getInt("perPage"));
+        nsList.setTotal(nsNodes.length());
+        for (int i = 0; i < nsNodes.length(); i++) {
+        	JSONObject element = nsNodes.getJSONObject(i);
+        	nsList.add(parsePair(element));
         }
         return nsList;
     }
@@ -339,10 +343,12 @@ public class MachinetagsInterface {
      * @return NamespacesList containing Predicate
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public NamespacesList getPredicates(String namespace, int perPage, int page)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         NamespacesList nsList = new NamespacesList();
         parameters.add(new Parameter("method", METHOD_GET_PREDICATES));
@@ -358,19 +364,19 @@ public class MachinetagsInterface {
             parameters.add(new Parameter("page", "" + page));
         }
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element nsElement = response.getData();
-        NodeList nsNodes = nsElement.getElementsByTagName("predicate");
-        nsList.setPage(nsElement.getAttribute("page"));
-        nsList.setPages(nsElement.getAttribute("pages"));
-        nsList.setPerPage(nsElement.getAttribute("perPage"));
-        nsList.setTotal("" + nsNodes.getLength());
-        for (int i = 0; i < nsNodes.getLength(); i++) {
-            Element element = (Element) nsNodes.item(i);
-            nsList.add(parsePredicate(element));
+        JSONObject nsElement = response.getData().getJSONObject("predicates");
+        JSONArray nsNodes = nsElement.getJSONArray("predicate");
+        nsList.setPage(nsElement.getInt("page"));
+        nsList.setPages(nsElement.getInt("pages"));
+        nsList.setPerPage(nsElement.getInt("perPage"));
+        nsList.setTotal(nsNodes.length());
+        for (int i = 0; i < nsNodes.length(); i++) {
+        	JSONObject element = nsNodes.getJSONObject(i);
+        	nsList.add(parsePredicate(element));
         }
         return nsList;
     }
@@ -387,10 +393,12 @@ public class MachinetagsInterface {
      * @return NamespacesList
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public NamespacesList getValues(String namespace, String predicate, int perPage, int page)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         NamespacesList valuesList = new NamespacesList();
         parameters.add(new Parameter("method", METHOD_GET_VALUES));
@@ -409,18 +417,18 @@ public class MachinetagsInterface {
             parameters.add(new Parameter("page", "" + page));
         }
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element nsElement = response.getData();
-        NodeList nsNodes = nsElement.getElementsByTagName("value");
-        valuesList.setPage(nsElement.getAttribute("page"));
-        valuesList.setPages(nsElement.getAttribute("pages"));
-        valuesList.setPerPage(nsElement.getAttribute("perPage"));
-        valuesList.setTotal("" + nsNodes.getLength());
-        for (int i = 0; i < nsNodes.getLength(); i++) {
-            Element element = (Element) nsNodes.item(i);
+        JSONObject nsElement = response.getData().getJSONObject("values");
+        JSONArray nsNodes = nsElement.getJSONArray("value");
+        valuesList.setPage(nsElement.getInt("page"));
+        valuesList.setPages(nsElement.getInt("pages"));
+        valuesList.setPerPage(nsElement.getInt("perPage"));
+        valuesList.setTotal(nsNodes.length());
+        for (int i = 0; i < nsNodes.length(); i++) {
+        	JSONObject element = nsNodes.getJSONObject(i);
             valuesList.add(parseValue(element));
         }
         return valuesList;
@@ -437,10 +445,12 @@ public class MachinetagsInterface {
      * @return NamespacesList
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public NamespacesList getRecentValues(String namespace, String predicate, Date addedSince)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         NamespacesList valuesList = new NamespacesList();
         parameters.add(new Parameter("method", METHOD_GET_RECENTVALUES));
@@ -459,56 +469,56 @@ public class MachinetagsInterface {
             );
         }
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element nsElement = response.getData();
-        NodeList nsNodes = nsElement.getElementsByTagName("value");
-        valuesList.setPage(nsElement.getAttribute("page"));
-        valuesList.setPages(nsElement.getAttribute("pages"));
-        valuesList.setPerPage(nsElement.getAttribute("perPage"));
-        valuesList.setTotal("" + nsNodes.getLength());
-        for (int i = 0; i < nsNodes.getLength(); i++) {
-            Element element = (Element) nsNodes.item(i);
+        JSONObject nsElement = response.getData().getJSONObject("values");
+        JSONArray nsNodes = nsElement.getJSONArray("value");
+        valuesList.setPage(nsElement.getInt("page"));
+        valuesList.setPages(nsElement.getInt("pages"));
+        valuesList.setPerPage(nsElement.getInt("perPage"));
+        valuesList.setTotal(nsNodes.length());
+        for (int i = 0; i < nsNodes.length(); i++) {
+        	JSONObject element = nsNodes.getJSONObject(i);
             valuesList.add(parseValue(element));
         }
         return valuesList;
     }
 
-    private Value parseValue(Element nsElement) {
+    private Value parseValue(JSONObject nsElement) throws JSONException {
         Value value = new Value();
-        value.setUsage(nsElement.getAttribute("usage"));
-        value.setNamespace(nsElement.getAttribute("namespace"));
-        value.setPredicate(nsElement.getAttribute("predicate"));
-        value.setFirstAdded(nsElement.getAttribute("first_added"));
-        value.setLastAdded(nsElement.getAttribute("last_added"));
-        value.setValue(XMLUtilities.getValue(nsElement));
+        value.setUsage(nsElement.getString("usage"));
+        value.setNamespace(nsElement.getString("namespace"));
+        value.setPredicate(nsElement.getString("predicate"));
+        value.setFirstAdded(nsElement.getString("first_added"));
+        value.setLastAdded(nsElement.getString("last_added"));
+        value.setValue(nsElement.getString("_content"));
         return value;
     }
     
     
-    private Predicate parsePredicate(Element nsElement) {
+    private Predicate parsePredicate(JSONObject nsElement) throws JSONException {
         Predicate predicate = new Predicate();
-        predicate.setUsage(nsElement.getAttribute("usage"));
-        predicate.setNamespaces(nsElement.getAttribute("namespaces"));
-        predicate.setValue(XMLUtilities.getValue(nsElement));
+        predicate.setUsage(nsElement.getString("usage"));
+        predicate.setNamespaces(nsElement.getString("namespaces"));
+        predicate.setValue(nsElement.getString("_content"));
         return predicate;
     }
 
-    private Namespace parseNamespace(Element nsElement) {
+    private Namespace parseNamespace(JSONObject nsElement) throws JSONException {
         Namespace ns = new Namespace();
-        ns.setUsage(nsElement.getAttribute("usage"));
-        ns.setPredicates(nsElement.getAttribute("predicates"));
-        ns.setValue(XMLUtilities.getValue(nsElement));
+        ns.setUsage(nsElement.getString("usage"));
+        ns.setPredicates(nsElement.getString("predicates"));
+        ns.setValue(nsElement.getString("_content"));
         return ns;
     }
 
-    private Pair parsePair(Element nsElement) {
+    private Pair parsePair(JSONObject nsElement) throws JSONException {
         Pair pair = new Pair();
-        pair.setUsage(nsElement.getAttribute("usage"));
-        pair.setNamespace(nsElement.getAttribute("namespace"));
-        pair.setPredicate(nsElement.getAttribute("predicate"));
+        pair.setUsage(nsElement.getString("usage"));
+        pair.setNamespace(nsElement.getString("namespace"));
+        pair.setPredicate(nsElement.getString("predicate"));
         return pair;
     }
 }

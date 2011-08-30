@@ -1,20 +1,21 @@
 package com.aetrion.flickr.groups.members;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
 import com.aetrion.flickr.util.StringUtilities;
+import com.yuyang226.flickr.oauth.OAuthUtils;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Members Interface.
@@ -52,16 +53,16 @@ public class MembersInterface {
      * @return A members-list
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      * @see <a href="http://www.flickr.com/services/api/flickr.groups.members.getList.html">API Documentation</a>
      */
     public MembersList getList(String groupId, Set<String> memberTypes, int perPage, int page)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         MembersList members = new MembersList();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
-        parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("group_id", groupId));
 
         if (perPage > 0) {
@@ -78,37 +79,33 @@ public class MembersInterface {
                 )
             );
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        OAuthUtils.addOAuthToken(parameters);
+        
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element mElement = response.getData();
-        members.setPage(mElement.getAttribute("page"));
-        members.setPages(mElement.getAttribute("pages"));
-        members.setPerPage(mElement.getAttribute("perpage"));
-        members.setTotal(mElement.getAttribute("total"));
+        JSONObject mElement = response.getData().getJSONObject("members");
+        members.setPage(mElement.getInt("page"));
+        members.setPages(mElement.getInt("pages"));
+        members.setPerPage(mElement.getInt("perpage"));
+        members.setTotal(mElement.getInt("total"));
 
-        NodeList mNodes = mElement.getElementsByTagName("member");
-        for (int i = 0; i < mNodes.getLength(); i++) {
-            Element element = (Element) mNodes.item(i);
+        JSONArray mNodes = mElement.optJSONArray("member");
+        for (int i = 0; mNodes != null && i < mNodes.length(); i++) {
+        	JSONObject element = mNodes.getJSONObject(i);
             members.add(parseMember(element));
         }
         return members;
     }
 
-    private Member parseMember(Element mElement) {
+    private Member parseMember(JSONObject mElement) throws JSONException {
         Member member = new Member();
-        member.setId(mElement.getAttribute("nsid"));
-        member.setUserName(mElement.getAttribute("username"));
-        member.setIconServer(mElement.getAttribute("iconserver"));
-        member.setIconFarm(mElement.getAttribute("iconfarm"));
-        member.setMemberType(mElement.getAttribute("membertype"));
+        member.setId(mElement.getString("nsid"));
+        member.setUserName(mElement.getString("username"));
+        member.setIconServer(mElement.getString("iconserver"));
+        member.setIconFarm(mElement.getString("iconfarm"));
+        member.setMemberType(mElement.getString("membertype"));
         return member;
     }
 }

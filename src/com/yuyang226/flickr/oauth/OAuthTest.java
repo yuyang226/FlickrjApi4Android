@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import com.aetrion.flickr.Flickr;
 import com.aetrion.flickr.RequestContext;
 import com.aetrion.flickr.people.User;
+import com.aetrion.flickr.photos.Photo;
 
 
 
@@ -71,11 +72,18 @@ public class OAuthTest {
 //			System.out.println(f.getPeopleInterface().getInfo("8308954@N06"));
 //			System.out.println(f.getPeopleInterface().getPublicGroups("8308954@N06"));
 //			System.out.println(f.getPeopleInterface().getUploadStatus());
-//			Photo photo = f.getPeopleInterface().getPublicPhotos("8308954@N06", 0, 0).get(0);
+			Photo photo = f.getPeopleInterface().getPublicPhotos("8308954@N06", 0, 0).get(0);
+			//photo ID: 6024664723
 			//System.out.println(f.getPeopleInterface().getPhotos("8308954@N06", null, 0, 0));
 			//f.getFavoritesInterface().add(photo.getId());
 //			System.out.println("Favourites List: \n" + f.getFavoritesInterface().getList("8308954@N06", 0, 0, null));
 //			System.out.println("Favourites Public List: \n" + f.getFavoritesInterface().getPublicList("8308954@N06", 0, 0, null));
+			//group ID: 95014477@N00
+//			Group group = f.getGroupsInterface().search("Nikon", 0, 0).iterator().next();
+//			System.out.println(f.getGroupsInterface().getInfo(group.getId()));
+//			System.out.println(f.getMembersInterface().getList(group.getId(), null, 0, 0));
+			System.out.println(f.getGeoInterface().getLocation("6024664723"));
+			System.out.println(f.getGeoInterface().getPerms("6024664723"));
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

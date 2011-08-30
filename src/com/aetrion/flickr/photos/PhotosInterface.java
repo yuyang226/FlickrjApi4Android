@@ -31,6 +31,7 @@ import com.aetrion.flickr.people.User;
 import com.aetrion.flickr.photos.geo.GeoInterface;
 import com.aetrion.flickr.util.StringUtilities;
 import com.aetrion.flickr.util.XMLUtilities;
+import com.yuyang226.flickr.oauth.OAuthUtils;
 
 /**
  * Interface for working with Flickr Photos.
@@ -699,13 +700,11 @@ public class PhotosInterface {
             parameters.add(new Parameter("page", page));
         }
 
-        Response response = transport.get(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getData();
-        PhotoList photos = PhotoUtils.createPhotoList(photosElement);
-        return photos;
+        return PhotoUtils.createPhotoList(response.getData());
     }
 
     /**
@@ -792,28 +791,19 @@ public class PhotosInterface {
         throws IOException, SAXException, FlickrException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_UNTAGGED));
-        parameters.add(new Parameter("api_key", apiKey));
-
         if (perPage > 0) {
             parameters.add(new Parameter("per_page", perPage));
         }
         if (page > 0) {
             parameters.add(new Parameter("page", page));
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transport.get(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getData();
-        PhotoList photos = PhotoUtils.createPhotoList(photosElement);
-        return photos;
+        return PhotoUtils.createPhotoList(response.getData());
     }
 
 
@@ -853,7 +843,6 @@ public class PhotosInterface {
         throws FlickrException, IOException, SAXException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_WITH_GEO_DATA));
-        parameters.add(new Parameter("api_key", apiKey));
 
         if (minUploadDate != null) {
             parameters.add(new Parameter("min_upload_date", minUploadDate.getTime() / 1000L));
@@ -882,20 +871,13 @@ public class PhotosInterface {
         if (page > 0) {
             parameters.add(new Parameter("page", page));
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transport.get(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getData();
-        PhotoList photos = PhotoUtils.createPhotoList(photosElement);
-        return photos;
+        return PhotoUtils.createPhotoList(response.getData());
     }
 
 
@@ -931,7 +913,6 @@ public class PhotosInterface {
     public PhotoList getWithoutGeoData(Date minUploadDate, Date maxUploadDate, Date minTakenDate, Date maxTakenDate, int privacyFilter, String sort, Set<String> extras, int perPage, int page) throws FlickrException, IOException, SAXException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_WITHOUT_GEO_DATA));
-        parameters.add(new Parameter("api_key", apiKey));
 
         if (minUploadDate != null) {
             parameters.add(new Parameter("min_upload_date", minUploadDate.getTime() / 1000L));
@@ -960,20 +941,13 @@ public class PhotosInterface {
         if (page > 0) {
             parameters.add(new Parameter("page", page));
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transport.get(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getData();
-        PhotoList photos = PhotoUtils.createPhotoList(photosElement);
-        return photos;
+        return PhotoUtils.createPhotoList(response.getData());
     }
 
 
@@ -996,8 +970,6 @@ public class PhotosInterface {
     public PhotoList recentlyUpdated(Date minDate, Set<String> extras, int perPage, int page) throws IOException, SAXException, FlickrException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_RECENTLY_UPDATED));
-        parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("min_date", minDate.getTime() / 1000L));
 
         if (extras != null && !extras.isEmpty()) {
@@ -1009,20 +981,13 @@ public class PhotosInterface {
         if (page > 0) {
             parameters.add(new Parameter("page", page));
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transport.get(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getData();
-        PhotoList photos = PhotoUtils.createPhotoList(photosElement);
-        return photos;
+        return PhotoUtils.createPhotoList(response.getData());
     }
 
     /**

@@ -10,14 +10,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
+import com.aetrion.flickr.util.JSONUtils;
 import com.yuyang226.flickr.oauth.OAuthUtils;
 import com.yuyang226.flickr.org.json.JSONArray;
 import com.yuyang226.flickr.org.json.JSONException;
@@ -115,8 +112,11 @@ public class GroupsInterface {
      *
      * @param groupId The group id
      * @return The Group object
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public Group getInfo(String groupId) throws IOException, SAXException, FlickrException {
+    public Group getInfo(String groupId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_INFO));
         parameters.add(new Parameter("api_key", apiKey));
@@ -134,26 +134,20 @@ public class GroupsInterface {
         group.setLang(groupElement.getString("lang"));
         group.setPoolModerated("1".equals(groupElement.getString("ispoolmoderated")));
 
-        group.setName(XMLUtilities.getChildValue(groupElement, "name"));
-        group.setDescription(XMLUtilities.getChildValue(groupElement, "description"));
-        group.setMembers(XMLUtilities.getChildValue(groupElement, "members"));
-        group.setPrivacy(XMLUtilities.getChildValue(groupElement, "privacy"));
+        group.setName(JSONUtils.getChildValue(groupElement, "name"));
+        group.setDescription(JSONUtils.getChildValue(groupElement, "description"));
+        group.setMembers(JSONUtils.getChildValue(groupElement, "members"));
+        group.setPrivacy(JSONUtils.getChildValue(groupElement, "privacy"));
 
-        NodeList throttleNodes = groupElement.getElementsByTagName("throttle");
-        int n = throttleNodes.getLength();
+        JSONArray throttleNodes = groupElement.optJSONArray("throttle");
+        int n = throttleNodes == null ? 0 : throttleNodes.length();
         if (n == 1) {
-            Element throttleElement = (Element) throttleNodes.item(0);
+        	JSONObject throttleElement = throttleNodes.getJSONObject(n);
             Throttle throttle = new Throttle();
             group.setThrottle(throttle);
-            throttle.setMode(throttleElement.getAttribute("mode"));
-            String countStr = throttleElement.getAttribute("count");
-            String remainingStr = throttleElement.getAttribute("remaining");
-            if (countStr != null && countStr.length() > 0) {
-                throttle.setCount(Integer.parseInt(countStr));
-            }
-            if (remainingStr != null && remainingStr.length() > 0) {
-                throttle.setRemaining(Integer.parseInt(remainingStr));
-            }
+            throttle.setMode(throttleElement.getString("mode"));
+            throttle.setCount(throttleElement.optInt("count"));
+            throttle.setRemaining(throttleElement.optInt("remaining"));
         } else if (n > 1) {
             System.err.println("WARNING: more than one throttle element in group");
         }
@@ -169,14 +163,15 @@ public class GroupsInterface {
      * @param page The page of results to return. If this argument is 0, it defaults to 1.
      * @return A GroupList Object. Only the fields <em>id</em>, <em>name</em> and <em>eighteenplus</em> in the Groups will be set.
      * @throws IOException 
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public Collection<Group> search(String text, int perPage, int page) throws FlickrException, IOException, SAXException {
+    public Collection<Group> search(String text, int perPage, int page) throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         GroupList groupList = new GroupList();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_SEARCH));
-        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("text", text));
 
@@ -186,28 +181,23 @@ public class GroupsInterface {
         if (page > 0) {
             parameters.add(new Parameter("page", new Integer(page)));
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element groupsElement = response.getData();
-        NodeList groupNodes = groupsElement.getElementsByTagName("group");
-        groupList.setPage(XMLUtilities.getIntAttribute(groupsElement, "page"));
-        groupList.setPages(XMLUtilities.getIntAttribute(groupsElement, "pages"));
-        groupList.setPerPage(XMLUtilities.getIntAttribute(groupsElement, "perpage"));
-        groupList.setTotal(XMLUtilities.getIntAttribute(groupsElement, "total"));
-        for (int i = 0; i < groupNodes.getLength(); i++) {
-            Element groupElement = (Element) groupNodes.item(i);
+        JSONObject groupsElement = response.getData().getJSONObject("groups");
+        JSONArray groupNodes = groupsElement.optJSONArray("group");
+        groupList.setPage(groupsElement.getInt("page"));
+        groupList.setPages(groupsElement.getInt("pages"));
+        groupList.setPerPage(groupsElement.getInt("perpage"));
+        groupList.setTotal(groupsElement.getInt("total"));
+        for (int i = 0; groupNodes != null && i < groupNodes.length(); i++) {
+        	JSONObject groupElement = groupNodes.getJSONObject(i);
             Group group = new Group();
-            group.setId(groupElement.getAttribute("nsid"));
-            group.setName(groupElement.getAttribute("name"));
+            group.setId(groupElement.getString("nsid"));
+            group.setName(groupElement.getString("name"));
             groupList.add(group);
         }
         return groupList;

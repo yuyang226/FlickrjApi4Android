@@ -1,25 +1,25 @@
 package com.aetrion.flickr.photos.comments;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
 import com.aetrion.flickr.photos.PhotoList;
 import com.aetrion.flickr.photos.PhotoUtils;
 import com.aetrion.flickr.photos.PhotosInterface;
 import com.aetrion.flickr.util.StringUtilities;
-import com.aetrion.flickr.util.XMLUtilities;
+import com.yuyang226.flickr.oauth.OAuthUtils;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Work on Comments.
@@ -56,31 +56,27 @@ public class CommentsInterface {
      * @param photoId The id of the photo to add a comment to.
      * @param commentText Text of the comment.
      * @return a unique comment id.
-     * @throws SAXException
      * @throws IOException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public String addComment(String photoId, String commentText) throws IOException, SAXException, FlickrException {
+    public String addComment(String photoId, String commentText) 
+    throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_ADD_COMMENT));
-        parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("photo_id", photoId));
         parameters.add(new Parameter("comment_text", commentText));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
         //Note: This method requires an HTTP POST request.
-        Response response = transportAPI.post(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element commentElement = (Element)response.getData();
-        return commentElement.getAttribute("id");
+        JSONObject commentElement = response.getData();
+        return commentElement.getString("id");
     }
 
     /**
@@ -90,24 +86,19 @@ public class CommentsInterface {
      *
      * @param commentId The id of the comment to delete.
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public void deleteComment(String commentId) throws IOException, SAXException, FlickrException {
+    public void deleteComment(String commentId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_DELETE_COMMENT));
-        parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("comment_id", commentId));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
         //Note: This method requires an HTTP POST request.
-        Response response = transportAPI.post(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -123,25 +114,20 @@ public class CommentsInterface {
      * @param commentId The id of the comment to edit.
      * @param commentText Update the comment to this text.
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public void editComment(String commentId, String commentText) throws IOException, SAXException, FlickrException {
+    public void editComment(String commentId, String commentText) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_EDIT_COMMENT));
-        parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("comment_id", commentId));
         parameters.add(new Parameter("comment_text", commentText));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
         //Note: This method requires an HTTP POST request.
-        Response response = transportAPI.post(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -158,46 +144,41 @@ public class CommentsInterface {
      * @return a List of {@link Comment} objects.
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public List<Comment> getList(String photoId)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
-        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("photo_id", photoId));
-		parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+		OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
         List<Comment> comments = new ArrayList<Comment>();
-        Element commentsElement = response.getData();
-        NodeList commentNodes = commentsElement.getElementsByTagName("comment");
-        int n = commentNodes.getLength();
-        for (int i = 0; i < n; i++) {
+        JSONObject commentsElement = response.getData().getJSONObject("comments");
+        JSONArray commentNodes = commentsElement.optJSONArray("comment");
+        for (int i = 0; commentNodes != null && i < commentNodes.length(); i++) {
             Comment comment = new Comment();
-            Element commentElement = (Element)commentNodes.item(i);
-            comment.setId(commentElement.getAttribute("id"));
-            comment.setAuthor(commentElement.getAttribute("author"));
-            comment.setAuthorName(commentElement.getAttribute("authorname"));
-            comment.setPermaLink(commentElement.getAttribute("permalink"));
+            JSONObject commentElement = commentNodes.getJSONObject(i);
+            comment.setId(commentElement.getString("id"));
+            comment.setAuthor(commentElement.getString("author"));
+            comment.setAuthorName(commentElement.getString("authorname"));
+            comment.setPermaLink(commentElement.getString("permalink"));
             long unixTime = 0;
             try {
-                unixTime = Long.parseLong(commentElement.getAttribute("datecreate"));
+                unixTime = Long.parseLong(commentElement.getString("datecreate"));
             } catch (NumberFormatException e) {
                 // what shall we do?
                 e.printStackTrace();
             }
             comment.setDateCreate(new Date(unixTime * 1000L));
-            comment.setPermaLink(commentElement.getAttribute("permalink"));
-            comment.setText(XMLUtilities.getValue(commentElement));
+            comment.setPermaLink(commentElement.getString("permalink"));
+            comment.setText(commentElement.getString("_content"));
             comments.add(comment);
         }
         return comments;
@@ -227,14 +208,14 @@ public class CommentsInterface {
      * @return List of photos
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public PhotoList getRecentForContacts(Date lastComment, List<String> contactsFilter, Set<String> extras, int perPage, int page) throws FlickrException, IOException, SAXException {
-        PhotoList photos = new PhotoList();
+    public PhotoList getRecentForContacts(Date lastComment, List<String> contactsFilter, Set<String> extras, 
+    		int perPage, int page) throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", PhotosInterface.METHOD_GET_NOT_IN_SET));
-        parameters.add(new Parameter("api_key", apiKey));
-
         if (lastComment != null) {
             parameters.add(new Parameter("last_comment", String.valueOf(lastComment.getTime() / 1000L)));
         }
@@ -253,28 +234,12 @@ public class CommentsInterface {
         if (page > 0) {
             parameters.add(new Parameter("page", page));
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getData();
-        photos.setPage(photosElement.getAttribute("page"));
-        photos.setPages(photosElement.getAttribute("pages"));
-        photos.setPerPage(photosElement.getAttribute("perpage"));
-        photos.setTotal(photosElement.getAttribute("total"));
-
-        NodeList photoElements = photosElement.getElementsByTagName("photo");
-        for (int i = 0; i < photoElements.getLength(); i++) {
-            Element photoElement = (Element) photoElements.item(i);
-            photos.add(PhotoUtils.createPhoto(photoElement));
-        }
-        return photos;
+        return PhotoUtils.createPhotoList(response.getData());
     }
 }

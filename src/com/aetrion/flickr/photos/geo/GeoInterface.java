@@ -1,24 +1,25 @@
 package com.aetrion.flickr.photos.geo;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
 import com.aetrion.flickr.photos.GeoData;
 import com.aetrion.flickr.photos.PhotoList;
 import com.aetrion.flickr.photos.PhotoUtils;
 import com.aetrion.flickr.util.StringUtilities;
-import com.aetrion.flickr.util.XMLUtilities;
+import com.yuyang226.flickr.oauth.OAuthUtils;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Access to the flickr.photos.geo methods.
@@ -58,32 +59,28 @@ public class GeoInterface {
      *
      * @param photoId reqired photo id, not null
      * @return Geo Data, if the photo has it. 
-     * @throws SAXException 
      * @throws IOException 
      * @throws FlickrException if photo id is invalid, if photo has no geodata 
      * or if any other error has been reported in the response.
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public GeoData getLocation(String photoId) throws IOException, SAXException, FlickrException {
+    public GeoData getLocation(String photoId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LOCATION));
         parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("photo_id", photoId));
 
-        Response response = transport.get(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        // response:
-		// <photo id="123">
-		//  <location latitude="-17.685895" longitude="-63.36914" accuracy="6" />
-		// </photo>
-
-        Element photoElement = response.getData();
-
-        Element locationElement = XMLUtilities.getChild(photoElement, "location");
-        String latStr = locationElement.getAttribute("latitude");
-        String lonStr = locationElement.getAttribute("longitude");
-        String accStr = locationElement.getAttribute("accuracy");
+        JSONObject photoElement = response.getData().getJSONObject("photo");
+        JSONObject locationElement = photoElement.getJSONObject("location");
+        String latStr = locationElement.getString("latitude");
+        String lonStr = locationElement.getString("longitude");
+        String accStr = locationElement.getString("accuracy");
         // I ignore the id attribute. should be the same as the given
         // photo id.
         GeoData geoData = new GeoData(lonStr, latStr, accStr);
@@ -99,36 +96,30 @@ public class GeoInterface {
      * @return the permissions
      * @throws SAXException
      * @throws IOException
-     * @throws SAXException
      * @throws IOException
      * @throws FlickrException
      * @throws FlickrException if photo id is invalid, if photo has no geodata
      * or if any other error has been reported in the response.
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public GeoPermissions getPerms(String photoId) throws IOException, SAXException, FlickrException {
+    public GeoPermissions getPerms(String photoId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PERMS));
-        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("photo_id", photoId));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transport.get(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        // response:
-        // <perms id="240935723" ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
         GeoPermissions perms = new GeoPermissions();
-        Element permsElement = response.getData();
-        perms.setPublic("1".equals(permsElement.getAttribute("ispublic")));
-        perms.setContact("1".equals(permsElement.getAttribute("iscontact")));
-        perms.setFriend("1".equals(permsElement.getAttribute("isfriend")));
-        perms.setFamily("1".equals(permsElement.getAttribute("isfamily")));
+        JSONObject permsElement = response.getData().getJSONObject("perms");
+        perms.setPublic("1".equals(permsElement.getString("ispublic")));
+        perms.setContact("1".equals(permsElement.getString("iscontact")));
+        perms.setFriend("1".equals(permsElement.getString("isfriend")));
+        perms.setFamily("1".equals(permsElement.getString("isfamily")));
         // I ignore the id attribute. should be the same as the given
         // photo id.
 		return perms;
@@ -139,24 +130,20 @@ public class GeoInterface {
      *
      * This method requires authentication with 'write' permission.
      *
-     * @throws SAXException
      * @throws IOException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public void removeLocation(String photoId) throws IOException, SAXException, FlickrException {
+    public void removeLocation(String photoId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_REMOVE_LOCATION));
-        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("photo_id", photoId));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
         // Note: This method requires an HTTP POST request.
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         // This method has no specific response - It returns an empty sucess response 
         // if it completes without error.
         if (response.isError()) {
@@ -175,15 +162,15 @@ public class GeoInterface {
      *
      * @param photoId The id of the photo to cet permissions for.
      * @param location geo data with optional accuracy (1-16), accuracy 0 to use the default.
-     * @throws SAXException 
      * @throws IOException 
      * @throws FlickrException 
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public void setLocation(String photoId, GeoData location) throws IOException, SAXException, FlickrException {
+    public void setLocation(String photoId, GeoData location) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_SET_LOCATION));
-        parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("photo_id", photoId));
         parameters.add(new Parameter("lat", String.valueOf(location.getLatitude())));
         parameters.add(new Parameter("lon", String.valueOf(location.getLongitude())));
@@ -191,15 +178,10 @@ public class GeoInterface {
         if (accuracy > 0) {
             parameters.add(new Parameter("accuracy", String.valueOf(location.getAccuracy())));
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
         // Note: This method requires an HTTP POST request.
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         // This method has no specific response - It returns an empty sucess response 
         // if it completes without error.
         if (response.isError()) {
@@ -214,28 +196,24 @@ public class GeoInterface {
      *
      * @param photoId The id of the photo to set permissions for.
      * @param perms Permissions, who can see the geo data of this photo
-     * @throws SAXException 
      * @throws IOException 
      * @throws FlickrException 
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public void setPerms(String photoId, GeoPermissions perms) throws IOException, SAXException, FlickrException {
+    public void setPerms(String photoId, GeoPermissions perms) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_SET_PERMS));
-        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("photo_id", photoId));
         parameters.add(new Parameter("is_public", perms.isPublic() ? "1" : "0"));
         parameters.add(new Parameter("is_contact", perms.isContact() ? "1" : "0"));
         parameters.add(new Parameter("is_friend", perms.isFriend() ? "1" : "0"));
         parameters.add(new Parameter("is_family", perms.isFamily() ? "1" : "0"));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
         // Note: This method requires an HTTP POST request.
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         // This method has no specific response - It returns an empty sucess response 
         // if it completes without error.
         if (response.isError()) {
@@ -253,19 +231,19 @@ public class GeoInterface {
      * @param location The latitude/longitude and accuracy of the photos to be update.
      * @param placeId A Flickr Places ID. (While optional, you must pass either a valid Places ID or a WOE ID.)
      * @param woeId A Where On Earth (WOE) ID. (While optional, you must pass either a valid Places ID or a WOE ID.)
-     * @throws SAXException 
      * @throws IOException 
      * @throws FlickrException 
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public void batchCorrectLocation(
         GeoData location,
         String placeId,
         String woeId
-    ) throws IOException, SAXException, FlickrException {
+    ) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_BATCH_CORRECT_LOCATION));
-        parameters.add(new Parameter("api_key", apiKey));
-
         if (placeId != null) {
             parameters.add(new Parameter("place_id", placeId));
         }
@@ -275,15 +253,10 @@ public class GeoInterface {
         parameters.add(new Parameter("lat", location.getLatitude()));
         parameters.add(new Parameter("lon", location.getLongitude()));
         parameters.add(new Parameter("accuracy", location.getAccuracy()));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
         // Note: This method requires an HTTP POST request.
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         // This method has no specific response - It returns an empty sucess response 
         // if it completes without error.
         if (response.isError()) {
@@ -297,18 +270,18 @@ public class GeoInterface {
      * @param placeId A Flickr Places ID. (While optional, you must pass either a valid Places ID or a WOE ID.)
      * @param woeId A Where On Earth (WOE) ID. (While optional, you must pass either a valid Places ID or a WOE ID.)
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public void correctLocation(
         String photoId,
         String placeId,
         String woeId
-    ) throws IOException, SAXException, FlickrException {
+    ) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_CORRECT_LOCATION));
-        parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("photo_id", photoId));
         if (placeId != null) {
             parameters.add(new Parameter("place_id", placeId));
@@ -316,15 +289,10 @@ public class GeoInterface {
         if (woeId != null) {
             parameters.add(new Parameter("woe_id", woeId));
         }
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
         // Note: This method requires an HTTP POST request.
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         // This method has no specific response - It returns an empty sucess response 
         // if it completes without error.
         if (response.isError()) {
@@ -342,17 +310,18 @@ public class GeoInterface {
      * @param page
      * @return The collection of Photo objects
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      * @see com.aetrion.flickr.photos.Extras
      */
     public PhotoList photosForLocation(
         GeoData location,
         Set<String> extras,
         int perPage, int page
-    ) throws IOException, SAXException, FlickrException {
+    ) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        PhotoList photos = new PhotoList();
         parameters.add(new Parameter("method", METHOD_PHOTOS_FOR_LOCATION));
         parameters.add(new Parameter("api_key", apiKey));
 
@@ -368,22 +337,11 @@ public class GeoInterface {
         parameters.add(new Parameter("lat", location.getLatitude()));
         parameters.add(new Parameter("lon", location.getLongitude()));
         parameters.add(new Parameter("accuracy", location.getAccuracy()));
-        Response response = transport.get(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getData();
-        photos.setPage(photosElement.getAttribute("page"));
-        photos.setPages(photosElement.getAttribute("pages"));
-        photos.setPerPage(photosElement.getAttribute("perpage"));
-        photos.setTotal(photosElement.getAttribute("total"));
-
-        NodeList photoElements = photosElement.getElementsByTagName("photo");
-        for (int i = 0; i < photoElements.getLength(); i++) {
-            Element photoElement = (Element) photoElements.item(i);
-            photos.add(PhotoUtils.createPhoto(photoElement));
-        }
-        return photos;
+        return PhotoUtils.createPhotoList(response.getData());
     }
 
     /**
@@ -395,28 +353,23 @@ public class GeoInterface {
      * @param photoId Photo id (required).
      * @param context Context is a numeric value representing the photo's geotagginess beyond latitude and longitude. For example, you may wish to indicate that a photo was taken "indoors" (1) or "outdoors" (2).
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public void setContext(
         String photoId,
         int context
-    ) throws IOException, SAXException, FlickrException {
+    ) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_SET_CONTEXT));
-        parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("photo_id", photoId));
         parameters.add(new Parameter("context", "" + context));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
         // Note: This method requires an HTTP POST request.
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         // This method has no specific response - It returns an empty sucess response 
         // if it completes without error.
         if (response.isError()) {

@@ -18,9 +18,7 @@ import com.aetrion.flickr.photos.PhotoList;
 import com.aetrion.flickr.photos.PhotoUtils;
 import com.aetrion.flickr.util.StringUtilities;
 import com.yuyang226.flickr.oauth.OAuthUtils;
-import com.yuyang226.flickr.org.json.JSONArray;
 import com.yuyang226.flickr.org.json.JSONException;
-import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Interface for working with Flickr favorites.
@@ -83,8 +81,6 @@ public class FavoritesInterface {
      */
     public PhotoList getList(String userId, int perPage, int page, Set<String> extras) throws IOException,
              FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
-        PhotoList photos = new PhotoList();
-
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
         if (userId != null) {
@@ -105,18 +101,7 @@ public class FavoritesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-
-        JSONObject photosElement = response.getData().getJSONObject("photos");
-        photos.setPage(photosElement.getInt("page"));
-		photos.setPages(photosElement.getInt("pages"));
-		photos.setPerPage(photosElement.getInt("perpage"));
-		photos.setTotal(photosElement.getInt("total"));
-        JSONArray photoNodes = photosElement.getJSONArray("photo");
-        for (int i = 0; i < photoNodes.length(); i++) {
-        	JSONObject photoElement = photoNodes.getJSONObject(i);
-            photos.add(PhotoUtils.createPhoto(photoElement));
-        }
-        return photos;
+        return PhotoUtils.createPhotoList(response.getData());
     }
 
     /**
@@ -138,8 +123,6 @@ public class FavoritesInterface {
      */
     public PhotoList getPublicList(String userId, int perPage, int page, Set<String> extras)
             throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
-        PhotoList photos = new PhotoList();
-
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PUBLIC_LIST));
         parameters.add(new Parameter("api_key", apiKey));
@@ -160,18 +143,7 @@ public class FavoritesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-
-        JSONObject photosElement = response.getData().getJSONObject("photos");
-        photos.setPage(photosElement.getInt("page"));
-		photos.setPages(photosElement.getInt("pages"));
-		photos.setPerPage(photosElement.getInt("perpage"));
-		photos.setTotal(photosElement.getInt("total"));
-        JSONArray photoNodes = photosElement.getJSONArray("photo");
-        for (int i = 0; i < photoNodes.length(); i++) {
-        	JSONObject photoElement = photoNodes.getJSONObject(i);
-            photos.add(PhotoUtils.createPhoto(photoElement));
-        }
-        return photos;
+        return PhotoUtils.createPhotoList(response.getData());
     }
 
     /**

@@ -231,8 +231,6 @@ public class PeopleInterface {
      */
     public PhotoList getPublicPhotos(String userId, Set<String> extras, int perPage, int page) 
     throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
-        PhotoList photos = new PhotoList();
-
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PUBLIC_PHOTOS));
         parameters.add(new Parameter("api_key", apiKey));
@@ -253,18 +251,7 @@ public class PeopleInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        JSONObject photosElement = response.getData().getJSONObject("photos");
-        photos.setPage(photosElement.getInt("page"));
-		photos.setPages(photosElement.getInt("pages"));
-		photos.setPerPage(photosElement.getInt("perpage"));
-		photos.setTotal(photosElement.getInt("total"));
-
-        JSONArray photoNodes = photosElement.getJSONArray("photo");
-        for (int i = 0; i < photoNodes.length(); i++) {
-            JSONObject photoElement = photoNodes.getJSONObject(i);
-            photos.add(PhotoUtils.createPhoto(photoElement));
-        }
-        return photos;
+        return PhotoUtils.createPhotoList(response.getData());
     }
 
     /**
@@ -330,8 +317,6 @@ public class PeopleInterface {
 	 */
 	public PhotoList getPhotos(String userId, Set<String> extras, int perPage,
 			int page) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
-		PhotoList photos = new PhotoList();
-
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.add(new Parameter("method", METHOD_GET_PHOTOS));
 		parameters.add(new Parameter("user_id", userId));
@@ -355,17 +340,6 @@ public class PeopleInterface {
 			throw new FlickrException(response.getErrorCode(), response
 					.getErrorMessage());
 		}
-		JSONObject photosElement = response.getData().getJSONObject("photos");
-		photos.setPage(photosElement.getInt("page"));
-		photos.setPages(photosElement.getInt("pages"));
-		photos.setPerPage(photosElement.getInt("perpage"));
-		photos.setTotal(photosElement.getInt("total"));
-
-		JSONArray photoNodes = photosElement.getJSONArray("photo");
-		for (int i = 0; i < photoNodes.length(); i++) {
-			JSONObject photoElement = photoNodes.getJSONObject(i);
-			photos.add(PhotoUtils.createPhoto(photoElement));
-		}
-		return photos;
+		return PhotoUtils.createPhotoList(response.getData());
 	}
 }

@@ -22,7 +22,7 @@ public final class PhotoUtils {
 	}
 
 	/**
-	 * Transfer the Information of a photo from a DOM-object
+	 * Transfer the Information of a photo from a JSONObject
 	 * to a Photo-object.
 	 *
 	 * @param photoElement
@@ -30,20 +30,6 @@ public final class PhotoUtils {
 	 * @throws JSONException 
 	 */
 	public static final Photo createPhoto(JSONObject photoElement) throws JSONException {
-		return createPhoto(photoElement, null);
-	}
-
-	/**
-	 * Transfer the Information of a photo from a DOM-object
-	 * to a Photo-object.
-	 *
-	 * @param photoElement
-	 * @param defaultElement
-	 * @return Photo
-	 * @throws JSONException 
-	 */
-	public static final Photo createPhoto(JSONObject photoElement,
-			JSONObject defaultElement) throws JSONException {
 		Photo photo = new Photo();
 		photo.setId(photoElement.getString("id"));
 		photo.setPlaceId(photoElement.optString("place_id", null));
@@ -122,7 +108,7 @@ public final class PhotoUtils {
 				|| photo.getOriginalFormat().equals("")) {
 			photo.setOriginalFormat("jpg");
 		}
-		
+
 		User owner = new User();
 		owner.setId(photoElement.getString("owner"));
 		owner.setUsername(photoElement.optString("ownername", null));
@@ -251,8 +237,8 @@ public final class PhotoUtils {
 		} catch (NullPointerException e) {
 			photo.setUrls(new ArrayList<PhotoUrl>());
 		}*/
-		
-	      //"latitude": 31.344969, "longitude": "121.371238", "accuracy": 16, 
+
+		//"latitude": 31.344969, "longitude": "121.371238", "accuracy": 16, 
 		//"place_id": "JAJiM7JTU78IjzqC", "woeid": "2151849", "geo_is_family": 0, "geo_is_friend": 0, "geo_is_contact": 0, "geo_is_public": 1 },
 
 		String longitude = photoElement.optString("longitude", null);
@@ -272,19 +258,20 @@ public final class PhotoUtils {
 	/**
 	 * Parse a list of Photos from given Element.
 	 *
-	 * @param photosElement
+	 * @param responseData
 	 * @return PhotoList
 	 * @throws JSONException 
 	 */
-	public static final PhotoList createPhotoList(JSONObject photosElement) throws JSONException {
+	public static final PhotoList createPhotoList(JSONObject responseData) throws JSONException {
+		JSONObject photosElement = responseData.getJSONObject("photos");
 		PhotoList photos = new PhotoList();
-		photos.setPage(photosElement.getInt("page"));
-		photos.setPages(photosElement.getInt("pages"));
-		photos.setPerPage(photosElement.getInt("perpage"));
-		photos.setTotal(photosElement.getInt("total"));
+		photos.setPage(photosElement.optInt("page"));
+		photos.setPages(photosElement.optInt("pages"));
+		photos.setPerPage(photosElement.optInt("perpage"));
+		photos.setTotal(photosElement.optInt("total"));
 
-		JSONArray photoNodes = photosElement.getJSONArray("photo");
-		for (int i = 0; i < photoNodes.length(); i++) {
+		JSONArray photoNodes = photosElement.optJSONArray("photo");
+		for (int i = 0; photoNodes != null && i < photoNodes.length(); i++) {
 			JSONObject photoElement = photoNodes.getJSONObject(i);
 			photos.add(PhotoUtils.createPhoto(photoElement));
 		}

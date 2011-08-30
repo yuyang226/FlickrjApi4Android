@@ -6,6 +6,8 @@
 package com.aetrion.flickr.interestingness;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,19 +15,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
 import com.aetrion.flickr.photos.Extras;
-import com.aetrion.flickr.photos.Photo;
 import com.aetrion.flickr.photos.PhotoList;
 import com.aetrion.flickr.photos.PhotoUtils;
 import com.aetrion.flickr.util.StringUtilities;
+import com.yuyang226.flickr.org.json.JSONException;
 
 /**
  *
@@ -75,13 +73,14 @@ public class InterestingnessInterface {
      * @return PhotoList
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      * @see com.aetrion.flickr.photos.Extras
      */
-    public PhotoList getList(String date, Set<String> extras, int perPage, int page) throws FlickrException, IOException, SAXException {
+    public PhotoList getList(String date, Set<String> extras, int perPage, int page) 
+    throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        PhotoList photos = new PhotoList();
-
         parameters.add(new Parameter(KEY_METHOD, METHOD_GET_LIST));
         parameters.add(new Parameter(KEY_API_KEY, apiKey));
 
@@ -100,23 +99,11 @@ public class InterestingnessInterface {
             parameters.add(new Parameter(KEY_PAGE, String.valueOf(page)));
         }
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element photosElement = response.getData();
-        photos.setPage(photosElement.getAttribute("page"));
-        photos.setPages(photosElement.getAttribute("pages"));
-        photos.setPerPage(photosElement.getAttribute("perpage"));
-        photos.setTotal(photosElement.getAttribute("total"));
-
-        NodeList photoNodes = photosElement.getElementsByTagName("photo");
-        for (int i = 0; i < photoNodes.getLength(); i++) {
-            Element photoElement = (Element) photoNodes.item(i);
-            Photo photo = PhotoUtils.createPhoto(photoElement);
-            photos.add(photo);
-        }
-        return photos;
+        return PhotoUtils.createPhotoList(response.getData());
     }
 
     /**
@@ -128,11 +115,13 @@ public class InterestingnessInterface {
      * @return PhotoList
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      * @see com.aetrion.flickr.photos.Extras
      */
     public PhotoList getList(Date date, Set<String> extras, int perPage, int page)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         String dateString = null;
         if (date != null) {
             DateFormat df = (DateFormat)DATE_FORMATS.get();
@@ -148,9 +137,11 @@ public class InterestingnessInterface {
      * @return a List of Photos
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public PhotoList getList() throws FlickrException, IOException, SAXException {
+    public PhotoList getList() throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         return getList((String) null, Extras.ALL_EXTRAS, 500, 1);
     }
 
