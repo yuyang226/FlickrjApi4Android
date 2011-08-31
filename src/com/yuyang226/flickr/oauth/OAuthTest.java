@@ -82,8 +82,9 @@ public class OAuthTest {
 //			Group group = f.getGroupsInterface().search("Nikon", 0, 0).iterator().next();
 //			System.out.println(f.getGroupsInterface().getInfo(group.getId()));
 //			System.out.println(f.getMembersInterface().getList(group.getId(), null, 0, 0));
-			System.out.println(f.getGeoInterface().getLocation("6024664723"));
-			System.out.println(f.getGeoInterface().getPerms("6024664723"));
+//			System.out.println(f.getGeoInterface().getLocation("6024664723"));
+//			System.out.println(f.getGeoInterface().getPerms("6024664723"));
+			System.out.println(f.getLicensesInterface().getInfo());
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

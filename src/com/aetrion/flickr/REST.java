@@ -121,6 +121,8 @@ public class REST extends Transport {
 	 * @throws JSONException
 	 */
 	public Response get(String path, List<Parameter> parameters) throws IOException, JSONException {
+		parameters.add(new Parameter("nojsoncallback", "1"));
+		parameters.add(new Parameter("format", "json"));
 		String data = getLine(path, parameters);
 		return new RESTResponse(data);
 	}
@@ -269,8 +271,7 @@ public class REST extends Transport {
 	 * @see com.aetrion.flickr.Transport#post(java.lang.String, java.util.List, boolean)
 	 */
 	@Override
-	public Response post(String path, List<Parameter> parameters,
-			boolean multipart) throws IOException, JSONException {
+	public Response post(String path, List<Parameter> parameters) throws IOException, JSONException {
 		String data = sendPost(path, parameters);
 		return new RESTResponse(data);
 	}

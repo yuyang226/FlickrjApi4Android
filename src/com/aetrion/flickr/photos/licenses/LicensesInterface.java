@@ -5,19 +5,20 @@
 package com.aetrion.flickr.photos.licenses;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
+import com.yuyang226.flickr.oauth.OAuthUtils;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Interface for working with copyright licenses.
@@ -50,10 +51,10 @@ public class LicensesInterface {
      *
      * @return A collection of License objects
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
-    public Collection<License> getInfo() throws IOException, SAXException, FlickrException {
+    public Collection<License> getInfo() throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_INFO));
         parameters.add(new Parameter("api_key", apiKey));
@@ -63,14 +64,14 @@ public class LicensesInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
         List<License> licenses = new ArrayList<License>();
-        Element licensesElement = response.getData();
-        NodeList licenseElements = licensesElement.getElementsByTagName("license");
-        for (int i = 0; i < licenseElements.getLength(); i++) {
-            Element licenseElement = (Element) licenseElements.item(i);
+        JSONObject licensesElement = response.getData().getJSONObject("licenses");
+        JSONArray licenseElements = licensesElement.optJSONArray("license");
+        for (int i = 0; licenseElements != null && i < licenseElements.length(); i++) {
+        	JSONObject licenseElement = licenseElements.getJSONObject(i);
             License license = new License();
-            license.setId(licenseElement.getAttribute("id"));
-            license.setName(licenseElement.getAttribute("name"));
-            license.setUrl(licenseElement.getAttribute("url"));
+            license.setId(licenseElement.getString("id"));
+            license.setName(licenseElement.getString("name"));
+            license.setUrl(licenseElement.getString("url"));
             licenses.add(license);
         }
         return licenses;
@@ -84,24 +85,21 @@ public class LicensesInterface {
      * @param photoId The photo to update the license for.
      * @param licenseId The license to apply, or 0 (zero) to remove the current license.
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public void setLicense(String photoId, int licenseId) throws IOException, SAXException, FlickrException {
+    public void setLicense(String photoId, int licenseId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_SET_LICENSE));
-        parameters.add(new Parameter("api_key", apiKey));
+        //parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("photo_id", photoId));
         parameters.add(new Parameter("license_id", licenseId));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
         // Note: This method requires an HTTP POST request.
-        Response response = transportAPI.post(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

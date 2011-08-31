@@ -75,9 +75,7 @@ public abstract class Transport {
      * @throws IOException
      * @throws JSONException
      */
-    public Response post(String path, List<Parameter> parameters) throws IOException, JSONException {
-        return post(path, parameters, false);
-    }
+    protected abstract Response post(String path, List<Parameter> parameters) throws IOException, JSONException;
     
     public Response postJSON(String apiKey, String apiSharedSecret, 
     		List<Parameter> parameters) throws IOException, JSONException, InvalidKeyException, NoSuchAlgorithmException {
@@ -93,21 +91,8 @@ public abstract class Transport {
 		if (isOAuth) {
 			OAuthUtils.addOAuthParams(apiKey, apiSharedSecret, OAuthInterface.URL_REST, parameters);
 		}
-    	return post(OAuthInterface.PATH_REST, parameters, false);
+    	return post(OAuthInterface.PATH_REST, parameters);
     }
-    
-    /**
-     * Invoke an HTTP POST request on a remote host.
-     *
-     * @param path The request path
-     * @param parameters The parameters (List of Parameter objects)
-     * @param multipart Use multipart
-     * @return The Response object
-     * @throws IOException
-     * @throws JSONException
-     */
-    public abstract Response post(String path, List<Parameter> parameters, boolean multipart) throws IOException,
-    JSONException;
 
     /**
      * @return Returns the path.
