@@ -4,17 +4,18 @@
 package com.aetrion.flickr.prefs;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
+import com.yuyang226.flickr.oauth.OAuthUtils;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Requesting preferences for the current authenticated user.
@@ -57,27 +58,24 @@ public class PrefsInterface {
      * @see com.aetrion.flickr.Flickr#CONTENTTYPE_SCREENSHOT
      * @return The content-type
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public String getContentType() throws IOException, SAXException, FlickrException {
+    public String getContentType() throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_CONTENT_TYPE));
-        parameters.add(new Parameter("api_key", apiKey));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+//        parameters.add(new Parameter("api_key", apiKey));
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element personElement = response.getData();
-        return personElement.getAttribute("content_type");
+        JSONObject personElement = response.getData().getJSONObject("person");
+        return personElement.getString("content_type");
     }
 
     /**
@@ -85,8 +83,10 @@ public class PrefsInterface {
      *
      * @return privacy-level
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      * @see com.aetrion.flickr.Flickr#PRIVACY_LEVEL_NO_FILTER
      * @see com.aetrion.flickr.Flickr#PRIVACY_LEVEL_PUBLIC
      * @see com.aetrion.flickr.Flickr#PRIVACY_LEVEL_FRIENDS
@@ -94,31 +94,19 @@ public class PrefsInterface {
      * @see com.aetrion.flickr.Flickr#PRIVACY_LEVEL_FRIENDS_FAMILY
      * @see com.aetrion.flickr.Flickr#PRIVACY_LEVEL_PRIVATE
      */
-    public int getGeoPerms() throws IOException, SAXException, FlickrException {
+    public int getGeoPerms() throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_GEO_PERMS));
-        parameters.add(new Parameter("api_key", apiKey));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+//        parameters.add(new Parameter("api_key", apiKey));
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        int perm = -1;
-        Element personElement = response.getData();
-        String geoPerms = personElement.getAttribute("geoperms");
-        try {
-            perm = Integer.parseInt(geoPerms);
-        } catch (NumberFormatException e) {
-            throw new FlickrException("0", "Unable to parse geoPermission");
-        }
-        return perm;
+        JSONObject personElement = response.getData().getJSONObject("person");
+        return personElement.getInt("geoperms");
     }
 
     /**
@@ -126,27 +114,24 @@ public class PrefsInterface {
      *
      * @return boolean hidden or not
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public boolean getHidden() throws IOException, SAXException, FlickrException {
+    public boolean getHidden() throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_HIDDEN));
-        parameters.add(new Parameter("api_key", apiKey));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+//        parameters.add(new Parameter("api_key", apiKey));
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element personElement = response.getData();
-        return personElement.getAttribute("hidden").equals("1") ? true : false ;
+        JSONObject personElement = response.getData().getJSONObject("person");
+        return "1".equals(personElement.getString("hidden"));
     }
 
     /**
@@ -157,27 +142,24 @@ public class PrefsInterface {
      * @see com.aetrion.flickr.Flickr#SAFETYLEVEL_SAFE
      * @return The current users safety-level
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public String getSafetyLevel() throws IOException, SAXException, FlickrException {
+    public String getSafetyLevel() throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_SAFETY_LEVEL));
-        parameters.add(new Parameter("api_key", apiKey));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+//        parameters.add(new Parameter("api_key", apiKey));
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element personElement = response.getData();
-        return personElement.getAttribute("safety_level");
+        JSONObject personElement = response.getData().getJSONObject("person");
+        return personElement.getString("safety_level");
     }
 
     /**
@@ -190,27 +172,24 @@ public class PrefsInterface {
      * @see com.aetrion.flickr.Flickr#PRIVACY_LEVEL_FAMILY
      * @see com.aetrion.flickr.Flickr#PRIVACY_LEVEL_FRIENDS
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
      * @return privacyLevel
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public int getPrivacy() throws IOException, SAXException, FlickrException {
+    public int getPrivacy() throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PRIVACY));
-        parameters.add(new Parameter("api_key", apiKey));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+//        parameters.add(new Parameter("api_key", apiKey));
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element personElement = response.getData();
-        return Integer.parseInt(personElement.getAttribute("privacy"));
+        JSONObject personElement = response.getData().getJSONObject("person");
+        return personElement.getInt("privacy");
     }
 }

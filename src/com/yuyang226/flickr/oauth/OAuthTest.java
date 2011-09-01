@@ -19,12 +19,15 @@ import com.aetrion.flickr.photos.Photo;
  *
  */
 public class OAuthTest {
-
+	public static final String DATA = "\\u4e0a\\u6d77\\u98ce\\u534e\\u521d\\u4e2d";
 	/**
 	 * 
 	 */
 	public OAuthTest() {
-		// TODO Auto-generated constructor stub
+		super();
+		System.out.println(DATA);
+		String v = "'"+DATA+"'";  
+	    System.out.println(v);  
 	}
 
 	private static String readParamFromCommand(String message) throws IOException {
@@ -51,7 +54,7 @@ public class OAuthTest {
 			//oauth_token=72157626911878883-7288bed42b42e288, oauth_token_secret=9b5e1fc9a8d33997
 			OAuth auth = new OAuth();
 			User user = new User();
-			user.setId("id=8308954@N06");
+			user.setId("8308954@N06");
 			user.setUsername("Yang and Yun's Album");
 			auth.setToken(new OAuthToken("72157626911878883-7288bed42b42e288", "9b5e1fc9a8d33997"));
 			RequestContext.getRequestContext().setOAuth(auth);
@@ -73,6 +76,11 @@ public class OAuthTest {
 //			System.out.println(f.getPeopleInterface().getPublicGroups("8308954@N06"));
 //			System.out.println(f.getPeopleInterface().getUploadStatus());
 			Photo photo = f.getPeopleInterface().getPublicPhotos("8308954@N06", 0, 0).get(0);
+			//Photoset ID: 72157626738803062
+//			Photoset set = f.getPhotosetsInterface().getList("8308954@N06").getPhotosets().iterator().next();
+//			System.out.println(f.getPhotosetsInterface().getInfo(set.getId()));
+//			System.out.println(f.getPhotosetsInterface().getPhotos("72157626738803062", 0, 0));
+//			System.out.println(f.getPhotosetsInterface().getContext("5726077435", "72157626738803062"));
 			//photo ID: 6024664723
 			//System.out.println(f.getPeopleInterface().getPhotos("8308954@N06", null, 0, 0));
 			//f.getFavoritesInterface().add(photo.getId());
@@ -84,7 +92,29 @@ public class OAuthTest {
 //			System.out.println(f.getMembersInterface().getList(group.getId(), null, 0, 0));
 //			System.out.println(f.getGeoInterface().getLocation("6024664723"));
 //			System.out.println(f.getGeoInterface().getPerms("6024664723"));
-			System.out.println(f.getLicensesInterface().getInfo());
+//			System.out.println(f.getLicensesInterface().getInfo());
+//			Place place = f.getPlacesInterface().find("Shanghai").get(0);
+//			System.out.println(place.getName() + ": " + place.getPlaceId());
+			//shanghai place ID: JAJiM7JTU78IjzqC
+//			System.out.println(f.getPlacesInterface().getInfoByUrl(place.getPlaceUrl()));
+//			System.out.println(f.getPlacesInterface().getInfo(place.getPlaceId(), place.getWoeId()));
+			
+//			System.out.println(f.getPrefsInterface().getContentType());
+//			System.out.println(f.getPrefsInterface().getGeoPerms());
+//			System.out.println(f.getPrefsInterface().getHidden());
+//			System.out.println(f.getPrefsInterface().getPrivacy());
+//			System.out.println(f.getPrefsInterface().getSafetyLevel());
+			
+//			System.out.println(f.getUrlsInterface().lookupUser(f.getUrlsInterface().getUserProfile("8308954@N06")));
+//			System.out.println(f.getUrlsInterface().getUserPhotos("8308954@N06"));
+//			System.out.println(f.getUrlsInterface().lookupGroup(f.getUrlsInterface().getGroup("95014477@N00")));
+			
+			System.out.println(f.getTagsInterface().getClusters("nikon"));
+			System.out.println(f.getTagsInterface().getListPhoto("6024664723"));
+			System.out.println(f.getTagsInterface().getListUser("8308954@N06"));
+			System.out.println(f.getTagsInterface().getListUserPopular("8308954@N06"));
+			System.out.println(f.getTagsInterface().getListUserRaw(null));
+			System.out.println(f.getTagsInterface().getRelated("nikon"));
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

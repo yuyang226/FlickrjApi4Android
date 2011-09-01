@@ -33,7 +33,6 @@ import com.aetrion.flickr.prefs.PrefsInterface;
 import com.aetrion.flickr.reflection.ReflectionInterface;
 import com.aetrion.flickr.tags.TagsInterface;
 import com.aetrion.flickr.test.TestInterface;
-import com.aetrion.flickr.uploader.Uploader;
 import com.aetrion.flickr.urls.UrlsInterface;
 import com.yuyang226.flickr.oauth.OAuth;
 import com.yuyang226.flickr.oauth.OAuthInterface;
@@ -108,7 +107,6 @@ public class Flickr {
     private TestInterface testInterface;
     private TransformInterface transformInterface;
     private UploadInterface uploadInterface;
-    private Uploader uploader;
     private UrlsInterface urlsInterface;
 
     /**
@@ -547,13 +545,6 @@ public class Flickr {
             uploadInterface = new UploadInterface(apiKey, sharedSecret, transport);
         }
         return uploadInterface;
-    }
-
-    public Uploader getUploader() {
-        if (uploader == null) {
-            uploader = new Uploader(apiKey, sharedSecret);
-        }
-        return uploader;
     }
 
     public UrlsInterface getUrlsInterface() {

@@ -1,24 +1,24 @@
 package com.aetrion.flickr.places;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
 import com.aetrion.flickr.photos.SearchParameters;
 import com.aetrion.flickr.tags.Tag;
 import com.aetrion.flickr.util.StringUtilities;
-import com.aetrion.flickr.util.XMLUtilities;
+import com.yuyang226.flickr.oauth.OAuthUtils;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Lookup Flickr Places.<p>
@@ -139,12 +139,11 @@ public class PlacesInterface {
      * @return PlacesList
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
      */
     public PlacesList find(String query)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        PlacesList placesList = new PlacesList();
         parameters.add(new Parameter("method", METHOD_FIND));
         parameters.add(new Parameter("api_key", apiKey));
 
@@ -154,17 +153,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getData();
-        NodeList placesNodes = placesElement.getElementsByTagName("place");
-        placesList.setPage("1");
-        placesList.setPages("1");
-        placesList.setPerPage("" + placesNodes.getLength());
-        placesList.setTotal("" + placesNodes.getLength());
-        for (int i = 0; i < placesNodes.getLength(); i++) {
-            Element placeElement = (Element) placesNodes.item(i);
-            placesList.add(parsePlace(placeElement));
-        }
-        return placesList;
+        return parsePlacesList(response.getData());
     }
 
     /**
@@ -221,44 +210,31 @@ public class PlacesInterface {
      * @return A PlacesList
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public PlacesList findByLatLon(
         double latitude,
         double longitude,
         int accuracy
-    ) throws FlickrException, IOException, SAXException {
+    ) throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         PlacesList placesList = new PlacesList();
         parameters.add(new Parameter("method", METHOD_FIND_BY_LATLON));
-        parameters.add(new Parameter("api_key", apiKey));
+//        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("lat", "" + latitude));
         parameters.add(new Parameter("lon", "" + longitude));
         parameters.add(new Parameter("accuracy", "" + accuracy));
 
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getData();
-        NodeList placesNodes = placesElement.getElementsByTagName("place");
-        placesList.setPage("1");
-        placesList.setPages("1");
-        placesList.setPerPage("" + placesNodes.getLength());
-        placesList.setTotal("" + placesNodes.getLength());
-        for (int i = 0; i < placesNodes.getLength(); i++) {
-            Element placeElement = (Element) placesNodes.item(i);
-            placesList.add(parsePlace(placeElement));
-        }
-        return placesList;
+        return parsePlacesList(response.getData());
     }
 
     /**
@@ -272,12 +248,11 @@ public class PlacesInterface {
      * @return List of Places
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
      */
     public PlacesList getChildrenWithPhotosPublic(String placeId, String woeId)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        PlacesList placesList = new PlacesList();
         parameters.add(new Parameter("method", METHOD_GET_CHILDREN_WITH_PHOTOS_PUBLIC));
         parameters.add(new Parameter("api_key", apiKey));
 
@@ -292,17 +267,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getData();
-        NodeList placesNodes = placesElement.getElementsByTagName("place");
-        placesList.setPage("1");
-        placesList.setPages("1");
-        placesList.setPerPage("" + placesNodes.getLength());
-        placesList.setTotal("" + placesNodes.getLength());
-        for (int i = 0; i < placesNodes.getLength(); i++) {
-            Element placeElement = (Element) placesNodes.item(i);
-            placesList.add(parsePlace(placeElement));
-        }
-        return placesList;
+        return parsePlacesList(response.getData());
     }
 
     /**
@@ -315,10 +280,10 @@ public class PlacesInterface {
      * @return A Location
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
      */
     public Location getInfo(String placeId, String woeId)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         Location loc = new Location();
         parameters.add(new Parameter("method", METHOD_GET_INFO));
@@ -335,7 +300,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element locationElement = response.getData();
+        JSONObject locationElement = response.getData().getJSONObject("place");
         return parseLocation(locationElement);
     }
 
@@ -348,12 +313,11 @@ public class PlacesInterface {
      * @return A Location
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
      */
     public Location getInfoByUrl(String url)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        Location loc = new Location();
         parameters.add(new Parameter("method", METHOD_GET_INFO_BY_URL));
         parameters.add(new Parameter("api_key", apiKey));
 
@@ -363,7 +327,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element locationElement = response.getData();
+        JSONObject locationElement = response.getData().getJSONObject("place");
         return parseLocation(locationElement);
     }
 
@@ -375,12 +339,11 @@ public class PlacesInterface {
      * @return A list of placetypes
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
      */
     public List<PlaceType> getPlaceTypes()
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        PlacesList placesList = new PlacesList();
         parameters.add(new Parameter("method", METHOD_GET_PLACETYPES));
         parameters.add(new Parameter("api_key", apiKey));
 
@@ -389,13 +352,13 @@ public class PlacesInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
         List<PlaceType> placeTypeList = new ArrayList<PlaceType>();
-        Element placeTypeElement = response.getData();
-        NodeList placeTypeNodes = placeTypeElement.getElementsByTagName("place_type");
-        for (int i = 0; i < placeTypeNodes.getLength(); i++) {
-            placeTypeElement = (Element) placeTypeNodes.item(i);
+        JSONObject placeTypeElement = response.getData().getJSONObject("place_types");
+        JSONArray placeTypeNodes = placeTypeElement.optJSONArray("place_type");
+        for (int i = 0; placeTypeNodes != null && i < placeTypeNodes.length(); i++) {
+            placeTypeElement = placeTypeNodes.getJSONObject(i);
             PlaceType placeType = new PlaceType();
-            placeType.setPlaceTypeId(placeTypeElement.getAttribute("id"));
-            placeType.setPlaceTypeName(XMLUtilities.getValue(placeTypeElement));
+            placeType.setPlaceTypeId(placeTypeElement.getString("id"));
+            placeType.setPlaceTypeName(placeTypeElement.getString("_content"));
             placeTypeList.add(placeType);
         }
         return placeTypeList;
@@ -415,9 +378,10 @@ public class PlacesInterface {
      * @return A list of shapes
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
      */
-    public List<Object> getShapeHistory(String placeId, String woeId) throws FlickrException, IOException, SAXException {
+    public List<Object> getShapeHistory(String placeId, String woeId) 
+    throws FlickrException, IOException, JSONException {
         List<Object> shapeList = new ArrayList<Object>();
         List<Parameter> parameters = new ArrayList<Parameter>();
         Location loc = new Location();
@@ -435,7 +399,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element shapeElement = response.getData();
+        JSONObject shapeElement = response.getData();
         return shapeList;
     }
 
@@ -451,16 +415,15 @@ public class PlacesInterface {
      * @return PlacesList
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
      */
     public PlacesList getTopPlacesList(
         int placeType,
         Date date,
         String placeId,
         String woeId
-    ) throws FlickrException, IOException, SAXException {
+    ) throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        PlacesList placesList = new PlacesList();
         parameters.add(new Parameter("method", METHOD_GET_TOP_PLACES_LIST));
         parameters.add(new Parameter("api_key", apiKey));
 
@@ -479,17 +442,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getData();
-        NodeList placesNodes = placesElement.getElementsByTagName("place");
-        placesList.setPage("1");
-        placesList.setPages("1");
-        placesList.setPerPage("" + placesNodes.getLength());
-        placesList.setTotal("" + placesNodes.getLength());
-        for (int i = 0; i < placesNodes.getLength(); i++) {
-            Element placeElement = (Element) placesNodes.item(i);
-            placesList.add(parsePlace(placeElement));
-        }
-        return placesList;
+        return parsePlacesList(response.getData());
     }
 
     /**
@@ -512,12 +465,12 @@ public class PlacesInterface {
      * @return A PlacesList
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
      */
     public PlacesList placesForBoundingBox(
         int placeType,
         String bbox
-    ) throws FlickrException, IOException, SAXException {
+    ) throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         PlacesList placesList = new PlacesList();
         parameters.add(new Parameter("method", METHOD_PLACES_FOR_BOUNDINGBOX));
@@ -530,17 +483,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getData();
-        NodeList placesNodes = placesElement.getElementsByTagName("place");
-        placesList.setPage("1");
-        placesList.setPages("1");
-        placesList.setPerPage("" + placesNodes.getLength());
-        placesList.setTotal("" + placesNodes.getLength());
-        for (int i = 0; i < placesNodes.getLength(); i++) {
-            Element placeElement = (Element) placesNodes.item(i);
-            placesList.add(parsePlace(placeElement));
-        }
-        return placesList;
+        return parsePlacesList(response.getData());
     }
 
     /**
@@ -554,7 +497,9 @@ public class PlacesInterface {
      * @return A PlacesList
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public PlacesList placesForContacts(
         int placeType,
@@ -562,11 +507,10 @@ public class PlacesInterface {
         String woeId,
         String threshold,
         String contacts
-    ) throws FlickrException, IOException, SAXException {
+    ) throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        PlacesList placesList = new PlacesList();
         parameters.add(new Parameter("method", METHOD_PLACES_FOR_CONTACTS));
-        parameters.add(new Parameter("api_key", apiKey));
+//        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("place_type", intPlaceTypeToString(placeType)));
         if (placeId != null) {
@@ -582,27 +526,12 @@ public class PlacesInterface {
             parameters.add(new Parameter("contacts", contacts));
         }
 
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        OAuthUtils.addOAuthToken(parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getData();
-        NodeList placesNodes = placesElement.getElementsByTagName("place");
-        placesList.setPage("1");
-        placesList.setPages("1");
-        placesList.setPerPage("" + placesNodes.getLength());
-        placesList.setTotal("" + placesNodes.getLength());
-        for (int i = 0; i < placesNodes.getLength(); i++) {
-            Element placeElement = (Element) placesNodes.item(i);
-            placesList.add(parsePlace(placeElement));
-        }
-        return placesList;
+        return parsePlacesList(response.getData());
     }
 
     /**
@@ -626,7 +555,7 @@ public class PlacesInterface {
      * @return A PlacesList
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
      */
     public PlacesList placesForTags(
         int placeTypeId,
@@ -639,9 +568,8 @@ public class PlacesInterface {
         String machineTagMode,
         Date minUploadDate, Date maxUploadDate,
         Date minTakenDate, Date maxTakenDate
-    ) throws FlickrException, IOException, SAXException {
+    ) throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        PlacesList placesList = new PlacesList();
         parameters.add(new Parameter("method", METHOD_PLACES_FOR_TAGS));
         parameters.add(new Parameter("api_key", apiKey));
 
@@ -684,17 +612,7 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getData();
-        NodeList placesNodes = placesElement.getElementsByTagName("place");
-        placesList.setPage("1");
-        placesList.setPages("1");
-        placesList.setPerPage("" + placesNodes.getLength());
-        placesList.setTotal("" + placesNodes.getLength());
-        for (int i = 0; i < placesNodes.getLength(); i++) {
-            Element placeElement = (Element) placesNodes.item(i);
-            placesList.add(parsePlace(placeElement));
-        }
-        return placesList;
+        return parsePlacesList(response.getData());
     }
 
     /**
@@ -711,7 +629,9 @@ public class PlacesInterface {
      * @return A PlacesList
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public PlacesList placesForUser(
         int placeType,
@@ -720,11 +640,11 @@ public class PlacesInterface {
         String threshold,
         Date minUploadDate, Date maxUploadDate,
         Date minTakenDate, Date maxTakenDate
-    ) throws FlickrException, IOException, SAXException {
+    ) throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        PlacesList placesList = new PlacesList();
+        
         parameters.add(new Parameter("method", METHOD_PLACES_FOR_USER));
-        parameters.add(new Parameter("api_key", apiKey));
+//        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("place_type", intPlaceTypeToString(placeType)));
         if (placeId != null) {
@@ -749,24 +669,24 @@ public class PlacesInterface {
             parameters.add(new Parameter("max_taken_date", ((DateFormat) SearchParameters.MYSQL_DATE_FORMATS.get()).format(maxTakenDate)));
         }
 
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        OAuthUtils.addOAuthToken(parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element placesElement = response.getData();
-        NodeList placesNodes = placesElement.getElementsByTagName("place");
+        return parsePlacesList(response.getData());
+    }
+    
+    private PlacesList parsePlacesList(JSONObject data) throws JSONException {
+    	PlacesList placesList = new PlacesList();
+    	JSONObject placesElement = data.getJSONObject("places");
+        JSONArray placesNodes = placesElement.optJSONArray("place");
         placesList.setPage("1");
         placesList.setPages("1");
-        placesList.setPerPage("" + placesNodes.getLength());
-        placesList.setTotal("" + placesNodes.getLength());
-        for (int i = 0; i < placesNodes.getLength(); i++) {
-            Element placeElement = (Element) placesNodes.item(i);
+        placesList.setPerPage(placesNodes != null ? placesNodes.length() : 0);
+        placesList.setTotal(placesList.getPerPage());
+        for (int i = 0; placesNodes != null && i < placesNodes.length(); i++) {
+        	JSONObject placeElement = placesNodes.getJSONObject(i);
             placesList.add(parsePlace(placeElement));
         }
         return placesList;
@@ -780,28 +700,25 @@ public class PlacesInterface {
      * @return A Location
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public Location resolvePlaceId(String placeId)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_RESOLVE_PLACE_ID));
-        parameters.add(new Parameter("api_key", apiKey));
+//        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("place_id", placeId));
 
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element locationElement = response.getData();
+        JSONObject locationElement = response.getData().getJSONObject("place");
         return parseLocation(locationElement);
     }
 
@@ -816,28 +733,25 @@ public class PlacesInterface {
      * @return A Location
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
     public Location resolvePlaceURL(String flickrPlacesUrl)
-      throws FlickrException, IOException, SAXException {
+      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_RESOLVE_PLACE_URL));
-        parameters.add(new Parameter("api_key", apiKey));
+//        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("url", flickrPlacesUrl));
 
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element locationElement = response.getData();
+        JSONObject locationElement = response.getData().getJSONObject("place");
         return parseLocation(locationElement);
     }
 
@@ -856,15 +770,15 @@ public class PlacesInterface {
      * @return A list of Tags
      * @throws FlickrException
      * @throws IOException
-     * @throws SAXException
+     * @throws JSONException 
      */
     public List<Tag> tagsForPlace(
         String woeId,
         String placeId,
         Date minUploadDate, Date maxUploadDate,
         Date minTakenDate, Date maxTakenDate
-    ) throws FlickrException, IOException, SAXException {
-        List<Parameter> parameters = new ArrayList();
+    ) throws FlickrException, IOException, JSONException {
+        List<Parameter> parameters = new ArrayList<Parameter>();
         List<Tag> tagsList = new ArrayList<Tag>();
         parameters.add(new Parameter("method", METHOD_TAGS_FOR_PLACE));
         parameters.add(new Parameter("api_key", apiKey));
@@ -892,32 +806,32 @@ public class PlacesInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element tagsElement = response.getData();
-        NodeList tagsNodes = tagsElement.getElementsByTagName("tag");
-        for (int i = 0; i < tagsNodes.getLength(); i++) {
-            Element tagElement = (Element) tagsNodes.item(i);
+        JSONObject tagsElement = response.getData().getJSONObject("tags");
+        JSONArray tagsNodes = tagsElement.optJSONArray("tag");
+        for (int i = 0; tagsNodes != null && i < tagsNodes.length(); i++) {
+            JSONObject tagElement = tagsNodes.getJSONObject(i);
             Tag tag = new Tag();
-            tag.setCount(tagElement.getAttribute("count"));
-            tag.setValue(XMLUtilities.getValue(tagElement));
+            tag.setCount(tagElement.getString("count"));
+            tag.setValue(tagElement.getString("_content"));
             tagsList.add(tag);
         }
         return tagsList;
     }
 
-    private Location parseLocation(Element locationElement) {
+    private Location parseLocation(JSONObject locationElement) throws JSONException {
         Location location = new Location();
-        Element localityElement = (Element) locationElement.getElementsByTagName("locality").item(0);
-        Element countyElement = (Element) locationElement.getElementsByTagName("county").item(0);
-        Element regionElement = (Element) locationElement.getElementsByTagName("region").item(0);
-        Element countryElement = (Element) locationElement.getElementsByTagName("country").item(0);
+        JSONObject localityElement = locationElement.getJSONObject("locality");
+        JSONObject countyElement = locationElement.getJSONObject("county");
+        JSONObject regionElement = locationElement.getJSONObject("region");
+        JSONObject countryElement = locationElement.getJSONObject("country");
 
-        location.setPlaceId(locationElement.getAttribute("place_id"));
-        //location.setName(locationElement.getAttribute("name"));
-        location.setPlaceUrl(locationElement.getAttribute("place_url"));
-        location.setWoeId(locationElement.getAttribute("woeid"));
-        location.setLatitude(locationElement.getAttribute("latitude"));
-        location.setLongitude(locationElement.getAttribute("longitude"));
-        location.setPlaceType(stringPlaceTypeToInt(locationElement.getAttribute("place_type")));
+        location.setPlaceId(locationElement.getString("place_id"));
+        //location.setName(locationElement.getString("name"));
+        location.setPlaceUrl(locationElement.getString("place_url"));
+        location.setWoeId(locationElement.getString("woeid"));
+        location.setLatitude(locationElement.getString("latitude"));
+        location.setLongitude(locationElement.getString("longitude"));
+        location.setPlaceType(stringPlaceTypeToInt(locationElement.getString("place_type")));
 
         location.setLocality(
             parseLocationPlace(localityElement, Place.TYPE_LOCALITY)
@@ -934,31 +848,31 @@ public class PlacesInterface {
         return location;
     }
 
-    private Place parseLocationPlace(Element element, int type) {
+    private Place parseLocationPlace(JSONObject element, int type) throws JSONException {
         Place place = new Place();
-        place.setName(XMLUtilities.getValue(element));
-        place.setPlaceId(element.getAttribute("place_id"));
-        place.setPlaceUrl(element.getAttribute("place_url"));
-        place.setWoeId(element.getAttribute("woeid"));
-        place.setLatitude(element.getAttribute("latitude"));
-        place.setLongitude(element.getAttribute("longitude"));
+        place.setName(element.getString("_content"));
+        place.setPlaceId(element.getString("place_id"));
+        place.setPlaceUrl(element.getString("place_url"));
+        place.setWoeId(element.getString("woeid"));
+        place.setLatitude(element.getString("latitude"));
+        place.setLongitude(element.getString("longitude"));
         place.setPlaceType(type);
         return place;
     }
 
-    private Place parsePlace(Element placeElement) {
+    private Place parsePlace(JSONObject placeElement) throws JSONException {
         Place place = new Place();
-        place.setPlaceId(placeElement.getAttribute("place_id"));
-        place.setPlaceUrl(placeElement.getAttribute("place_url"));
-        place.setWoeId(placeElement.getAttribute("woeid"));
-        place.setLatitude(placeElement.getAttribute("latitude"));
-        place.setLongitude(placeElement.getAttribute("longitude"));
-        place.setPhotoCount(placeElement.getAttribute("photo_count"));
-        String typeString = placeElement.getAttribute("place_type");
+        place.setPlaceId(placeElement.getString("place_id"));
+        place.setPlaceUrl(placeElement.getString("place_url"));
+        place.setWoeId(placeElement.getString("woeid"));
+        place.setLatitude(placeElement.getString("latitude"));
+        place.setLongitude(placeElement.getString("longitude"));
+        place.setPhotoCount(placeElement.optString("photo_count"));
+        String typeString = placeElement.optString("place_type");
         // Now the place-Id is directly available
-        place.setPlaceType(placeElement.getAttribute("place_type_id"));
+        place.setPlaceType(placeElement.optString("place_type_id"));
         //place.setPlaceType(stringPlaceTypeToInt(typeString));
-        place.setName(XMLUtilities.getValue(placeElement));
+        place.setName(placeElement.getString("_content"));
         return place;
     }
 

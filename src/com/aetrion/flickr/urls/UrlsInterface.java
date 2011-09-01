@@ -7,15 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-import org.xml.sax.SAXException;
-
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
 import com.aetrion.flickr.groups.Group;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Interface for testing Flickr connectivity.
@@ -56,23 +54,23 @@ public class UrlsInterface {
      * @param groupId The group ID
      * @return The group URL
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
-    public String getGroup(String groupId) throws IOException, SAXException, FlickrException {
+    public String getGroup(String groupId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_GROUP));
         parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("group_id", groupId));
 
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element payload = response.getData();
-        return payload.getAttribute("url");
+        JSONObject payload = response.getData().getJSONObject("group");
+        return payload.getString("url");
     }
 
     /**
@@ -81,23 +79,23 @@ public class UrlsInterface {
      * @param userId The user ID
      * @return The user photo URL
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
-    public String getUserPhotos(String userId) throws IOException, SAXException, FlickrException {
+    public String getUserPhotos(String userId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_USER_PHOTOS));
         parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("user_id", userId));
 
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element payload = response.getData();
-        return payload.getAttribute("url");
+        JSONObject payload = response.getData().getJSONObject("user");
+        return payload.getString("url");
     }
 
     /**
@@ -106,23 +104,23 @@ public class UrlsInterface {
      * @param userId The user ID
      * @return The URL
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
-    public String getUserProfile(String userId) throws IOException, SAXException, FlickrException {
+    public String getUserProfile(String userId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_USER_PROFILE));
         parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("user_id", userId));
 
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element payload = response.getData();
-        return payload.getAttribute("url");
+        JSONObject payload = response.getData().getJSONObject("user");
+        return payload.getString("url");
     }
 
     /**
@@ -131,26 +129,26 @@ public class UrlsInterface {
      * @param url The url
      * @return The group
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
-    public Group lookupGroup(String url) throws IOException, SAXException, FlickrException {
+    public Group lookupGroup(String url) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_LOOKUP_GROUP));
         parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("url", url));
 
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
         Group group = new Group();
-        Element payload = response.getData();
-        Element groupnameElement = (Element) payload.getElementsByTagName("groupname").item(0);
-        group.setId(payload.getAttribute("id"));
-        group.setName(((Text) groupnameElement.getFirstChild()).getData());
+        JSONObject payload = response.getData().getJSONObject("group");
+        JSONObject groupnameElement = payload.getJSONObject("groupname");
+        group.setId(payload.getString("id"));
+        group.setName(groupnameElement.getString("_content"));
         return group;
     }
 
@@ -160,25 +158,25 @@ public class UrlsInterface {
      * @param url The user profile URL
      * @return The username
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
     public String lookupUser(String url)
-      throws IOException, SAXException, FlickrException {
+      throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_LOOKUP_USER));
         parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("url", url));
 
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element payload = response.getData();
-        Element groupnameElement = (Element) payload.getElementsByTagName("username").item(0);
-        return ((Text) groupnameElement.getFirstChild()).getData();
+        JSONObject payload = response.getData().getJSONObject("user");
+        JSONObject groupnameElement = payload.getJSONObject("username");
+        return groupnameElement.getString("_content");
     }
 
 }

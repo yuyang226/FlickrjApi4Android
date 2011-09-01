@@ -164,13 +164,14 @@ public class REST extends Transport {
 		BufferedReader rd = null;
 		try {
 			in = getInputStream(path, parameters);
-			rd = new BufferedReader(new InputStreamReader(in));
+			rd = new BufferedReader(new InputStreamReader(in, OAuthUtils.ENC));
 			final StringBuffer buf = new StringBuffer();
 			String line;
 			while ((line = rd.readLine()) != null) {
 				buf.append(line);
 			}
-			return URLDecoder.decode(buf.toString().trim(), OAuthUtils.ENC);
+			
+			return buf.toString();
 		} finally {
 			IOUtilities.close(in);
 			IOUtilities.close(rd);
@@ -189,7 +190,7 @@ public class REST extends Transport {
 	 */
 	public Map<String, String> getMapData(boolean getRequestMethod, String path, List<Parameter> parameters) throws IOException {
 		String data = getRequestMethod ? getLine(path, parameters) : sendPost(path, parameters);
-		return getDataAsMap(data);
+		return getDataAsMap(URLDecoder.decode(data, OAuthUtils.ENC));
 	}
 	
 	public Map<String, String> getDataAsMap(String data) {

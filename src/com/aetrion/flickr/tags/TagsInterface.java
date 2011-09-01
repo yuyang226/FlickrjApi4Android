@@ -4,14 +4,11 @@
 package com.aetrion.flickr.tags;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
-import org.xml.sax.SAXException;
 
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
@@ -20,7 +17,10 @@ import com.aetrion.flickr.Transport;
 import com.aetrion.flickr.photos.Photo;
 import com.aetrion.flickr.photos.PhotoList;
 import com.aetrion.flickr.photos.PhotoUtils;
-import com.aetrion.flickr.util.XMLUtilities;
+import com.yuyang226.flickr.oauth.OAuthUtils;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Interface for working with Flickr tags.
@@ -70,9 +70,10 @@ public class TagsInterface {
      * @since 1.2
      * @param searchTag
      * @return a list of clusters
+     * @throws JSONException 
      */
     public ClusterList getClusters(String searchTag)
-      throws IOException, SAXException, FlickrException {
+      throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_CLUSTERS));
         parameters.add(new Parameter("api_key", apiKey));
@@ -84,17 +85,15 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
         ClusterList clusters = new ClusterList();
-        Element clustersElement = response.getData();
-        NodeList clusterElements = clustersElement.getElementsByTagName("cluster");
-        for (int i = 0; i < clusterElements.getLength(); i++) {
+        JSONObject clustersElement = response.getData().getJSONObject("clusters");
+        JSONArray clusterElements = clustersElement.optJSONArray("cluster");
+        for (int i = 0; clusterElements != null && i < clusterElements.length(); i++) {
             Cluster cluster = new Cluster();
-            NodeList tagElements = ((Element) clusterElements.item(i))
-              .getElementsByTagName("tag");
-            for (int j = 0; j < tagElements.getLength(); j++) {
+            JSONObject clusterElement = clusterElements.getJSONObject(i);
+            JSONArray tagElements = clusterElement.optJSONArray("tag");
+            for (int j = 0; tagElements != null && j < tagElements.length(); j++) {
                 Tag tag = new Tag();
-                tag.setValue(
-                    ((Text) tagElements.item(j).getFirstChild()).getData()
-                );
+                tag.setValue(tagElements.getJSONObject(j).getString("_content"));
                 cluster.addTag(tag);
             }
             clusters.addCluster(cluster);
@@ -111,11 +110,11 @@ public class TagsInterface {
      * @param clusterId
      * @return PhotoList
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
     public PhotoList getClusterPhotos(String tag, String clusterId)
-      throws IOException, SAXException, FlickrException {
+      throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_CLUSTER_PHOTOS));
         parameters.add(new Parameter("api_key", apiKey));
@@ -138,8 +137,9 @@ public class TagsInterface {
      * @param period valid values are 'day' or 'week'
      * @param count maximum is 200
      * @return The collection of HotlistTag objects
+     * @throws JSONException 
      */
-    public Collection<HotlistTag> getHotList(String period, int count) throws IOException, SAXException, FlickrException {
+    public Collection<HotlistTag> getHotList(String period, int count) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_HOT_LIST));
         parameters.add(new Parameter("api_key", apiKey));
@@ -152,15 +152,15 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element tagsElement = response.getData();
+        JSONObject tagsElement = response.getData().getJSONObject("tags");
 
         List<HotlistTag> tags = new ArrayList<HotlistTag>();
-        NodeList tagElements = tagsElement.getElementsByTagName("tag");
-        for (int i = 0; i < tagElements.getLength(); i++) {
-            Element tagElement = (Element) tagElements.item(i);
+        JSONArray tagElements = tagsElement.optJSONArray("tag");
+        for (int i = 0; tagElements != null && i < tagElements.length(); i++) {
+        	JSONObject tagElement = tagElements.getJSONObject(i);
             HotlistTag tag = new HotlistTag();
-            tag.setScore(tagElement.getAttribute("score"));
-            tag.setValue(((Text) tagElement.getFirstChild()).getData());
+            tag.setScore(tagElement.getString("score"));
+            tag.setValue(tagElement.getString("_content"));
             tags.add(tag);
         }
         return tags;
@@ -173,8 +173,9 @@ public class TagsInterface {
      *
      * @param photoId The photo ID
      * @return The collection of Tag objects
+     * @throws JSONException 
      */
-    public Photo getListPhoto(String photoId) throws IOException, SAXException, FlickrException {
+    public Photo getListPhoto(String photoId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST_PHOTO));
         parameters.add(new Parameter("api_key", apiKey));
@@ -186,21 +187,21 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element photoElement = response.getData();
+        JSONObject photoElement = response.getData().getJSONObject("photo");
         Photo photo = new Photo();
-        photo.setId(photoElement.getAttribute("id"));
+        photo.setId(photoElement.getString("id"));
 
         List<Tag> tags = new ArrayList<Tag>();
-        Element tagsElement = (Element) photoElement.getElementsByTagName("tags").item(0);
-        NodeList tagElements = tagsElement.getElementsByTagName("tag");
-        for (int i = 0; i < tagElements.getLength(); i++) {
-            Element tagElement = (Element) tagElements.item(i);
+        JSONObject tagsElement = photoElement.getJSONObject("tags");
+        JSONArray tagElements = tagsElement.optJSONArray("tag");
+        for (int i = 0; tagElements != null && i < tagElements.length(); i++) {
+        	JSONObject tagElement = tagElements.getJSONObject(i);
             Tag tag = new Tag();
-            tag.setId(tagElement.getAttribute("id"));
-            tag.setAuthor(tagElement.getAttribute("author"));
-            tag.setAuthorName(tagElement.getAttribute("authorname"));
-            tag.setRaw(tagElement.getAttribute("raw"));
-            tag.setValue(((Text) tagElement.getFirstChild()).getData());
+            tag.setId(tagElement.getString("id"));
+            tag.setAuthor(tagElement.getString("author"));
+            tag.setAuthorName(tagElement.getString("authorname"));
+            tag.setRaw(tagElement.getString("raw"));
+            tag.setValue(tagElement.getString("_content"));
             tags.add(tag);
         }
         photo.setTags(tags);
@@ -215,10 +216,10 @@ public class TagsInterface {
      * @param userId The User ID
      * @return The User object
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
-    public Collection<Tag> getListUser(String userId) throws IOException, SAXException, FlickrException {
+    public Collection<Tag> getListUser(String userId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST_USER));
         parameters.add(new Parameter("api_key", apiKey));
@@ -230,15 +231,16 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element whoElement = response.getData();
+        JSONObject whoElement = response.getData().getJSONObject("who");
 
         List<Tag> tags = new ArrayList<Tag>();
-        Element tagsElement = (Element) whoElement.getElementsByTagName("tags").item(0);
-        NodeList tagElements = tagsElement.getElementsByTagName("tag");
-        for (int i = 0; i < tagElements.getLength(); i++) {
-            Element tagElement = (Element) tagElements.item(i);
+        JSONObject tagsElement = whoElement.getJSONObject("tags");
+        JSONArray tagElements = tagsElement.optJSONArray("tag");
+        for (int i = 0; tagElements != null && i < tagElements.length(); i++) {
+        	JSONObject tagElement = tagElements.getJSONObject(i);
             Tag tag = new Tag();
-            tag.setValue(((Text) tagElement.getFirstChild()).getData());
+            tag.setCount(tagElement.optInt("count"));
+            tag.setValue(tagElement.getString("_content"));
             tags.add(tag);
         }
         return tags;
@@ -252,10 +254,10 @@ public class TagsInterface {
      * @param userId The user ID
      * @return The collection of Tag objects
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
-    public Collection<Tag> getListUserPopular(String userId) throws IOException, SAXException, FlickrException {
+    public Collection<Tag> getListUserPopular(String userId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST_USER_POPULAR));
         parameters.add(new Parameter("api_key", apiKey));
@@ -267,16 +269,16 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element whoElement = response.getData();
+        JSONObject whoElement = response.getData().getJSONObject("who");
 
         List<Tag> tags = new ArrayList<Tag>();
-        Element tagsElement = (Element) whoElement.getElementsByTagName("tags").item(0);
-        NodeList tagElements = tagsElement.getElementsByTagName("tag");
-        for (int i = 0; i < tagElements.getLength(); i++) {
-            Element tagElement = (Element) tagElements.item(i);
+        JSONObject tagsElement = whoElement.getJSONObject("tags");
+        JSONArray tagElements = tagsElement.optJSONArray("tag");
+        for (int i = 0; tagElements != null && i < tagElements.length(); i++) {
+        	JSONObject tagElement = tagElements.getJSONObject(i);
             Tag tag = new Tag();
-            tag.setCount(tagElement.getAttribute("count"));
-            tag.setValue(((Text) tagElement.getFirstChild()).getData());
+            tag.setCount(tagElement.getString("count"));
+            tag.setValue(tagElement.getString("_content"));
             tags.add(tag);
         }
         return tags;
@@ -290,36 +292,39 @@ public class TagsInterface {
      * @param tagVal a tag to search for, or null
      * @return The collection of Tag objects
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public Collection<TagRaw> getListUserRaw(String tagVal) throws IOException, SAXException, FlickrException {
+    public Collection<TagRaw> getListUserRaw(String tagVal) throws IOException, FlickrException, JSONException, InvalidKeyException, NoSuchAlgorithmException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST_USER_RAW));
-        parameters.add(new Parameter("api_key", apiKey));
+//        parameters.add(new Parameter("api_key", apiKey));
 
         if (tagVal != null) {
             parameters.add(new Parameter("tag", tagVal));
         }
-
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        OAuthUtils.addOAuthToken(parameters);
+        
+        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element whoElement = response.getData();
+        JSONObject whoElement = response.getData().getJSONObject("who");
 
         List<TagRaw> tags = new ArrayList<TagRaw>();
-        Element tagsElement = (Element) whoElement.getElementsByTagName("tags").item(0);
-        NodeList tagElements = tagsElement.getElementsByTagName("tag");
-        for (int i = 0; i < tagElements.getLength(); i++) {
-            Element tagElement = (Element) tagElements.item(i);
+        JSONObject tagsElement = whoElement.getJSONObject("tags");
+        JSONArray tagElements = tagsElement.optJSONArray("tag");
+        for (int i = 0; tagElements != null && i < tagElements.length(); i++) {
+        	JSONObject tagElement = tagElements.getJSONObject(i);
             TagRaw tag = new TagRaw();
-            tag.setClean(tagElement.getAttribute("clean"));
-            NodeList rawElements = tagElement.getElementsByTagName("raw");
-            for (int j = 0; j < rawElements.getLength(); j++) {
-                Element rawElement = (Element) rawElements.item(j);
-                tag.addRaw(((Text) rawElement.getFirstChild()).getData());
+            tag.setClean(tagElement.getString("clean"));
+            JSONArray rawElements = tagElement.optJSONArray("raw");
+            for (int j = 0; rawElements != null && j < rawElements.length(); j++) {
+            	JSONObject rawElement = rawElements.getJSONObject(j);
+                tag.addRaw(rawElement.getString("_content"));
             }
             tags.add(tag);
         }
@@ -334,10 +339,10 @@ public class TagsInterface {
      * @param tag The source tag
      * @return A RelatedTagsList object
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
-    public RelatedTagsList getRelated(String tag) throws IOException, SAXException, FlickrException {
+    public RelatedTagsList getRelated(String tag) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_RELATED));
         parameters.add(new Parameter("api_key", apiKey));
@@ -349,15 +354,14 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element tagsElement = response.getData();
-
+        JSONObject tagsElement = response.getData().getJSONObject("tags");
         RelatedTagsList tags = new RelatedTagsList();
-        tags.setSource(tagsElement.getAttribute("source"));
-        NodeList tagElements = tagsElement.getElementsByTagName("tag");
-        for (int i = 0; i < tagElements.getLength(); i++) {
-            Element tagElement = (Element) tagElements.item(i);
+        tags.setSource(tagsElement.getString("source"));
+        JSONArray tagElements = tagsElement.optJSONArray("tag");
+        for (int i = 0; tagElements != null && i < tagElements.length(); i++) {
+        	JSONObject tagElement = tagElements.getJSONObject(i);
             Tag t = new Tag();
-            t.setValue(XMLUtilities.getValue(tagElement));
+            t.setValue(tagElement.getString("_content"));
             tags.add(t);
         }
         return tags;
