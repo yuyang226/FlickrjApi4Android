@@ -8,16 +8,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
-import com.aetrion.flickr.util.XMLUtilities;
+import com.aetrion.flickr.util.JSONUtils;
+import com.yuyang226.flickr.org.json.JSONArray;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Interface for testing the complete implementation of all Flickr-methods.<p>
@@ -57,121 +55,51 @@ public class ReflectionInterface {
      * @param methodName The method name
      * @return The Method object
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
-    public Method getMethodInfo(String methodName) throws IOException, SAXException, FlickrException {
+    public Method getMethodInfo(String methodName) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_METHOD_INFO));
         parameters.add(new Parameter("api_key", apiKey));
-
         parameters.add(new Parameter("method_name", methodName));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
-
         Response response = transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element methodElement = response.getData();
+        JSONObject methodElement = response.getData().getJSONObject("method");
         Method method = new Method();
-        method.setName(methodElement.getAttribute("name"));
-        method.setNeedsLogin("1".equals(methodElement.getAttribute("needslogin")));
-        method.setNeedsSigning("1".equals(methodElement.getAttribute("needssigning")));
-        String requiredPermsStr = methodElement.getAttribute("requiredperms");
-        if (requiredPermsStr != null && requiredPermsStr.length() > 0) {
-            try {
-                int perms = Integer.parseInt(requiredPermsStr);
-                method.setRequiredPerms(perms);
-            } catch (NumberFormatException e) {
-                // what shall we do?
-                e.printStackTrace();
-            }
-        }
-        method.setDescription(XMLUtilities.getChildValue(methodElement, "description"));
-        method.setResponse(XMLUtilities.getChildValue(methodElement, "response"));
-        method.setExplanation(XMLUtilities.getChildValue(methodElement, "explanation"));
+        method.setName(methodElement.getString("name"));
+        method.setNeedsLogin("1".equals(methodElement.getString("needslogin")));
+        method.setNeedsSigning("1".equals(methodElement.getString("needssigning")));
+        method.setRequiredPerms(methodElement.optInt("requiredperms"));
+        method.setDescription(JSONUtils.getChildValue(methodElement, "description"));
+        method.setResponse(JSONUtils.getChildValue(methodElement, "response"));
+        method.setExplanation(JSONUtils.getChildValue(methodElement, "explanation"));
 
         List<Argument> arguments = new ArrayList<Argument>();
-        Element argumentsElement = XMLUtilities.getChild(methodElement, "arguments");
-        // tolerant fix for incorrect nesting of the <arguments> element
-        // as observed in current flickr responses of this method
-        //
-        // specified as 
-        // <rsp>
-        //	<method>
-        //   <arguments>
-        //   <errors>
-        //  <method>
-        // </rsp>
-        //
-        // observed as
-        // <rsp>
-        //  <method>
-        //  <arguments>
-        //  <errors>
-        // </rsp>
-        //
-        if (argumentsElement == null) {
-        	//System.err.println("getMethodInfo: Using workaround for arguments array");
-            Element parent = (Element)methodElement.getParentNode();
-            Element child = XMLUtilities.getChild(parent, "arguments");
-            if (child != null) {
-            	argumentsElement = child;
-            }
-        }
-        NodeList argumentElements = argumentsElement.getElementsByTagName("argument");
-        for (int i = 0; i < argumentElements.getLength(); i++) {
+        JSONObject argumentsElement = response.getData().getJSONObject("arguments");
+        JSONArray argumentElements = argumentsElement.optJSONArray("argument");
+        for (int i = 0; argumentElements != null && i < argumentElements.length(); i++) {
             Argument argument = new Argument();
-            Element argumentElement = (Element) argumentElements.item(i);
-            argument.setName(argumentElement.getAttribute("name"));
-            argument.setOptional("1".equals(argumentElement.getAttribute("optional")));
-            argument.setDescription(XMLUtilities.getValue(argumentElement));
+            JSONObject argumentElement = argumentElements.getJSONObject(i);
+            argument.setName(argumentElement.getString("name"));
+            argument.setOptional("1".equals(argumentElement.getString("optional")));
+            argument.setDescription(argumentElement.getString("_content"));
             arguments.add(argument);
         }
         method.setArguments(arguments);
 
-        Element errorsElement = XMLUtilities.getChild(methodElement, "errors");
-        // tolerant fix for incorrect nesting of the <errors> element
-        // as observed in current flickr responses of this method
-        // as of 2006-09-15
-        //
-        // specified as 
-        // <rsp>
-        //	<method>
-        //   <arguments>
-        //   <errors>
-        //  <method>
-        // </rsp>
-        //
-        // observed as
-        // <rsp>
-        //  <method>
-        //  <arguments>
-        //  <errors>
-        // </rsp>
-        //
-        if (errorsElement == null) {
-           	//System.err.println("getMethodInfo: Using workaround for errors array");
-            Element parent = (Element)methodElement.getParentNode();
-            Element child = XMLUtilities.getChild(parent, "errors");
-            if (child != null) {
-            	errorsElement = child;
-            }
-        }
+        JSONObject errorsElement = response.getData().getJSONObject("errors");
         List<Error> errors = new ArrayList<Error>();
-        NodeList errorElements = errorsElement.getElementsByTagName("error");
-        for (int i = 0; i < errorElements.getLength(); i++) {
+        JSONArray errorElements = errorsElement.optJSONArray("error");
+        for (int i = 0; errorElements != null && i < errorElements.length(); i++) {
             Error error = new Error();
-            Element errorElement = (Element) errorElements.item(i);
-            error.setCode(errorElement.getAttribute("code"));
-            error.setMessage(errorElement.getAttribute("message"));
-            error.setExplaination(XMLUtilities.getValue(errorElement));
+            JSONObject errorElement = errorElements.getJSONObject(i);
+            error.setCode(errorElement.getString("code"));
+            error.setMessage(errorElement.getString("message"));
+            error.setExplaination(errorElement.getString("_content"));
             errors.add(error);
         }
         method.setErrors(errors);
@@ -184,33 +112,25 @@ public class ReflectionInterface {
      *
      * @return The method names
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
-    public Collection<String> getMethods() throws IOException, SAXException, FlickrException {
+    public Collection<String> getMethods() throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_METHODS));
         parameters.add(new Parameter("api_key", apiKey));
-
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
-
         Response response = transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        Element methodsElement = response.getData();
+        JSONObject methodsElement = response.getData().getJSONObject("methods");
 
         List<String> methods = new ArrayList<String>();
-        NodeList methodElements = methodsElement.getElementsByTagName("method");
-        for (int i = 0; i < methodElements.getLength(); i++) {
-            Element methodElement = (Element) methodElements.item(i);
-            methods.add(XMLUtilities.getValue(methodElement));
+        JSONArray methodElements = methodsElement.optJSONArray("method");
+        for (int i = 0; methodElements != null && i < methodElements.length(); i++) {
+        	JSONObject methodElement = methodElements.getJSONObject(i);
+            methods.add(methodElement.getString("_content"));
         }
         return methods;
     }

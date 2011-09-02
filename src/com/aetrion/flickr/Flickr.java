@@ -25,7 +25,6 @@ import com.aetrion.flickr.photos.geo.GeoInterface;
 import com.aetrion.flickr.photos.licenses.LicensesInterface;
 import com.aetrion.flickr.photos.notes.NotesInterface;
 import com.aetrion.flickr.photos.transform.TransformInterface;
-import com.aetrion.flickr.photos.upload.UploadInterface;
 import com.aetrion.flickr.photosets.PhotosetsInterface;
 import com.aetrion.flickr.photosets.comments.PhotosetsCommentsInterface;
 import com.aetrion.flickr.places.PlacesInterface;
@@ -106,7 +105,6 @@ public class Flickr {
     private TagsInterface tagsInterface;
     private TestInterface testInterface;
     private TransformInterface transformInterface;
-    private UploadInterface uploadInterface;
     private UrlsInterface urlsInterface;
 
     /**
@@ -538,13 +536,6 @@ public class Flickr {
             transformInterface = new TransformInterface(apiKey, sharedSecret, transport);
         }
         return transformInterface;
-    }
-
-    public UploadInterface getUploadInterface() {
-        if (uploadInterface == null) {
-            uploadInterface = new UploadInterface(apiKey, sharedSecret, transport);
-        }
-        return uploadInterface;
     }
 
     public UrlsInterface getUrlsInterface() {

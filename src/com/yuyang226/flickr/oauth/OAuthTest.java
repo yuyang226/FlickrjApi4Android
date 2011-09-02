@@ -46,12 +46,13 @@ public class OAuthTest {
 			Flickr f = new Flickr("cf133e9bab9b574fa5f8166c9ecf6455", "d9b66ded5812c3a8");
 			/*OAuthToken oauthToken = f.getOAuthInterface().getRequestToken("http://localhost");
 			System.out.println(oauthToken);
-			System.out.println(f.getOAuthInterface().buildAuthenticationUrl(Permission.READ, oauthToken));
+			System.out.println(f.getOAuthInterface().buildAuthenticationUrl(Permission.DELETE, oauthToken));
 			String tokenVerifier = readParamFromCommand("Enter Token Verifier: ");
-			f.getOAuthInterface().getAccessToken(oauthToken, tokenVerifier);
+			OAuth oauth = f.getOAuthInterface().getAccessToken(oauthToken, tokenVerifier);
+			System.out.println(oauth);
 			f.getOAuthInterface().testLogin();*/
 			
-			//oauth_token=72157626911878883-7288bed42b42e288, oauth_token_secret=9b5e1fc9a8d33997
+			//oauthToken=72157626911878883-7288bed42b42e288, oauthTokenSecret=9b5e1fc9a8d33997
 			OAuth auth = new OAuth();
 			User user = new User();
 			user.setId("8308954@N06");
@@ -61,6 +62,7 @@ public class OAuthTest {
 			f.setOAuth(auth);
 			
 			System.out.println(f.getOAuthInterface().testLogin());
+			f.getCommentsInterface().addComment("5772049100", "Hello World");
 //			System.out.println(f.getActivityInterface().userComments(0, 0));
 //			System.out.println(f.getActivityInterface().userPhotos(1, 1, null));
 //			System.out.println(f.getBlogsInterface().getServices());
@@ -109,12 +111,28 @@ public class OAuthTest {
 //			System.out.println(f.getUrlsInterface().getUserPhotos("8308954@N06"));
 //			System.out.println(f.getUrlsInterface().lookupGroup(f.getUrlsInterface().getGroup("95014477@N00")));
 			
-			System.out.println(f.getTagsInterface().getClusters("nikon"));
-			System.out.println(f.getTagsInterface().getListPhoto("6024664723"));
-			System.out.println(f.getTagsInterface().getListUser("8308954@N06"));
-			System.out.println(f.getTagsInterface().getListUserPopular("8308954@N06"));
-			System.out.println(f.getTagsInterface().getListUserRaw(null));
-			System.out.println(f.getTagsInterface().getRelated("nikon"));
+//			System.out.println(f.getTagsInterface().getClusters("nikon"));
+//			System.out.println(f.getTagsInterface().getListPhoto("6024664723"));
+//			System.out.println(f.getTagsInterface().getListUser("8308954@N06"));
+//			System.out.println(f.getTagsInterface().getListUserPopular("8308954@N06"));
+//			System.out.println(f.getTagsInterface().getListUserRaw(null));
+//			System.out.println(f.getTagsInterface().getRelated("nikon"));
+			
+//			System.out.println(f.getTestInterface().login());
+//			f.getTestInterface().null_();
+//			System.out.println(f.getTestInterface().echo(Arrays.asList(
+//					new Parameter[]{new Parameter("hello", "nikon")})));
+			
+//			System.out.println(f.getReflectionInterface().getMethods());
+//			System.out.println(f.getReflectionInterface().getMethodInfo("flickr.photos.delete"));
+			
+//			System.out.println(f.getPhotosInterface().getAllContexts("5772049100"));
+//			System.out.println(f.getPhotosInterface().getContext("5772049100"));
+//			System.out.println(f.getPhotosInterface().getFavorites("5772049100", 0, 0));
+//			System.out.println(f.getPhotosInterface().getExif("5772049100", null));
+//			System.out.println(f.getPhotosInterface().getUntagged(0, 0));
+			System.out.println(f.getPhotosInterface().getRecent(null, 0, 0));
+			//System.out.println(f.getPhotosInterface().getContactsPhotos(10, false, false, false));
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

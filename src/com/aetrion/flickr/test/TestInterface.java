@@ -4,20 +4,21 @@
 package com.aetrion.flickr.test;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-import org.xml.sax.SAXException;
 
 import com.aetrion.flickr.FlickrException;
 import com.aetrion.flickr.Parameter;
 import com.aetrion.flickr.Response;
 import com.aetrion.flickr.Transport;
-import com.aetrion.flickr.auth.AuthUtilities;
 import com.aetrion.flickr.people.User;
+import com.aetrion.flickr.util.JSONUtils;
+import com.yuyang226.flickr.oauth.OAuthUtils;
+import com.yuyang226.flickr.org.json.JSONException;
+import com.yuyang226.flickr.org.json.JSONObject;
 
 /**
  * Interface for testing Flickr connectivity.
@@ -50,20 +51,21 @@ public class TestInterface {
      * @param params The parameters
      * @return The Collection of echoed elements
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
      */
-    public Collection<Element> echo(Collection<Parameter> params) throws IOException, SAXException, FlickrException {
+    public JSONObject echo(Collection<Parameter> params) 
+    throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_ECHO));
         parameters.add(new Parameter("api_key", apiKey));
         parameters.addAll(params);
 
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        return response.getPayloadCollection();
+        return response.getData();
     }
 
     /**
@@ -71,53 +73,45 @@ public class TestInterface {
      *
      * @return The User object
      * @throws IOException
-     * @throws SAXException
      * @throws FlickrException
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public User login() throws IOException, SAXException, FlickrException {
+    public User login() throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_LOGIN));
-        parameters.add(new Parameter("api_key", apiKey));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+        //parameters.add(new Parameter("api_key", apiKey));
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transport.post(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        Element userElement = response.getData();
+        JSONObject userElement = response.getData().getJSONObject("user");
         User user = new User();
-        user.setId(userElement.getAttribute("id"));
+        user.setId(userElement.getString("id"));
 
-        Element usernameElement = (Element) userElement.getElementsByTagName("username").item(0);
-        user.setUsername(((Text) usernameElement.getFirstChild()).getData());
-
+        user.setUsername(JSONUtils.getChildValue(userElement, "username"));
         return user;
     }
     
     /**
      * Null test.
      * This method requires authentication with 'read' permission.
-     * @throws SAXException 
      * @throws IOException 
      * @throws FlickrException 
+     * @throws JSONException 
+     * @throws NoSuchAlgorithmException 
+     * @throws InvalidKeyException 
      */
-    public void null_() throws IOException, SAXException, FlickrException {
+    public void null_() throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_NULL));
-        parameters.add(new Parameter("api_key", apiKey));
-        parameters.add(
-            new Parameter(
-                "api_sig",
-                AuthUtilities.getSignature(sharedSecret, parameters)
-            )
-        );
+//        parameters.add(new Parameter("api_key", apiKey));
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transport.get(transport.getPath(), parameters);
+        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
