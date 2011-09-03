@@ -43,25 +43,26 @@ public class OAuthTest {
 	 */
 	public static void main(String[] args) {
 		try {
-			Flickr f = new Flickr("cf133e9bab9b574fa5f8166c9ecf6455", "d9b66ded5812c3a8");
+			Flickr f = new Flickr("da4fadd0084ea1799ad33048f0d6a5c5", "186b04791439c326");
 			/*OAuthToken oauthToken = f.getOAuthInterface().getRequestToken("http://localhost");
 			System.out.println(oauthToken);
-			System.out.println(f.getOAuthInterface().buildAuthenticationUrl(Permission.DELETE, oauthToken));
+			System.out.println(f.getOAuthInterface().buildAuthenticationUrl(Permission.WRITE, oauthToken));
 			String tokenVerifier = readParamFromCommand("Enter Token Verifier: ");
 			OAuth oauth = f.getOAuthInterface().getAccessToken(oauthToken, tokenVerifier);
 			System.out.println(oauth);
-			f.getOAuthInterface().testLogin();*/
+			RequestContext.getRequestContext().setOAuth(oauth);*/
 			
-			//oauthToken=72157626911878883-7288bed42b42e288, oauthTokenSecret=9b5e1fc9a8d33997
+			//oauthToken=72157627458295241-83050bfaaeffd445, oauthTokenSecret=07c38a749dc7d36e
 			OAuth auth = new OAuth();
 			User user = new User();
 			user.setId("8308954@N06");
 			user.setUsername("Yang and Yun's Album");
-			auth.setToken(new OAuthToken("72157626911878883-7288bed42b42e288", "9b5e1fc9a8d33997"));
+			auth.setToken(new OAuthToken("72157627458295241-83050bfaaeffd445", "07c38a749dc7d36e"));
 			RequestContext.getRequestContext().setOAuth(auth);
 			f.setOAuth(auth);
 			
 			System.out.println(f.getOAuthInterface().testLogin());
+			f.getPhotosInterface().addTags("5772049100", new String[]{"Hello", "World"});
 			f.getCommentsInterface().addComment("5772049100", "Hello World");
 //			System.out.println(f.getActivityInterface().userComments(0, 0));
 //			System.out.println(f.getActivityInterface().userPhotos(1, 1, null));

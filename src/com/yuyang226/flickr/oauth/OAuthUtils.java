@@ -29,12 +29,14 @@ import com.aetrion.flickr.RequestContext;
 public class OAuthUtils {
 	private static final String PARAMETER_SEPARATOR = "&";
 	private static final String NAME_VALUE_SEPARATOR = "=";
+	
+	public static final String ENC = "UTF-8";
 	/** Default charsets */
 	public static final String DEFAULT_CONTENT_CHARSET = "ISO-8859-1";
 
 	private static final String HMAC_SHA1 = "HmacSHA1";
 
-	public static final String ENC = "UTF-8";
+	
 	
 	public static final String REQUEST_METHOD_GET = "GET";
 	public static final String REQUEST_METHOD_POST = "POST";
@@ -118,7 +120,7 @@ public class OAuthUtils {
 			
 		});
 		
-		return result.toString() + URLEncoder.encode(format(parameters, ENC), ENC);
+		return result.append(URLEncoder.encode(format(parameters, ENC), ENC)).toString();
 	}
 	
 	public static String hmacsha1(String data, String key, String tokenSecret) throws IllegalStateException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
@@ -170,7 +172,7 @@ public class OAuthUtils {
 	public static String encode (final String content, final String encoding) {
 		try {
 			return URLEncoder.encode(content,
-					encoding != null ? encoding : DEFAULT_CONTENT_CHARSET);
+					encoding != null ? encoding : DEFAULT_CONTENT_CHARSET).replace("+", "%20");
 		} catch (UnsupportedEncodingException problem) {
 			throw new IllegalArgumentException(problem);
 		}

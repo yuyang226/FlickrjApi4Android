@@ -20,8 +20,6 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.xml.sax.SAXException;
-
 import com.aetrion.flickr.util.Base64;
 import com.aetrion.flickr.util.DebugInputStream;
 import com.aetrion.flickr.util.IOUtilities;
@@ -43,7 +41,6 @@ public class REST extends Transport {
 	private boolean proxyAuth = false;
 	private String proxyUser = "";
 	private String proxyPassword = "";
-	private static Object mutex = new Object();
 
 	/**
 	 * Construct a new REST transport instance.
@@ -170,14 +167,14 @@ public class REST extends Transport {
 			while ((line = rd.readLine()) != null) {
 				buf.append(line);
 			}
-			
+
 			return buf.toString();
 		} finally {
 			IOUtilities.close(in);
 			IOUtilities.close(rd);
 		}
 	}
-	
+
 	/**
 	 * <p>A helper method for sending a GET request to the provided URL with the given parameters, 
 	 * then return the response as a Map.</p>
@@ -192,7 +189,7 @@ public class REST extends Transport {
 		String data = getRequestMethod ? getLine(path, parameters) : sendPost(path, parameters);
 		return getDataAsMap(URLDecoder.decode(data, OAuthUtils.ENC));
 	}
-	
+
 	public Map<String, String> getDataAsMap(String data) {
 		Map<String, String> result = new HashMap<String, String>();
 		if (data != null) {
@@ -207,8 +204,6 @@ public class REST extends Transport {
 	}
 
 	public String sendPost(String path, List<Parameter> parameters) throws IOException{
-		InputStream in = null;
-		BufferedReader reader = null;
 		HttpURLConnection conn = null;
 		DataOutputStream out = null;
 		try {
@@ -217,11 +212,13 @@ public class REST extends Transport {
 			conn.setRequestMethod("POST");
 			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			conn.setRequestProperty("Connection", "Keep-Alive");
-			conn.setUseCaches( false);
+			conn.setRequestProperty("Cache-Control", "no-cache,max-age=0"); 
+			conn.setRequestProperty("Pragma", "no-cache");
+			conn.setUseCaches(false);
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
 			out = new DataOutputStream(conn.getOutputStream());
-			
+
 			Iterator<?> iter = parameters.iterator();
 			while (iter.hasNext()) {
 				Parameter p = (Parameter) iter.next();
@@ -241,32 +238,41 @@ public class REST extends Transport {
 					out.writeBytes("&");
 				}
 			}
-				
 			out.flush();
 			out.close();
 
-			if (conn.getResponseCode() != HttpURLConnection.HTTP_OK)
+			if ((conn.getResponseCode() != HttpURLConnection.HTTP_OK)) {
+				String errorMessage = readFromStream(conn.getErrorStream());
 				throw new IOException("Connection Failed. Response Code: "
-						+ conn.getResponseCode() + ", Response Message: " + conn.getResponseMessage());
-			
-			in = conn.getInputStream();
-			reader = new BufferedReader(new InputStreamReader(in));
-			StringBuffer buffer = new StringBuffer();
-	        String line = null;
-	        while ((line = reader.readLine()) != null) {
-	            buffer.append(line);
-	        }
-	        
-	        return URLDecoder.decode(buffer.toString().trim(), OAuthUtils.ENC);
+						+ conn.getResponseCode() + ", Response Message: " + conn.getResponseMessage()
+						+ ", Error: " + errorMessage);
+			}
+
+			String result = readFromStream(conn.getInputStream());
+			return URLDecoder.decode(result.trim(), OAuthUtils.ENC);
 		} finally {
 			IOUtilities.close(out);
-			IOUtilities.close(in);
-			IOUtilities.close(reader);
+
 			if (conn != null)
 				conn.disconnect() ;
 		}
-	}  
-	
+	}
+
+	private String readFromStream(InputStream input) throws IOException {
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(input));
+			StringBuffer buffer = new StringBuffer();
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				buffer.append(line);
+			}
+			return buffer.toString();
+		}finally {
+			IOUtilities.close(input);
+			IOUtilities.close(reader);
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see com.aetrion.flickr.Transport#post(java.lang.String, java.util.List, boolean)
@@ -275,161 +281,6 @@ public class REST extends Transport {
 	public Response post(String path, List<Parameter> parameters) throws IOException, JSONException {
 		String data = sendPost(path, parameters);
 		return new RESTResponse(data);
-	}
-
-	/**
-	 * Invoke an HTTP POST request on a remote host.
-	 *
-	 * @param path The request path
-	 * @param parameters The parameters (collection of Parameter objects)
-	 * @param multipart Use multipart
-	 * @return The Response object
-	 * @throws IOException
-	 * @throws SAXException
-	 */
-	/*public Response post(String path, List<Parameter> parameters, boolean multipart) throws IOException, SAXException {
-		// see: AuthUtilities.getSignature()
-		//AuthUtilities.addAuthToken(parameters);
-
-		RequestContext requestContext = RequestContext.getRequestContext();
-		URL url = UrlUtilities.buildPostUrl(getHost(), getPort(), path);
-
-		HttpURLConnection conn = null;
-		try {
-			String boundary = "---------------------------7d273f7a0d3";
-
-			conn = (HttpURLConnection) url.openConnection();
-			conn.addRequestProperty("Cache-Control", "no-cache,max-age=0"); 
-			conn.addRequestProperty("Pragma", "no-cache"); 
-			if (proxyAuth) {
-				conn.setRequestProperty(
-						"Proxy-Authorization",
-						"Basic " + getProxyCredentials()
-				);
-			}
-			conn.setDoOutput(true);
-			conn.setRequestMethod("POST");
-			if (multipart) {
-				conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-			}
-			conn.connect();
-
-			DataOutputStream out = null;
-			try {
-				if (Flickr.debugRequest) {
-					out = new DataOutputStream(
-							new DebugOutputStream(
-									conn.getOutputStream(),
-									System.out
-							)
-					);
-				} else {
-					out = new DataOutputStream(conn.getOutputStream());
-				}
-
-				// construct the body
-				if (multipart) {
-					out.writeBytes("--" + boundary + "\r\n");
-					Iterator<?> iter = parameters.iterator();
-					while (iter.hasNext()) {
-						Parameter p = (Parameter) iter.next();
-
-						writeParam(p.getName(), p.getValue(), out, boundary);
-					}
-					                    Auth auth = requestContext.getAuth();
-                    if (auth != null) {
-                        writeParam(
-                            "api_sig",
-                            AuthUtilities.getMultipartSignature(sharedSecret, parameters),
-                            out,
-                            boundary
-                        );
-                    } 
-				} else {
-					Iterator<?> iter = parameters.iterator();
-					while (iter.hasNext()) {
-						Parameter p = (Parameter) iter.next();
-						out.writeBytes(p.getName());
-						out.writeBytes("=");
-						try {
-							out.writeBytes(
-									URLEncoder.encode(
-											String.valueOf(p.getValue()),
-											UTF8
-									)
-							);
-						} catch (UnsupportedEncodingException e) {
-							// Should never happen, but just in case
-						}
-						if (iter.hasNext()) {
-							out.writeBytes("&");
-						}
-					}
-
-					Auth auth = requestContext.getAuth();
-					if (auth != null) {
-						// will be added at AuthUtilities.addAuthToken()
-						//out.writeBytes("&auth_token=");
-						//out.writeBytes(auth.getToken());
-						//out.writeBytes("&api_sig=");
-						//out.writeBytes(AuthUtilities.getSignature(parameters));
-					}
-				}
-				out.flush();
-			} finally {
-				IOUtilities.close(out);
-			}
-
-			InputStream in = null;
-			try {
-				if (Flickr.debugStream) {
-					in = new DebugInputStream(conn.getInputStream(), System.out);
-				} else {
-					in = conn.getInputStream();
-				}
-				Response response = null;
-				synchronized (mutex) {
-					Document document = builder.parse(in);
-					response = (Response) responseClass.newInstance();
-					response.parse(document);
-				}
-				return response;
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException(e); // TODO: Replace with a better exception
-			} catch (InstantiationException e) {
-				throw new RuntimeException(e); // TODO: Replace with a better exception
-			} finally {
-				IOUtilities.close(in);
-			}
-		} finally {
-			if (conn != null) {
-				conn.disconnect();
-			}
-		}
-	}*/
-
-	private void writeParam(String name, Object value, DataOutputStream out, String boundary)
-	throws IOException {
-		if (value instanceof InputStream) {
-			out.writeBytes("Content-Disposition: form-data; name=\"" + name + "\"; filename=\"image.jpg\";\r\n");
-			out.writeBytes("Content-Type: image/jpeg" + "\r\n\r\n");
-			InputStream in = (InputStream) value;
-			byte[] buf = new byte[512];
-			int res = -1;
-			while ((res = in.read(buf)) != -1) {
-				out.write(buf);
-			}
-			out.writeBytes("\r\n" + "--" + boundary + "\r\n");
-		} else if (value instanceof byte[]) {
-			out.writeBytes("Content-Disposition: form-data; name=\"" + name + "\"; filename=\"image.jpg\";\r\n");
-			out.writeBytes("Content-Type: image/jpeg" + "\r\n\r\n");
-			out.write((byte[]) value);
-			out.writeBytes("\r\n" + "--" + boundary + "\r\n");
-		} else {
-			out.writeBytes("Content-Disposition: form-data; name=\"" + name + "\"\r\n\r\n");
-			out.write(((String) value).getBytes("UTF-8"));
-			out.writeBytes("\r\n" + "--" + boundary + "\r\n");
-		}
 	}
 
 	public boolean isProxyAuth() {

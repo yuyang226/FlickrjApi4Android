@@ -75,7 +75,7 @@ public class CommentsInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        JSONObject commentElement = response.getData();
+        JSONObject commentElement = response.getData().getJSONObject("comment");
         return commentElement.getString("id");
     }
 
