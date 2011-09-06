@@ -54,12 +54,6 @@
 			basedir="${build.classes}">
 			<include name="**/*"/>
 		</jar>
-		<jar 
-			jarfile="${build.dir}/${vandroidname}.jar" 
-			basedir="${build.classes}">
-			<include name="**/*"/>
-			<exclude name="org/json/**/*"/>
-		</jar>
 	</target>
 	
 	<!-- ==================================================== -->
