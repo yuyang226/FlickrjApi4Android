@@ -1,7 +1,7 @@
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import junit.framework.TestCase;
-import com.aetrion.flickr.auth.AuthUtilities;
+import com.gmail.yuyang226.flickr.auth.AuthUtilities;
 
 import java.util.List;
 import java.util.ArrayList;

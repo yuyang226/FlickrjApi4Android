@@ -1,6 +1,6 @@
 /* Copyright 2004, Aetrion LLC.  All Rights Reserved. */
 
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,11 +14,11 @@ import junit.framework.TestCase;
 
 import org.xml.sax.SAXException;
 
-import com.aetrion.flickr.auth.Auth;
-import com.aetrion.flickr.auth.AuthInterface;
-import com.aetrion.flickr.commons.CommonsInterface;
-import com.aetrion.flickr.commons.Institution;
-import com.aetrion.flickr.util.IOUtilities;
+import com.gmail.yuyang226.flickr.auth.Auth;
+import com.gmail.yuyang226.flickr.auth.AuthInterface;
+import com.gmail.yuyang226.flickr.commons.CommonsInterface;
+import com.gmail.yuyang226.flickr.commons.Institution;
+import com.gmail.yuyang226.flickr.util.IOUtilities;
 
 /**
  * @author mago

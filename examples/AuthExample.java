@@ -9,14 +9,14 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import com.aetrion.flickr.Flickr;
-import com.aetrion.flickr.FlickrException;
-import com.aetrion.flickr.REST;
-import com.aetrion.flickr.RequestContext;
-import com.aetrion.flickr.auth.Auth;
-import com.aetrion.flickr.auth.AuthInterface;
-import com.aetrion.flickr.auth.Permission;
-import com.aetrion.flickr.util.IOUtilities;
+import com.gmail.yuyang226.flickr.Flickr;
+import com.gmail.yuyang226.flickr.FlickrException;
+import com.gmail.yuyang226.flickr.REST;
+import com.gmail.yuyang226.flickr.RequestContext;
+import com.gmail.yuyang226.flickr.auth.Auth;
+import com.gmail.yuyang226.flickr.auth.AuthInterface;
+import com.gmail.yuyang226.flickr.auth.Permission;
+import com.gmail.yuyang226.flickr.util.IOUtilities;
 
 /**
  * Demonstrates the authentication-process.<p>

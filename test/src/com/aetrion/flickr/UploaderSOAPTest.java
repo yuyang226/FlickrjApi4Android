@@ -1,6 +1,6 @@
 /* Copyright 2004, Aetrion LLC.  All Rights Reserved. */
 
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -15,9 +15,9 @@ import junit.framework.TestCase;
 
 import org.xml.sax.SAXException;
 
-import com.aetrion.flickr.uploader.UploadMetaData;
-import com.aetrion.flickr.uploader.Uploader;
-import com.aetrion.flickr.util.IOUtilities;
+import com.gmail.yuyang226.flickr.uploader.UploadMetaData;
+import com.gmail.yuyang226.flickr.uploader.Uploader;
+import com.gmail.yuyang226.flickr.util.IOUtilities;
 
 /**
  * @author Anthony Eden

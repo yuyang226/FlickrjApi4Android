@@ -2,7 +2,7 @@
  * Copyright (c) 2005 Your Corporation. All Rights Reserved.
  */
 
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,13 +12,13 @@ import java.util.Properties;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.aetrion.flickr.auth.Auth;
-import com.aetrion.flickr.auth.AuthInterface;
-import com.aetrion.flickr.reflection.Argument;
-import com.aetrion.flickr.reflection.Error;
-import com.aetrion.flickr.reflection.Method;
-import com.aetrion.flickr.reflection.ReflectionInterface;
-import com.aetrion.flickr.util.IOUtilities;
+import com.gmail.yuyang226.flickr.auth.Auth;
+import com.gmail.yuyang226.flickr.auth.AuthInterface;
+import com.gmail.yuyang226.flickr.reflection.Argument;
+import com.gmail.yuyang226.flickr.reflection.Error;
+import com.gmail.yuyang226.flickr.reflection.Method;
+import com.gmail.yuyang226.flickr.reflection.ReflectionInterface;
+import com.gmail.yuyang226.flickr.util.IOUtilities;
 import junit.framework.TestCase;
 import org.xml.sax.SAXException;
 

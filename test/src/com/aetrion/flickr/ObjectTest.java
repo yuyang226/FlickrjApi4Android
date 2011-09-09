@@ -1,4 +1,4 @@
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -8,15 +8,15 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import com.aetrion.flickr.contacts.OnlineStatus;
-import com.aetrion.flickr.people.User;
-import com.aetrion.flickr.photos.Editability;
-import com.aetrion.flickr.photos.GeoData;
-import com.aetrion.flickr.photos.Note;
-import com.aetrion.flickr.photos.Permissions;
-import com.aetrion.flickr.photos.Photo;
-import com.aetrion.flickr.photos.Size;
-import com.aetrion.flickr.tags.Tag;
+import com.gmail.yuyang226.flickr.contacts.OnlineStatus;
+import com.gmail.yuyang226.flickr.people.User;
+import com.gmail.yuyang226.flickr.photos.Editability;
+import com.gmail.yuyang226.flickr.photos.GeoData;
+import com.gmail.yuyang226.flickr.photos.Note;
+import com.gmail.yuyang226.flickr.photos.Permissions;
+import com.gmail.yuyang226.flickr.photos.Photo;
+import com.gmail.yuyang226.flickr.photos.Size;
+import com.gmail.yuyang226.flickr.tags.Tag;
 /**
  *
  * @author mago

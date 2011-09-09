@@ -1,4 +1,4 @@
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,9 +13,9 @@ import junit.framework.TestCase;
 
 import org.xml.sax.SAXException;
 
-import com.aetrion.flickr.people.User;
-import com.aetrion.flickr.test.TestInterface;
-import com.aetrion.flickr.util.IOUtilities;
+import com.gmail.yuyang226.flickr.people.User;
+import com.gmail.yuyang226.flickr.test.TestInterface;
+import com.gmail.yuyang226.flickr.util.IOUtilities;
 
 /**
  * @author Matt Ray

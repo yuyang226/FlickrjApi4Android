@@ -117,30 +117,30 @@
           <pathelement location="${root.dir}/lib/saaj.jar"/>
         </classpath>
 
-        <test name="com.aetrion.flickr.ActivityInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.BlogsInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.CommentsInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.CommonsInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.ContactsInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.FavoritesInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.GeoInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.GroupsInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.InterestingnessInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.MachinetagsInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.MembersInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.ObjectTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.PandaInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.PeopleInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.PhotosetsInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.PhotosInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.PlacesInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.PrefsInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.TagsInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.TestInterfaceTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.UploaderTest" todir="${test.reports}"/>
-        <test name="com.aetrion.flickr.ReflectionInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.ActivityInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.BlogsInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.CommentsInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.CommonsInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.ContactsInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.FavoritesInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.GeoInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.GroupsInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.InterestingnessInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.MachinetagsInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.MembersInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.ObjectTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.PandaInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.PeopleInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.PhotosetsInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.PhotosInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.PlacesInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.PrefsInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.TagsInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.TestInterfaceTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.UploaderTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.ReflectionInterfaceTest" todir="${test.reports}"/>
       	
-        <test name="com.aetrion.flickr.CompletenessTest" todir="${test.reports}"/>
+        <test name="com.gmail.yuyang226.flickr.CompletenessTest" todir="${test.reports}"/>
      </junit>
       <echo message="Test reports are in ${test.reports}"/>
    </target>

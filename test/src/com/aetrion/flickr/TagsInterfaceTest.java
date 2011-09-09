@@ -1,4 +1,4 @@
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,16 +12,16 @@ import junit.framework.TestCase;
 
 import org.xml.sax.SAXException;
 
-import com.aetrion.flickr.auth.Auth;
-import com.aetrion.flickr.auth.AuthInterface;
-import com.aetrion.flickr.photos.Photo;
-import com.aetrion.flickr.photos.PhotoList;
-import com.aetrion.flickr.tags.Cluster;
-import com.aetrion.flickr.tags.ClusterList;
-import com.aetrion.flickr.tags.RelatedTagsList;
-import com.aetrion.flickr.tags.Tag;
-import com.aetrion.flickr.tags.TagsInterface;
-import com.aetrion.flickr.util.IOUtilities;
+import com.gmail.yuyang226.flickr.auth.Auth;
+import com.gmail.yuyang226.flickr.auth.AuthInterface;
+import com.gmail.yuyang226.flickr.photos.Photo;
+import com.gmail.yuyang226.flickr.photos.PhotoList;
+import com.gmail.yuyang226.flickr.tags.Cluster;
+import com.gmail.yuyang226.flickr.tags.ClusterList;
+import com.gmail.yuyang226.flickr.tags.RelatedTagsList;
+import com.gmail.yuyang226.flickr.tags.Tag;
+import com.gmail.yuyang226.flickr.tags.TagsInterface;
+import com.gmail.yuyang226.flickr.util.IOUtilities;
 
 /**
  * @author Anthony Eden

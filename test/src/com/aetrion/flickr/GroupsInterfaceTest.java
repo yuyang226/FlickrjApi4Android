@@ -1,6 +1,6 @@
 /* Copyright 2004, Aetrion LLC.  All Rights Reserved. */
 
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,13 +9,13 @@ import java.util.Properties;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.aetrion.flickr.groups.Category;
-import com.aetrion.flickr.groups.Group;
-import com.aetrion.flickr.groups.GroupList;
-import com.aetrion.flickr.groups.GroupsInterface;
-import com.aetrion.flickr.util.IOUtilities;
-import com.aetrion.flickr.auth.AuthInterface;
-import com.aetrion.flickr.auth.Auth;
+import com.gmail.yuyang226.flickr.groups.Category;
+import com.gmail.yuyang226.flickr.groups.Group;
+import com.gmail.yuyang226.flickr.groups.GroupList;
+import com.gmail.yuyang226.flickr.groups.GroupsInterface;
+import com.gmail.yuyang226.flickr.util.IOUtilities;
+import com.gmail.yuyang226.flickr.auth.AuthInterface;
+import com.gmail.yuyang226.flickr.auth.Auth;
 import junit.framework.TestCase;
 import org.xml.sax.SAXException;
 

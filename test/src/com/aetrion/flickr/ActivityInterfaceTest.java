@@ -1,4 +1,4 @@
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,12 +10,12 @@ import junit.framework.TestCase;
 
 import org.xml.sax.SAXException;
 
-import com.aetrion.flickr.activity.ActivityInterface;
-import com.aetrion.flickr.activity.ItemList;
-import com.aetrion.flickr.auth.Auth;
-import com.aetrion.flickr.auth.AuthInterface;
-import com.aetrion.flickr.auth.Permission;
-import com.aetrion.flickr.util.IOUtilities;
+import com.gmail.yuyang226.flickr.activity.ActivityInterface;
+import com.gmail.yuyang226.flickr.activity.ItemList;
+import com.gmail.yuyang226.flickr.auth.Auth;
+import com.gmail.yuyang226.flickr.auth.AuthInterface;
+import com.gmail.yuyang226.flickr.auth.Permission;
+import com.gmail.yuyang226.flickr.util.IOUtilities;
 
 /**
  *

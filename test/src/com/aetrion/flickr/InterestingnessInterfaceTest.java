@@ -1,4 +1,4 @@
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,13 +8,13 @@ import junit.framework.TestCase;
 
 import org.xml.sax.SAXException;
 
-import com.aetrion.flickr.auth.Auth;
-import com.aetrion.flickr.auth.AuthInterface;
-import com.aetrion.flickr.interestingness.InterestingnessInterface;
-import com.aetrion.flickr.photos.Extras;
-import com.aetrion.flickr.photos.Photo;
-import com.aetrion.flickr.photos.PhotoList;
-import com.aetrion.flickr.util.IOUtilities;
+import com.gmail.yuyang226.flickr.auth.Auth;
+import com.gmail.yuyang226.flickr.auth.AuthInterface;
+import com.gmail.yuyang226.flickr.interestingness.InterestingnessInterface;
+import com.gmail.yuyang226.flickr.photos.Extras;
+import com.gmail.yuyang226.flickr.photos.Photo;
+import com.gmail.yuyang226.flickr.photos.PhotoList;
+import com.gmail.yuyang226.flickr.util.IOUtilities;
 
 /**
  * 
@@ -55,7 +55,7 @@ public class InterestingnessInterfaceTest extends TestCase {
     }
 
 	/*
-	 * Test method for 'com.aetrion.flickr.interestingness.InterestingnessInterface.getList(String, Set, int, int)'
+	 * Test method for 'com.gmail.yuyang226.flickr.interestingness.InterestingnessInterface.getList(String, Set, int, int)'
 	 */
 	public void testGetListStringSetIntInt() throws FlickrException, IOException, SAXException {
 		assertNotNull(flickr);
@@ -100,14 +100,14 @@ public class InterestingnessInterfaceTest extends TestCase {
     }
 
     /*
-     * Test method for 'com.aetrion.flickr.interestingness.InterestingnessInterface.getList(Date, Set, int, int)'
+     * Test method for 'com.gmail.yuyang226.flickr.interestingness.InterestingnessInterface.getList(Date, Set, int, int)'
      */
     public void testGetListDateSetIntInt() {
 
     }
 
     /*
-     * Test method for 'com.aetrion.flickr.interestingness.InterestingnessInterface.getList()'
+     * Test method for 'com.gmail.yuyang226.flickr.interestingness.InterestingnessInterface.getList()'
      */
     public void testGetList() {
 

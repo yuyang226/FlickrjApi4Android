@@ -1,6 +1,6 @@
 /* Copyright 2004, Aetrion LLC.  All Rights Reserved. */
 
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -18,17 +18,17 @@ import junit.framework.TestCase;
 
 import org.xml.sax.SAXException;
 
-import com.aetrion.flickr.auth.Auth;
-import com.aetrion.flickr.photos.Permissions;
-import com.aetrion.flickr.photos.Photo;
-import com.aetrion.flickr.photos.PhotoContext;
-import com.aetrion.flickr.photos.PhotoList;
-import com.aetrion.flickr.photos.Photocount;
-import com.aetrion.flickr.photos.PhotosInterface;
-import com.aetrion.flickr.photos.SearchParameters;
-import com.aetrion.flickr.photos.Size;
-import com.aetrion.flickr.tags.Tag;
-import com.aetrion.flickr.util.IOUtilities;
+import com.gmail.yuyang226.flickr.auth.Auth;
+import com.gmail.yuyang226.flickr.photos.Permissions;
+import com.gmail.yuyang226.flickr.photos.Photo;
+import com.gmail.yuyang226.flickr.photos.PhotoContext;
+import com.gmail.yuyang226.flickr.photos.PhotoList;
+import com.gmail.yuyang226.flickr.photos.Photocount;
+import com.gmail.yuyang226.flickr.photos.PhotosInterface;
+import com.gmail.yuyang226.flickr.photos.SearchParameters;
+import com.gmail.yuyang226.flickr.photos.Size;
+import com.gmail.yuyang226.flickr.tags.Tag;
+import com.gmail.yuyang226.flickr.util.IOUtilities;
 
 /**
  * @author Anthony Eden

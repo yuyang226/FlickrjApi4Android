@@ -1,4 +1,4 @@
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,11 +8,11 @@ import java.util.Iterator;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.aetrion.flickr.util.IOUtilities;
-import com.aetrion.flickr.tags.TagsInterface;
-import com.aetrion.flickr.tags.Tag;
-import com.aetrion.flickr.tags.RelatedTagsList;
-import com.aetrion.flickr.photos.Photo;
+import com.gmail.yuyang226.flickr.util.IOUtilities;
+import com.gmail.yuyang226.flickr.tags.TagsInterface;
+import com.gmail.yuyang226.flickr.tags.Tag;
+import com.gmail.yuyang226.flickr.tags.RelatedTagsList;
+import com.gmail.yuyang226.flickr.photos.Photo;
 import org.xml.sax.SAXException;
 import junit.framework.TestCase;
 

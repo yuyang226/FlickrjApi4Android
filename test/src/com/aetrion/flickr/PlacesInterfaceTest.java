@@ -1,4 +1,4 @@
-package com.aetrion.flickr;
+package com.gmail.yuyang226.flickr;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,16 +12,16 @@ import junit.framework.TestCase;
 
 import org.xml.sax.SAXException;
 
-import com.aetrion.flickr.auth.Auth;
-import com.aetrion.flickr.auth.AuthInterface;
-import com.aetrion.flickr.auth.Permission;
-import com.aetrion.flickr.places.Location;
-import com.aetrion.flickr.places.Place;
-import com.aetrion.flickr.places.PlaceType;
-import com.aetrion.flickr.places.PlacesInterface;
-import com.aetrion.flickr.places.PlacesList;
-import com.aetrion.flickr.tags.Tag;
-import com.aetrion.flickr.util.IOUtilities;
+import com.gmail.yuyang226.flickr.auth.Auth;
+import com.gmail.yuyang226.flickr.auth.AuthInterface;
+import com.gmail.yuyang226.flickr.auth.Permission;
+import com.gmail.yuyang226.flickr.places.Location;
+import com.gmail.yuyang226.flickr.places.Place;
+import com.gmail.yuyang226.flickr.places.PlaceType;
+import com.gmail.yuyang226.flickr.places.PlacesInterface;
+import com.gmail.yuyang226.flickr.places.PlacesList;
+import com.gmail.yuyang226.flickr.tags.Tag;
+import com.gmail.yuyang226.flickr.util.IOUtilities;
 
 /**
  * Tests for the PlacesInterface.
