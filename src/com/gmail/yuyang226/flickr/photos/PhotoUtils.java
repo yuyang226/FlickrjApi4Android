@@ -111,9 +111,21 @@ public final class PhotoUtils {
 		}
 
 		User owner = new User();
-		owner.setId(photoElement.getString("owner"));
-		owner.setUsername(photoElement.optString("ownername", null));
-		photo.setOwner(owner);
+		Object obj = photoElement.get("owner");
+		if (obj instanceof JSONObject) {
+			JSONObject ownerObj = (JSONObject)obj;
+			//"owner":{"iconserver":"4083","username":"theblackstar","realname":"Adde Adesokan","nsid":"54880604@N06","iconfarm":5,"location":"Hamburg, Germany"},
+			owner.setId(ownerObj.getString("nsid"));
+			owner.setUsername(ownerObj.optString("username", null));
+			owner.setRealName(ownerObj.optString("realname", null));
+			owner.setLocation(ownerObj.optString("location", null));
+			photo.setOwner(owner);
+		} else {
+			owner.setId(photoElement.getString("owner"));
+			owner.setUsername(photoElement.optString("ownername", null));
+			photo.setOwner(owner);
+		}
+		
 		photo.setUrl("http://flickr.com/photos/" + owner.getId() + "/" + photo.getId());
 		JSONObject titleObj = photoElement.optJSONObject("title");
 		if (titleObj != null) {
@@ -190,7 +202,7 @@ public final class PhotoUtils {
 		// Elements.
 		try {
 			List<Tag> tags = new ArrayList<Tag>();
-			Object obj = photoElement.opt("tags");
+			obj = photoElement.opt("tags");
 			if (obj instanceof JSONObject) {
 				JSONObject tagsObject = (JSONObject)obj;
 				JSONArray tagNodes = tagsObject.optJSONArray("tag");
