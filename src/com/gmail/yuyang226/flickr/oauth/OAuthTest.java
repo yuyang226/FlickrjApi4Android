@@ -6,10 +6,12 @@ package com.gmail.yuyang226.flickr.oauth;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Collection;
 
 import com.gmail.yuyang226.flickr.Flickr;
 import com.gmail.yuyang226.flickr.RequestContext;
 import com.gmail.yuyang226.flickr.people.User;
+import com.gmail.yuyang226.flickr.photos.Exif;
 import com.gmail.yuyang226.flickr.photos.Photo;
 
 
@@ -64,6 +66,8 @@ public class OAuthTest {
 			System.out.println(f.getOAuthInterface().testLogin());
 			//f.getPhotosInterface().addTags("5772049100", new String[]{"Hello", "World"});
 			//f.getCommentsInterface().addComment("5772049100", "Hello World");
+			Collection<Exif> exifs = f.getPhotosInterface().getExif("5772049100", null);
+			System.out.println(exifs);
 			System.out.println(f.getGalleriesInterface().getList("8308954@N06", 0, 0));
 			System.out.println(f.getGalleriesInterface().getPhotos("8263632-72157623259986613", null, 0, 0));
 //			System.out.println(f.getActivityInterface().userComments(0, 0));

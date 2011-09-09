@@ -8,6 +8,7 @@ import com.gmail.yuyang226.flickr.org.json.JSONException;
 import com.gmail.yuyang226.flickr.org.json.JSONObject;
 import com.gmail.yuyang226.flickr.people.User;
 import com.gmail.yuyang226.flickr.tags.Tag;
+import com.gmail.yuyang226.flickr.util.JSONUtils;
 
 /**
  * Utilitiy-methods to transfer requested XML to Photo-objects.
@@ -114,13 +115,19 @@ public final class PhotoUtils {
 		owner.setUsername(photoElement.optString("ownername", null));
 		photo.setOwner(owner);
 		photo.setUrl("http://flickr.com/photos/" + owner.getId() + "/" + photo.getId());
-		photo.setTitle(photoElement.getString("title"));
-		photo.setDescription(photoElement.optString("description", null));
+		JSONObject titleObj = photoElement.optJSONObject("title");
+		if (titleObj != null) {
+			photo.setTitle(titleObj.getString("_content"));
+		} else {
+			photo.setTitle(photoElement.getString("title"));
+		}
+		
+		photo.setDescription(JSONUtils.getChildValue(photoElement, "description"));
 
 		// here the flags are set, if the photo is read by getInfo().
-		photo.setPublicFlag("1".equals(photoElement.getString("ispublic")));
-		photo.setFriendFlag("1".equals(photoElement.getString("isfriend")));
-		photo.setFamilyFlag("1".equals(photoElement.getString("isfamily")));
+		photo.setPublicFlag("1".equals(photoElement.optString("ispublic")));
+		photo.setFriendFlag("1".equals(photoElement.optString("isfriend")));
+		photo.setFamilyFlag("1".equals(photoElement.optString("isfamily")));
 
 		// Parse either photo by getInfo, or from list
 		/*try {
