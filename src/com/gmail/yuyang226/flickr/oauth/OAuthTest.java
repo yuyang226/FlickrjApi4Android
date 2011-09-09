@@ -64,9 +64,12 @@ public class OAuthTest {
 			f.setOAuth(auth);
 			
 			System.out.println(f.getOAuthInterface().testLogin());
+			f.getInterestingnessInterface().getList();
 			//f.getPhotosInterface().addTags("5772049100", new String[]{"Hello", "World"});
 			//f.getCommentsInterface().addComment("5772049100", "Hello World");
 			Collection<Exif> exifs = f.getPhotosInterface().getExif("5772049100", null);
+			f.getPhotosInterface().getInfo("6024664723", null);
+			f.getCommentsInterface().getList("6024664723");
 			System.out.println(exifs);
 			System.out.println(f.getGalleriesInterface().getList("8308954@N06", 0, 0));
 			System.out.println(f.getGalleriesInterface().getPhotos("8263632-72157623259986613", null, 0, 0));

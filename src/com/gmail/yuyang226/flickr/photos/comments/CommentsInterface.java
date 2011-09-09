@@ -1,8 +1,6 @@
 package com.gmail.yuyang226.flickr.photos.comments;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,11 +57,9 @@ public class CommentsInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public String addComment(String photoId, String commentText) 
-    throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_ADD_COMMENT));
         parameters.add(new Parameter("photo_id", photoId));
@@ -88,10 +84,8 @@ public class CommentsInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public void deleteComment(String commentId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public void deleteComment(String commentId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_DELETE_COMMENT));
         parameters.add(new Parameter("comment_id", commentId));
@@ -116,10 +110,8 @@ public class CommentsInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public void editComment(String commentId, String commentText) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public void editComment(String commentId, String commentText) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_EDIT_COMMENT));
         parameters.add(new Parameter("comment_id", commentId));
@@ -145,17 +137,15 @@ public class CommentsInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public List<Comment> getList(String photoId)
-      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+      throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
+        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("photo_id", photoId));
-		OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -169,15 +159,8 @@ public class CommentsInterface {
             comment.setAuthor(commentElement.getString("author"));
             comment.setAuthorName(commentElement.getString("authorname"));
             comment.setPermaLink(commentElement.getString("permalink"));
-            long unixTime = 0;
-            try {
-                unixTime = Long.parseLong(commentElement.getString("datecreate"));
-            } catch (NumberFormatException e) {
-                // what shall we do?
-                e.printStackTrace();
-            }
+            long unixTime = commentElement.optLong("datecreate");
             comment.setDateCreate(new Date(unixTime * 1000L));
-            comment.setPermaLink(commentElement.getString("permalink"));
             comment.setText(commentElement.getString("_content"));
             comments.add(comment);
         }
@@ -209,11 +192,9 @@ public class CommentsInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public PhotoList getRecentForContacts(Date lastComment, List<String> contactsFilter, Set<String> extras, 
-    		int perPage, int page) throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    		int perPage, int page) throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", PhotosInterface.METHOD_GET_NOT_IN_SET));
         if (lastComment != null) {

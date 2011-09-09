@@ -161,35 +161,28 @@ public final class PhotoUtils {
 			// nop
 		}*/
 
-		/*try {
-			Element commentsElement = (Element) photoElement.getElementsByTagName("comments").item(0);
-			photo.setComments(((Text) commentsElement.getFirstChild()).getData());
-		} catch (IndexOutOfBoundsException e) {
-		} catch (NullPointerException e) {
-			// nop
-		}*/
+		if (photoElement.has("comments")) {
+			JSONObject commentsElement = photoElement.getJSONObject("comments");
+			//photo.setComments(((Text) commentsElement.getFirstChild()).getData());
+		}
 
-		/*try {
-			Element notesElement = (Element) photoElement.getElementsByTagName("notes").item(0);
-			List<Note> notes = new ArrayList<Note>();
-			NodeList noteNodes = notesElement.getElementsByTagName("note");
-			for (int i = 0; i < noteNodes.getLength(); i++) {
-				Element noteElement = (Element) noteNodes.item(i);
+		JSONObject notesElement = photoElement.optJSONObject("notes");
+		List<Note> notes = new ArrayList<Note>();
+		if (notesElement != null) {
+			JSONArray noteNodes = notesElement.optJSONArray("note");
+			for (int i = 0; noteNodes != null && i < noteNodes.length(); i++) {
+				JSONObject noteElement = noteNodes.getJSONObject(i);
 				Note note = new Note();
-				note.setId(noteElement.getAttribute("id"));
-				note.setAuthor(noteElement.getAttribute("author"));
-				note.setAuthorName(noteElement.getAttribute("authorname"));
-				note.setBounds(noteElement.getAttribute("x"), noteElement.getAttribute("y"),
-						noteElement.getAttribute("w"), noteElement.getAttribute("h"));
-				note.setText(noteElement.getTextContent());
+				note.setId(noteElement.getString("id"));
+				note.setAuthor(noteElement.getString("author"));
+				note.setAuthorName(noteElement.getString("authorname"));
+				note.setBounds(noteElement.getString("x"), noteElement.getString("y"),
+						noteElement.getString("w"), noteElement.getString("h"));
+				note.setText(noteElement.getString("_content"));
 				notes.add(note);
 			}
-			photo.setNotes(notes);
-		} catch (IndexOutOfBoundsException e) {
-			photo.setNotes(new ArrayList<Note>());
-		} catch (NullPointerException e) {
-			photo.setNotes(new ArrayList<Note>());
-		}*/
+		}
+		photo.setNotes(notes);
 
 		// Tags coming as space-seperated attribute calling
 		// InterestingnessInterface#getList().
@@ -197,29 +190,27 @@ public final class PhotoUtils {
 		// Elements.
 		try {
 			List<Tag> tags = new ArrayList<Tag>();
-			String tagsAttr = photoElement.optString("tags", null);
-			if (tagsAttr != null) {
+			Object obj = photoElement.opt("tags");
+			if (obj instanceof JSONObject) {
+				JSONObject tagsObject = (JSONObject)obj;
+				JSONArray tagNodes = tagsObject.optJSONArray("tag");
+				for (int i = 0; tagNodes != null && i < tagNodes.length(); i++) {
+					JSONObject tagElement = tagNodes.getJSONObject(i);
+					Tag tag = new Tag();
+					tag.setId(tagElement.getString("id"));
+					tag.setAuthor(tagElement.getString("author"));
+					tag.setRaw(tagElement.getString("raw"));
+					tag.setValue(tagElement.optString("_content"));
+					tags.add(tag);
+				}
+			} else if (obj instanceof String){
+				String tagsAttr = obj.toString();
 				String[] values = tagsAttr.split(" ");
 				for (int i = 0; i < values.length; i++) {
 					Tag tag = new Tag();
 					tag.setValue(values[i]);
 					tags.add(tag);
 				}
-			} else {
-				/*try {
-					Element tagsElement = (Element) photoElement.getElementsByTagName("tags").item(0);
-					NodeList tagNodes = tagsElement.getElementsByTagName("tag");
-					for (int i = 0; i < tagNodes.getLength(); i++) {
-						Element tagElement = (Element) tagNodes.item(i);
-						Tag tag = new Tag();
-						tag.setId(tagElement.getAttribute("id"));
-						tag.setAuthor(tagElement.getAttribute("author"));
-						tag.setRaw(tagElement.getAttribute("raw"));
-						tag.setValue(((Text) tagElement.getFirstChild()).getData());
-						tags.add(tag);
-					}
-				} catch (IndexOutOfBoundsException e) {
-				}*/
 			}
 			photo.setTags(tags);
 		} catch (NullPointerException e) {
@@ -244,9 +235,6 @@ public final class PhotoUtils {
 		} catch (NullPointerException e) {
 			photo.setUrls(new ArrayList<PhotoUrl>());
 		}*/
-
-		//"latitude": 31.344969, "longitude": "121.371238", "accuracy": 16, 
-		//"place_id": "JAJiM7JTU78IjzqC", "woeid": "2151849", "geo_is_family": 0, "geo_is_friend": 0, "geo_is_contact": 0, "geo_is_public": 1 },
 
 		String longitude = photoElement.optString("longitude", null);
 		String latitude = photoElement.optString("latitude", null);
