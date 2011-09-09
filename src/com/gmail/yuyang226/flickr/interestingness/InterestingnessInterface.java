@@ -99,7 +99,7 @@ public class InterestingnessInterface {
             parameters.add(new Parameter(KEY_PAGE, String.valueOf(page)));
         }
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

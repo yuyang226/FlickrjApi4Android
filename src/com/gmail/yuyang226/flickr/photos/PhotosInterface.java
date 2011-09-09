@@ -1292,7 +1292,6 @@ public class PhotosInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws SAXException
      */
     public Photo getPhoto(String id) throws IOException, FlickrException, JSONException {
         return getPhoto(id, null);
