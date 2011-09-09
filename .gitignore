@@ -1,4 +1,2 @@
-bin
-target
+.settings
 build
-*.log
