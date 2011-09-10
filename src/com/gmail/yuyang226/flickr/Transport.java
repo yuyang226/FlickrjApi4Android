@@ -77,7 +77,7 @@ public abstract class Transport {
      */
     protected abstract Response post(String path, List<Parameter> parameters) throws IOException, JSONException;
     
-    public Response postJSON(String apiKey, String apiSharedSecret, 
+    public Response postJSON(String apiSharedSecret, 
     		List<Parameter> parameters) throws IOException, JSONException, FlickrException {
     	boolean isOAuth = false;
     	for (int i = parameters.size() - 1; i >= 0; i--) {
@@ -90,7 +90,7 @@ public abstract class Transport {
 		parameters.add(new Parameter("format", "json"));
 		if (isOAuth) {
 			try {
-				OAuthUtils.addOAuthParams(apiKey, apiSharedSecret, OAuthInterface.URL_REST, parameters);
+				OAuthUtils.addOAuthParams(apiSharedSecret, OAuthInterface.URL_REST, parameters);
 			} catch (InvalidKeyException e) {
 				throw new FlickrException(e);
 			} catch (NoSuchAlgorithmException e) {

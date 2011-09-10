@@ -1,8 +1,6 @@
 package com.gmail.yuyang226.flickr.commons;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,16 +43,14 @@ public class CommonsInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public List<Institution> getInstitutions() throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public List<Institution> getInstitutions() throws FlickrException, IOException, JSONException {
         List<Institution> institutions = new ArrayList<Institution>();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_INSTITUTIONS));
         parameters.add(new Parameter("api_key", apiKey));
 
-        Response response = transportAPI.postJSON(this.apiKey, this.sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

@@ -78,11 +78,12 @@ public class OAuthInterface {
 	}
 
 	public User testLogin() 
-	throws InvalidKeyException, NoSuchAlgorithmException, FlickrException, IOException, JSONException, SAXException {
+	throws FlickrException, IOException, JSONException {
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.add(new Parameter("method", METHOD_TEST_LOGIN));
+		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
 		OAuthUtils.addOAuthToken(parameters);
-		Response response = this.oauthTransport.postJSON(this.apiKey, this.sharedSecret, parameters);
+		Response response = this.oauthTransport.postJSON(this.sharedSecret, parameters);
 		if (response.isError()) {
 			throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
 		}
@@ -108,13 +109,13 @@ public class OAuthInterface {
 	 * @throws InvalidKeyException 
 	 * @throws URISyntaxException 
 	 */
-	public OAuthToken getRequestToken(String callbackUrl) throws IOException, FlickrException, 
-	InvalidKeyException, NoSuchAlgorithmException {
+	public OAuthToken getRequestToken(String callbackUrl) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException {
 		if (callbackUrl == null)
 			callbackUrl = "oob";
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.add(new Parameter("oauth_callback", callbackUrl));
-		OAuthUtils.addBasicOAuthParams(apiKey, this.sharedSecret, parameters);
+		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+		OAuthUtils.addBasicOAuthParams(this.sharedSecret, parameters);
 		OAuthUtils.signGet(this.sharedSecret, URL_REQUEST_TOKEN, parameters);
 
 		Map<String, String> response = this.oauthTransport.getMapData(true, PATH_OAUTH_REQUEST_TOKEN, parameters);
@@ -147,9 +148,10 @@ public class OAuthInterface {
 	public OAuth getAccessToken(OAuthToken oauthToken, String oauthVerifier) 
 	throws InvalidKeyException, NoSuchAlgorithmException, IOException, FlickrException {
 		List<Parameter> parameters = new ArrayList<Parameter>();
+		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
 		OAuthUtils.addOAuthToken(parameters);
 		parameters.add(new Parameter(KEY_OAUTH_VERIFIER, oauthVerifier));
-		OAuthUtils.addOAuthParams(apiKey, this.sharedSecret, URL_ACCESS_TOKEN, parameters);
+		OAuthUtils.addOAuthParams(this.sharedSecret, URL_ACCESS_TOKEN, parameters);
 
 		Map<String, String> response = this.oauthTransport.getMapData(false, PATH_OAUTH_ACCESS_TOKEN, parameters);
 		if (response.isEmpty()) {

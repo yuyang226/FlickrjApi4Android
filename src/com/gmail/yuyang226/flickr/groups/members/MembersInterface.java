@@ -1,8 +1,6 @@
 package com.gmail.yuyang226.flickr.groups.members;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +9,7 @@ import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.Response;
 import com.gmail.yuyang226.flickr.Transport;
+import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
 import com.gmail.yuyang226.flickr.org.json.JSONArray;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
@@ -54,15 +53,14 @@ public class MembersInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      * @see <a href="http://www.flickr.com/services/api/flickr.groups.members.getList.html">API Documentation</a>
      */
     public MembersList getList(String groupId, Set<String> memberTypes, int perPage, int page)
-      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+      throws FlickrException, IOException, JSONException {
         MembersList members = new MembersList();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         parameters.add(new Parameter("group_id", groupId));
 
         if (perPage > 0) {
@@ -81,7 +79,7 @@ public class MembersInterface {
         }
         OAuthUtils.addOAuthToken(parameters);
         
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

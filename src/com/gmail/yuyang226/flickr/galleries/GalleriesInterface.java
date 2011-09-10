@@ -12,6 +12,7 @@ import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.Response;
 import com.gmail.yuyang226.flickr.Transport;
+import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
 import com.gmail.yuyang226.flickr.org.json.JSONArray;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
@@ -38,10 +39,12 @@ public class GalleriesInterface {
 	private static final String KEY_PAGE = "page"; //$NON-NLS-1$
 	private static final String KEY_USER_ID = "user_id"; //$NON-NLS-1$
 	private static final String KEY_GALLERY_ID = "gallery_id"; //$NON-NLS-1$
+	private static final String KEY_PHOTO_ID = "photo_id"; //$NON-NLS-1$
 
 	private static final String METHOD_GET_LIST = "flickr.galleries.getList"; //$NON-NLS-1$
 	private static final String METHOD_GET_PHOTOS = "flickr.galleries.getPhotos"; //$NON-NLS-1$
-	private static final Object METHOD_CREATE = "flickr.galleries.create"; //$NON-NLS-1$
+	private static final String METHOD_CREATE = "flickr.galleries.create"; //$NON-NLS-1$
+	private static final String METHOD_GET_LIST_FOR_PHOTO = "flickr.galleries.getListForPhoto"; //$NON-NLS-1$
 
 	/**
 	 * The api key.
@@ -151,7 +154,52 @@ public class GalleriesInterface {
 					response.getErrorMessage());
 		}
 		return PhotoUtils.createPhotoList(response.getData());
+	}
+	
+	public List<Gallery> getListForPhoto(String photoId, int perPage, int page)
+	throws IOException, FlickrException, JSONException {
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		parameters.add(new Parameter(KEY_METHOD, METHOD_GET_LIST_FOR_PHOTO));
+		parameters.add(new Parameter(KEY_API_KEY, mApiKey));
+		parameters.add(new Parameter(KEY_PHOTO_ID, photoId));
+		if (perPage > 0) {
+			parameters
+			.add(new Parameter(KEY_PER_PAGE, String.valueOf(perPage)));
+		}
+		if (page > 0) {
+			parameters.add(new Parameter(KEY_PAGE, String.valueOf(page)));
+		}
 
+		List<Gallery> galleries = new ArrayList<Gallery>();
+		Response response = mTransport.get(mTransport.getPath(), parameters);
+		if (response.isError()) {
+			throw new FlickrException(response.getErrorCode(),
+					response.getErrorMessage());
+		}
+		JSONObject galleriesElement = response.getData().getJSONObject("galleries");
+		JSONArray galleryNodes = galleriesElement
+		.optJSONArray("gallery"); //$NON-NLS-1$
+		for (int i = 0; galleryNodes != null && i < galleryNodes.length(); i++) {
+			JSONObject galleryElement = galleryNodes.getJSONObject(i);
+			Gallery gallery = new Gallery();
+			gallery.setGalleryId(galleryElement.getString("id")); //$NON-NLS-1$
+			gallery.setGalleryUrl(galleryElement.getString("url")); //$NON-NLS-1$
+			gallery.setOwnerId(galleryElement.getString("owner")); //$NON-NLS-1$
+			gallery.setPrimaryPhotoId(galleryElement
+					.getString("primary_photo_id")); //$NON-NLS-1$
+			gallery.setPhotoCount(Integer.parseInt(galleryElement
+					.getString("count_photos"))); //$NON-NLS-1$
+			gallery.setVideoCount(Integer.parseInt(galleryElement
+					.getString("count_videos"))); //$NON-NLS-1$
+			String title = JSONUtils.getChildValue(galleryElement, "title"); //$NON-NLS-1$
+			gallery.setTitle(title == null ? "" : title); //$NON-NLS-1$
+
+			String desc = JSONUtils.getChildValue(galleryElement,
+			"description"); //$NON-NLS-1$
+			gallery.setDescription(desc == null ? "" : desc); //$NON-NLS-1$
+			galleries.add(gallery);
+		}
+		return galleries;
 	}
 
 	/**
@@ -171,14 +219,14 @@ public class GalleriesInterface {
 			FlickrException, JSONException {
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.add(new Parameter(KEY_METHOD, METHOD_CREATE));
-		//parameters.add(new Parameter(KEY_API_KEY, mApiKey));
+		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, this.mApiKey));
 
 		parameters.add(new Parameter("title", title)); //$NON-NLS-1$
 		parameters.add(new Parameter(
 				"description", description == null ? title : description)); //$NON-NLS-1$
 		parameters.add(new Parameter("primary_photo_id", primaryPhotoId)); //$NON-NLS-1$
 		OAuthUtils.addOAuthToken(parameters);
-		Response response = mTransport.postJSON(mApiKey, mSharedSecret, parameters);
+		Response response = mTransport.postJSON(mSharedSecret, parameters);
 		if (response.isError()) {
 			throw new FlickrException(response.getErrorCode(),
 					response.getErrorMessage());

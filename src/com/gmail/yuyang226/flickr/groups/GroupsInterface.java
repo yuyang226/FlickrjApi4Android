@@ -4,8 +4,6 @@
 package com.gmail.yuyang226.flickr.groups;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,6 +12,7 @@ import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.Response;
 import com.gmail.yuyang226.flickr.Transport;
+import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
 import com.gmail.yuyang226.flickr.org.json.JSONArray;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
@@ -52,22 +51,20 @@ public class GroupsInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public Category browse(String catId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public Category browse(String catId) throws IOException, FlickrException, JSONException {
         List<Subcategory> subcategories = new ArrayList<Subcategory>();
         List<Group> groups = new ArrayList<Group>();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_BROWSE));
-
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         if (catId != null) {
             parameters.add(new Parameter("cat_id", catId));
         }
         OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -113,16 +110,14 @@ public class GroupsInterface {
      * @param groupId The group id
      * @return The Group object
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public Group getInfo(String groupId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public Group getInfo(String groupId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_INFO));
         parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("group_id", groupId));
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -165,14 +160,12 @@ public class GroupsInterface {
      * @throws IOException 
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public Collection<Group> search(String text, int perPage, int page) throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public Collection<Group> search(String text, int perPage, int page) throws FlickrException, IOException, JSONException {
         GroupList groupList = new GroupList();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_SEARCH));
-
+        parameters.add(new Parameter("api_key", this.apiKey));
         parameters.add(new Parameter("text", text));
 
         if (perPage > 0) {
@@ -181,9 +174,8 @@ public class GroupsInterface {
         if (page > 0) {
             parameters.add(new Parameter("page", new Integer(page)));
         }
-        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

@@ -1,18 +1,15 @@
 package com.gmail.yuyang226.flickr.photos.geo;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import org.xml.sax.SAXException;
 
 import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.Response;
 import com.gmail.yuyang226.flickr.Transport;
+import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
 import com.gmail.yuyang226.flickr.org.json.JSONObject;
@@ -63,16 +60,14 @@ public class GeoInterface {
      * @throws FlickrException if photo id is invalid, if photo has no geodata 
      * or if any other error has been reported in the response.
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public GeoData getLocation(String photoId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public GeoData getLocation(String photoId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LOCATION));
         parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("photo_id", photoId));
 
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -94,23 +89,19 @@ public class GeoInterface {
      *
      * @param photoId reqired photo id, not null
      * @return the permissions
-     * @throws SAXException
      * @throws IOException
-     * @throws IOException
-     * @throws FlickrException
      * @throws FlickrException if photo id is invalid, if photo has no geodata
      * or if any other error has been reported in the response.
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public GeoPermissions getPerms(String photoId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public GeoPermissions getPerms(String photoId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PERMS));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         parameters.add(new Parameter("photo_id", photoId));
         OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.postJSON(sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -133,17 +124,15 @@ public class GeoInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public void removeLocation(String photoId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public void removeLocation(String photoId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_REMOVE_LOCATION));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         parameters.add(new Parameter("photo_id", photoId));
         OAuthUtils.addOAuthToken(parameters);
 
-        // Note: This method requires an HTTP POST request.
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.postJSON(sharedSecret, parameters);
         // This method has no specific response - It returns an empty sucess response 
         // if it completes without error.
         if (response.isError()) {
@@ -165,12 +154,11 @@ public class GeoInterface {
      * @throws IOException 
      * @throws FlickrException 
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public void setLocation(String photoId, GeoData location) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public void setLocation(String photoId, GeoData location) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_SET_LOCATION));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         parameters.add(new Parameter("photo_id", photoId));
         parameters.add(new Parameter("lat", String.valueOf(location.getLatitude())));
         parameters.add(new Parameter("lon", String.valueOf(location.getLongitude())));
@@ -181,7 +169,7 @@ public class GeoInterface {
         OAuthUtils.addOAuthToken(parameters);
 
         // Note: This method requires an HTTP POST request.
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.postJSON(sharedSecret, parameters);
         // This method has no specific response - It returns an empty sucess response 
         // if it completes without error.
         if (response.isError()) {
@@ -199,12 +187,11 @@ public class GeoInterface {
      * @throws IOException 
      * @throws FlickrException 
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public void setPerms(String photoId, GeoPermissions perms) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public void setPerms(String photoId, GeoPermissions perms) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_SET_PERMS));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         parameters.add(new Parameter("photo_id", photoId));
         parameters.add(new Parameter("is_public", perms.isPublic() ? "1" : "0"));
         parameters.add(new Parameter("is_contact", perms.isContact() ? "1" : "0"));
@@ -212,8 +199,7 @@ public class GeoInterface {
         parameters.add(new Parameter("is_family", perms.isFamily() ? "1" : "0"));
         OAuthUtils.addOAuthToken(parameters);
 
-        // Note: This method requires an HTTP POST request.
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.postJSON(sharedSecret, parameters);
         // This method has no specific response - It returns an empty sucess response 
         // if it completes without error.
         if (response.isError()) {
@@ -234,16 +220,15 @@ public class GeoInterface {
      * @throws IOException 
      * @throws FlickrException 
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public void batchCorrectLocation(
         GeoData location,
         String placeId,
         String woeId
-    ) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    ) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_BATCH_CORRECT_LOCATION));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         if (placeId != null) {
             parameters.add(new Parameter("place_id", placeId));
         }
@@ -256,7 +241,7 @@ public class GeoInterface {
         OAuthUtils.addOAuthToken(parameters);
 
         // Note: This method requires an HTTP POST request.
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.postJSON(sharedSecret, parameters);
         // This method has no specific response - It returns an empty sucess response 
         // if it completes without error.
         if (response.isError()) {
@@ -272,16 +257,15 @@ public class GeoInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public void correctLocation(
         String photoId,
         String placeId,
         String woeId
-    ) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    ) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_CORRECT_LOCATION));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         parameters.add(new Parameter("photo_id", photoId));
         if (placeId != null) {
             parameters.add(new Parameter("place_id", placeId));
@@ -291,8 +275,7 @@ public class GeoInterface {
         }
         OAuthUtils.addOAuthToken(parameters);
 
-        // Note: This method requires an HTTP POST request.
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.postJSON(sharedSecret, parameters);
         // This method has no specific response - It returns an empty sucess response 
         // if it completes without error.
         if (response.isError()) {
@@ -312,18 +295,16 @@ public class GeoInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      * @see com.gmail.yuyang226.flickr.photos.Extras
      */
     public PhotoList photosForLocation(
         GeoData location,
         Set<String> extras,
         int perPage, int page
-    ) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    ) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_PHOTOS_FOR_LOCATION));
-        parameters.add(new Parameter("api_key", apiKey));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
 
         if (extras.size() > 0) {
             parameters.add(new Parameter("extras", StringUtilities.join(extras, ",")));
@@ -337,7 +318,8 @@ public class GeoInterface {
         parameters.add(new Parameter("lat", location.getLatitude()));
         parameters.add(new Parameter("lon", location.getLongitude()));
         parameters.add(new Parameter("accuracy", location.getAccuracy()));
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        OAuthUtils.addOAuthToken(parameters);
+        Response response = transport.postJSON(sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -355,21 +337,20 @@ public class GeoInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public void setContext(
         String photoId,
         int context
-    ) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    ) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_SET_CONTEXT));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         parameters.add(new Parameter("photo_id", photoId));
         parameters.add(new Parameter("context", "" + context));
         OAuthUtils.addOAuthToken(parameters);
 
         // Note: This method requires an HTTP POST request.
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.postJSON(sharedSecret, parameters);
         // This method has no specific response - It returns an empty sucess response 
         // if it completes without error.
         if (response.isError()) {

@@ -1,17 +1,15 @@
 package com.gmail.yuyang226.flickr.activity;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
 
 import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.Response;
 import com.gmail.yuyang226.flickr.Transport;
+import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
 import com.gmail.yuyang226.flickr.org.json.JSONArray;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
@@ -52,14 +50,13 @@ public class ActivityInterface {
      * @throws IOException
      * @throws JSONException
      * @throws FlickrException
-     * @throws InvalidKeyException 
-     * @throws NoSuchAlgorithmException 
      */
     public ItemList userComments(int perPage, int page)
-      throws IOException, FlickrException, JSONException, InvalidKeyException, NoSuchAlgorithmException {
+      throws IOException, FlickrException, JSONException {
         ItemList items = new ItemList();
         List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.add(new Parameter("method", METHOD_USER_COMMENTS));
+		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
 		if (perPage > 0) {
             parameters.add(new Parameter("per_page", String.valueOf(perPage)));
         }
@@ -69,7 +66,7 @@ public class ActivityInterface {
         }
         OAuthUtils.addOAuthToken(parameters);
         
-		Response response = this.transportAPI.postJSON(this.apiKey, this.sharedSecret, parameters);
+		Response response = this.transportAPI.postJSON(this.sharedSecret, parameters);
 		if (response.isError()) {
 			throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
 		}
@@ -102,15 +99,13 @@ public class ActivityInterface {
      * @throws IOException
      * @throws JSONException
      * @throws FlickrException
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public ItemList userPhotos(int perPage, int page, String timeframe)
-      throws IOException, JSONException, FlickrException, InvalidKeyException, NoSuchAlgorithmException {
+      throws IOException, JSONException, FlickrException {
         ItemList items = new ItemList();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_USER_PHOTOS));
-
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         if (perPage > 0) {
             parameters.add(new Parameter("per_page", "" + perPage));
         }
@@ -128,7 +123,7 @@ public class ActivityInterface {
         }
         OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.postJSON(this.apiKey, this.sharedSecret, parameters);
+        Response response = transportAPI.postJSON(this.sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

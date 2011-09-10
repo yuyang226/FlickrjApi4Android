@@ -10,12 +10,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.xml.sax.SAXException;
-
 import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.Response;
 import com.gmail.yuyang226.flickr.Transport;
+import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
 import com.gmail.yuyang226.flickr.org.json.JSONArray;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
@@ -53,17 +52,15 @@ public class BlogsInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public Collection<Service> getServices()
-      throws IOException, SAXException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+      throws IOException, FlickrException, JSONException {
         List<Service> list = new ArrayList<Service>();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_SERVICES));
         parameters.add(new Parameter("api_key", apiKey));
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -96,7 +93,7 @@ public class BlogsInterface {
     public void postPhoto(Photo photo, String blogId, String blogPassword) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_POST_PHOTO));
-
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         parameters.add(new Parameter("blog_id", blogId));
         parameters.add(new Parameter("photo_id", photo.getId()));
         parameters.add(new Parameter("title", photo.getTitle()));
@@ -104,8 +101,9 @@ public class BlogsInterface {
         if (blogPassword != null) {
             parameters.add(new Parameter("blog_password", blogPassword));
         }
+        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.postJSON(this.apiKey, this.sharedSecret, parameters);
+        Response response = transportAPI.postJSON(this.sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -132,15 +130,14 @@ public class BlogsInterface {
      * @return The Collection of configured blogs
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public Collection<Blog> getList() throws IOException, FlickrException, JSONException, InvalidKeyException, NoSuchAlgorithmException {
+    public Collection<Blog> getList() throws IOException, FlickrException, JSONException {
         List<Blog> blogs = new ArrayList<Blog>();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         OAuthUtils.addOAuthToken(parameters);
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

@@ -4,8 +4,6 @@
 package com.gmail.yuyang226.flickr.groups.pools;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -17,6 +15,7 @@ import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.Response;
 import com.gmail.yuyang226.flickr.Transport;
 import com.gmail.yuyang226.flickr.groups.Group;
+import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
 import com.gmail.yuyang226.flickr.org.json.JSONArray;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
@@ -59,17 +58,16 @@ public class PoolsInterface {
      * @param photoId The photo ID
      * @param groupId The group ID
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public void add(String photoId, String groupId) throws IOException, 
-            FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+            FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_ADD));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         parameters.add(new Parameter("photo_id", photoId));
         parameters.add(new Parameter("group_id", groupId));
         OAuthUtils.addOAuthToken(parameters);
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.postJSON(sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -86,10 +84,8 @@ public class PoolsInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public PhotoContext getContext(String photoId, String groupId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public PhotoContext getContext(String photoId, String groupId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_GROUPS));
         parameters.add(new Parameter("api_key", apiKey));
@@ -97,7 +93,7 @@ public class PoolsInterface {
         parameters.add(new Parameter("photo_id", photoId));
         parameters.add(new Parameter("group_id", groupId));
 
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -129,17 +125,16 @@ public class PoolsInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public Collection<Group> getGroups() throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public Collection<Group> getGroups() throws IOException, FlickrException, JSONException {
         List<Group> groups = new ArrayList<Group>();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_GROUPS));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.postJSON(sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -172,13 +167,12 @@ public class PoolsInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public PhotoList getPhotos(String groupId, String[] tags, Set<String> extras, int perPage, int page)
-      throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+      throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PHOTOS));
+        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("group_id", groupId));
         if (tags != null) {
             parameters.add(new Parameter("tags", StringUtilities.join(tags, " ")));
@@ -201,9 +195,8 @@ public class PoolsInterface {
             }
             parameters.add(new Parameter(Extras.KEY_EXTRAS, sb.toString()));
         }
-        OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -222,11 +215,9 @@ public class PoolsInterface {
      * @param page The page offset (0 to ignore)
      * @return A Collection of Photo objects
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public PhotoList getPhotos(String groupId, String[] tags, int perPage, int page)
-      throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+      throws IOException, FlickrException, JSONException {
         return getPhotos(groupId, tags, Extras.MIN_EXTRAS, perPage, page);
     }
 
@@ -238,18 +229,17 @@ public class PoolsInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public void remove(String photoId, String groupId) throws IOException, 
-            FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+            FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_REMOVE));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         parameters.add(new Parameter("photo_id", photoId));
         parameters.add(new Parameter("group_id", groupId));
         OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transport.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transport.postJSON(sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

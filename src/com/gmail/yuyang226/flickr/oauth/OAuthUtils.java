@@ -35,15 +35,13 @@ public class OAuthUtils {
 	public static final String DEFAULT_CONTENT_CHARSET = "ISO-8859-1";
 
 	private static final String HMAC_SHA1 = "HmacSHA1";
-
-	
 	
 	public static final String REQUEST_METHOD_GET = "GET";
 	public static final String REQUEST_METHOD_POST = "POST";
 	
-	public static void addOAuthParams(String apiKey, String apiSharedSecret, String url, List<Parameter> parameters) 
+	public static void addOAuthParams(String apiSharedSecret, String url, List<Parameter> parameters) 
 	throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException {
-		addBasicOAuthParams(apiKey, apiSharedSecret, parameters);
+		addBasicOAuthParams(apiSharedSecret, parameters);
 		signPost(apiSharedSecret, url, parameters);
 	}
 	
@@ -77,9 +75,16 @@ public class OAuthUtils {
 		parameters.add(new Parameter("oauth_signature", signature));
 	}
 	
-	public static void addBasicOAuthParams(String apiKey, String apiSharedSecret, List<Parameter> parameters) {
+	public static boolean hasSigned() {
+		OAuth oauth = RequestContext.getRequestContext().getOAuth();
+		if (oauth == null)
+			return false;
+		
+		return oauth.getToken() != null;
+	}
+	
+	public static void addBasicOAuthParams(String apiSharedSecret, List<Parameter> parameters) {
 		OAuthUtils.addOAuthNonce(parameters);
-		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
 		OAuthUtils.addOAuthTimestamp(parameters);
 		OAuthUtils.addOAuthSignatureMethod(parameters);
 		OAuthUtils.addOAuthVersion(parameters);

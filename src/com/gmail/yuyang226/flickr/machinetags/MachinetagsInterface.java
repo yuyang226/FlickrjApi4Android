@@ -1,8 +1,6 @@
 package com.gmail.yuyang226.flickr.machinetags;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -240,11 +238,9 @@ public class MachinetagsInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public NamespacesList getNamespaces(String predicate, int perPage, int page)
-      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+      throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         NamespacesList nsList = new NamespacesList();
         parameters.add(new Parameter("method", METHOD_GET_NAMESPACES));
@@ -260,7 +256,7 @@ public class MachinetagsInterface {
             parameters.add(new Parameter("page", "" + page));
         }
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -291,11 +287,9 @@ public class MachinetagsInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public NamespacesList getPairs(String namespace, String predicate, int perPage, int page)
-      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+      throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         NamespacesList nsList = new NamespacesList();
         parameters.add(new Parameter("method", METHOD_GET_PAIRS));
@@ -314,7 +308,7 @@ public class MachinetagsInterface {
             parameters.add(new Parameter("page", "" + page));
         }
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -344,11 +338,9 @@ public class MachinetagsInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public NamespacesList getPredicates(String namespace, int perPage, int page)
-      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+      throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         NamespacesList nsList = new NamespacesList();
         parameters.add(new Parameter("method", METHOD_GET_PREDICATES));
@@ -364,7 +356,7 @@ public class MachinetagsInterface {
             parameters.add(new Parameter("page", "" + page));
         }
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -394,11 +386,9 @@ public class MachinetagsInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public NamespacesList getValues(String namespace, String predicate, int perPage, int page)
-      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+      throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         NamespacesList valuesList = new NamespacesList();
         parameters.add(new Parameter("method", METHOD_GET_VALUES));
@@ -417,7 +407,7 @@ public class MachinetagsInterface {
             parameters.add(new Parameter("page", "" + page));
         }
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -446,11 +436,9 @@ public class MachinetagsInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public NamespacesList getRecentValues(String namespace, String predicate, Date addedSince)
-      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+      throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         NamespacesList valuesList = new NamespacesList();
         parameters.add(new Parameter("method", METHOD_GET_RECENTVALUES));
@@ -469,7 +457,7 @@ public class MachinetagsInterface {
             );
         }
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

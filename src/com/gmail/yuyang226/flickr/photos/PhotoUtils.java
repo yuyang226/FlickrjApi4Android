@@ -114,7 +114,6 @@ public final class PhotoUtils {
 		Object obj = photoElement.get("owner");
 		if (obj instanceof JSONObject) {
 			JSONObject ownerObj = (JSONObject)obj;
-			//"owner":{"iconserver":"4083","username":"theblackstar","realname":"Adde Adesokan","nsid":"54880604@N06","iconfarm":5,"location":"Hamburg, Germany"},
 			owner.setId(ownerObj.getString("nsid"));
 			owner.setUsername(ownerObj.optString("username", null));
 			owner.setRealName(ownerObj.optString("realname", null));

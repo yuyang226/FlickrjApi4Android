@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 
 import com.gmail.yuyang226.flickr.Flickr;
 import com.gmail.yuyang226.flickr.RequestContext;
+import com.gmail.yuyang226.flickr.auth.Permission;
 import com.gmail.yuyang226.flickr.people.User;
 import com.gmail.yuyang226.flickr.photos.Photo;
 
@@ -44,13 +45,13 @@ public class OAuthTest {
 	public static void main(String[] args) {
 		try {
 			Flickr f = new Flickr("da4fadd0084ea1799ad33048f0d6a5c5", "186b04791439c326");
-			/*OAuthToken oauthToken = f.getOAuthInterface().getRequestToken("http://localhost");
+			OAuthToken oauthToken = f.getOAuthInterface().getRequestToken("http://localhost");
 			System.out.println(oauthToken);
 			System.out.println(f.getOAuthInterface().buildAuthenticationUrl(Permission.WRITE, oauthToken));
 			String tokenVerifier = readParamFromCommand("Enter Token Verifier: ");
 			OAuth oauth = f.getOAuthInterface().getAccessToken(oauthToken, tokenVerifier);
 			System.out.println(oauth);
-			RequestContext.getRequestContext().setOAuth(oauth);*/
+			RequestContext.getRequestContext().setOAuth(oauth);
 			
 			//oauthToken=72157627458295241-83050bfaaeffd445, oauthTokenSecret=07c38a749dc7d36e
 			OAuth auth = new OAuth();
@@ -60,7 +61,7 @@ public class OAuthTest {
 			auth.setToken(new OAuthToken("72157627458295241-83050bfaaeffd445", "07c38a749dc7d36e"));
 			RequestContext.getRequestContext().setOAuth(auth);
 			f.setOAuth(auth);
-			
+			//f.getGalleriesInterface().getListForPhoto("5772049100", 0, 0);
 			System.out.println(f.getOAuthInterface().testLogin());
 			//f.getPhotosInterface().addTags("5772049100", new String[]{"Hello", "World"});
 			//f.getCommentsInterface().addComment("5772049100", "Hello World");

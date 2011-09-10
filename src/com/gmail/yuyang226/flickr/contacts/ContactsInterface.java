@@ -4,8 +4,6 @@
 package com.gmail.yuyang226.flickr.contacts;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -15,6 +13,7 @@ import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.Response;
 import com.gmail.yuyang226.flickr.Transport;
+import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
 import com.gmail.yuyang226.flickr.org.json.JSONArray;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
@@ -52,16 +51,15 @@ public class ContactsInterface {
      * @return The Collection of Contact objects
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public Collection<Contact> getList() throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public Collection<Contact> getList() throws IOException, FlickrException, JSONException {
         List<Contact> contacts = new ArrayList<Contact>();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         OAuthUtils.addOAuthToken(parameters);
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -97,15 +95,14 @@ public class ContactsInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public Collection<Contact> getListRecentlyUploaded(Date lastUpload, String filter)
-      throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+      throws IOException, FlickrException, JSONException {
         List<Contact> contacts = new ArrayList<Contact>();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST_RECENTLY_UPLOADED));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
 
         if (lastUpload != null) {
             parameters.add(new Parameter("date_lastupload", lastUpload.getTime() / 1000L));
@@ -115,7 +112,7 @@ public class ContactsInterface {
         }
         OAuthUtils.addOAuthToken(parameters);
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -150,10 +147,8 @@ public class ContactsInterface {
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public Collection<Contact> getPublicList(String userId) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public Collection<Contact> getPublicList(String userId) throws IOException, FlickrException, JSONException {
         List<Contact> contacts = new ArrayList<Contact>();
 
         List<Parameter> parameters = new ArrayList<Parameter>();
@@ -161,7 +156,7 @@ public class ContactsInterface {
         parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("user_id", userId));
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

@@ -1,8 +1,6 @@
 package com.gmail.yuyang226.flickr.places;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,6 +10,7 @@ import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.Response;
 import com.gmail.yuyang226.flickr.Transport;
+import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
 import com.gmail.yuyang226.flickr.org.json.JSONArray;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
@@ -211,26 +210,21 @@ public class PlacesInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public PlacesList findByLatLon(
         double latitude,
         double longitude,
         int accuracy
-    ) throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    ) throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
-        PlacesList placesList = new PlacesList();
         parameters.add(new Parameter("method", METHOD_FIND_BY_LATLON));
-//        parameters.add(new Parameter("api_key", apiKey));
+        parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("lat", "" + latitude));
         parameters.add(new Parameter("lon", "" + longitude));
         parameters.add(new Parameter("accuracy", "" + accuracy));
 
-        OAuthUtils.addOAuthToken(parameters);
-
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -498,8 +492,6 @@ public class PlacesInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public PlacesList placesForContacts(
         int placeType,
@@ -507,10 +499,10 @@ public class PlacesInterface {
         String woeId,
         String threshold,
         String contacts
-    ) throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    ) throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_PLACES_FOR_CONTACTS));
-//        parameters.add(new Parameter("api_key", apiKey));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
 
         parameters.add(new Parameter("place_type", intPlaceTypeToString(placeType)));
         if (placeId != null) {
@@ -527,7 +519,7 @@ public class PlacesInterface {
         }
 
         OAuthUtils.addOAuthToken(parameters);
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -630,8 +622,6 @@ public class PlacesInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
     public PlacesList placesForUser(
         int placeType,
@@ -640,11 +630,11 @@ public class PlacesInterface {
         String threshold,
         Date minUploadDate, Date maxUploadDate,
         Date minTakenDate, Date maxTakenDate
-    ) throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    ) throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         
         parameters.add(new Parameter("method", METHOD_PLACES_FOR_USER));
-//        parameters.add(new Parameter("api_key", apiKey));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
 
         parameters.add(new Parameter("place_type", intPlaceTypeToString(placeType)));
         if (placeId != null) {
@@ -670,7 +660,7 @@ public class PlacesInterface {
         }
 
         OAuthUtils.addOAuthToken(parameters);
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.postJSON(sharedSecret, parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -690,69 +680,6 @@ public class PlacesInterface {
             placesList.add(parsePlace(placeElement));
         }
         return placesList;
-    }
-
-    /**
-     * Find Flickr Places information by Place ID.
-     *
-     * @deprecated This method has been deprecated. It won't be removed but you should use {@link #getInfo(String, String)} instead.
-     * @param placeId
-     * @return A Location
-     * @throws FlickrException
-     * @throws IOException
-     * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
-     */
-    public Location resolvePlaceId(String placeId)
-      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
-        List<Parameter> parameters = new ArrayList<Parameter>();
-        parameters.add(new Parameter("method", METHOD_RESOLVE_PLACE_ID));
-//        parameters.add(new Parameter("api_key", apiKey));
-
-        parameters.add(new Parameter("place_id", placeId));
-
-        OAuthUtils.addOAuthToken(parameters);
-
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
-        if (response.isError()) {
-            throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
-        }
-        JSONObject locationElement = response.getData().getJSONObject("place");
-        return parseLocation(locationElement);
-    }
-
-    /**
-     * Find Flickr Places information by Place URL.
-     *
-     * <p>This method does not require authentication.</p>
-     *
-     * @deprecated This method has been deprecated. It won't be removed but you
-     * should use {@link PlacesInterface#getInfoByUrl(String)} instead.
-     * @param flickrPlacesUrl
-     * @return A Location
-     * @throws FlickrException
-     * @throws IOException
-     * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
-     */
-    public Location resolvePlaceURL(String flickrPlacesUrl)
-      throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
-        List<Parameter> parameters = new ArrayList<Parameter>();
-        parameters.add(new Parameter("method", METHOD_RESOLVE_PLACE_URL));
-//        parameters.add(new Parameter("api_key", apiKey));
-
-        parameters.add(new Parameter("url", flickrPlacesUrl));
-
-        OAuthUtils.addOAuthToken(parameters);
-
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
-        if (response.isError()) {
-            throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
-        }
-        JSONObject locationElement = response.getData().getJSONObject("place");
-        return parseLocation(locationElement);
     }
 
     /**

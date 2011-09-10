@@ -1,8 +1,6 @@
 package com.gmail.yuyang226.flickr.panda;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -54,16 +52,14 @@ public class PandaInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      */
-    public List<Panda> getList() throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
+    public List<Panda> getList() throws FlickrException, IOException, JSONException {
         List<Panda> pandas = new ArrayList<Panda>();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
         parameters.add(new Parameter("api_key", apiKey));
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -91,13 +87,10 @@ public class PandaInterface {
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
-     * @throws NoSuchAlgorithmException 
-     * @throws InvalidKeyException 
      * @see com.gmail.yuyang226.flickr.photos.Extras
      */
     public PhotoList getPhotos(Panda panda, Set<String> extras, int perPage, int page) 
-    throws FlickrException, IOException, InvalidKeyException, NoSuchAlgorithmException, JSONException {
-        //List<Panda> pandas = new ArrayList<Panda>();
+    throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PHOTOS));
         parameters.add(new Parameter("api_key", apiKey));
@@ -114,7 +107,7 @@ public class PandaInterface {
             parameters.add(new Parameter("page", page));
         }
 
-        Response response = transportAPI.postJSON(apiKey, sharedSecret, parameters);
+        Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
