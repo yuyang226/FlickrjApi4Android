@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -105,20 +103,19 @@ public class OAuthInterface {
 	 * @throws IOException
 	 * @throws SAXException
 	 * @throws FlickrException
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
 	 * @throws URISyntaxException 
 	 */
-	public OAuthToken getRequestToken(String callbackUrl) throws IOException, FlickrException, InvalidKeyException, NoSuchAlgorithmException {
+	public OAuthToken getRequestToken(String callbackUrl) throws IOException, FlickrException {
 		if (callbackUrl == null)
 			callbackUrl = "oob";
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.add(new Parameter("oauth_callback", callbackUrl));
 		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
-		OAuthUtils.addBasicOAuthParams(this.sharedSecret, parameters);
+		OAuthUtils.addBasicOAuthParams(parameters);
 		OAuthUtils.signGet(this.sharedSecret, URL_REQUEST_TOKEN, parameters);
 
-		Map<String, String> response = this.oauthTransport.getMapData(true, PATH_OAUTH_REQUEST_TOKEN, parameters);
+		Map<String, String> response = this.oauthTransport.getMapData(
+				true, PATH_OAUTH_REQUEST_TOKEN, parameters);
 		if (response.isEmpty()) {
 			throw new FlickrException("Empty Response", "Empty Response");
 		}
@@ -132,26 +129,35 @@ public class OAuthInterface {
 		logger.info("Response: " + response);
 		OAuth oauth = new OAuth();
 		oauth.setToken(new OAuthToken(token, token_secret));
-		RequestContext.getRequestContext().setOAuth(oauth);
+		//RequestContext.getRequestContext().setOAuth(oauth);
 		return oauth.getToken();
 	}
 
 	/**
 	 * @param requestToken
+	 * @param tokenSecret
 	 * @param oauthVerifier
-	 * @throws InvalidKeyException
-	 * @throws NoSuchAlgorithmException
 	 * @throws IOException
 	 * @throws FlickrException
-	 * @throws SAXException 
 	 */
-	public OAuth getAccessToken(OAuthToken oauthToken, String oauthVerifier) 
-	throws InvalidKeyException, NoSuchAlgorithmException, IOException, FlickrException {
+	public OAuth getAccessToken(String token, String tokenSecret, String oauthVerifier) 
+	throws IOException, FlickrException {
 		List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
-		OAuthUtils.addOAuthToken(parameters);
+		parameters.add(new OAuthTokenParameter(token));
 		parameters.add(new Parameter(KEY_OAUTH_VERIFIER, oauthVerifier));
-		OAuthUtils.addOAuthParams(this.sharedSecret, URL_ACCESS_TOKEN, parameters);
+		OAuthUtils.addBasicOAuthParams(parameters);
+		//OAuthUtils.signPost(sharedSecret, URL_ACCESS_TOKEN, parameters);
+		
+		String signature = OAuthUtils.getSignature(
+				OAuthUtils.REQUEST_METHOD_POST, 
+				URL_ACCESS_TOKEN, 
+				parameters,
+				sharedSecret, tokenSecret);
+		// This method call must be signed.
+		parameters.add(new Parameter("oauth_signature", signature));
+		
+		//OAuthUtils.addOAuthParams(this.sharedSecret, URL_ACCESS_TOKEN, parameters);
 
 		Map<String, String> response = this.oauthTransport.getMapData(false, PATH_OAUTH_ACCESS_TOKEN, parameters);
 		if (response.isEmpty()) {

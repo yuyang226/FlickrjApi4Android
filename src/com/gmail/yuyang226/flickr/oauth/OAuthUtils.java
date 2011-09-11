@@ -17,6 +17,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
+import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.RequestContext;
 
@@ -40,8 +41,8 @@ public class OAuthUtils {
 	public static final String REQUEST_METHOD_POST = "POST";
 	
 	public static void addOAuthParams(String apiSharedSecret, String url, List<Parameter> parameters) 
-	throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException {
-		addBasicOAuthParams(apiSharedSecret, parameters);
+	throws FlickrException {
+		addBasicOAuthParams(parameters);
 		signPost(apiSharedSecret, url, parameters);
 	}
 	
@@ -52,15 +53,15 @@ public class OAuthUtils {
 		parameters.add(new OAuthTokenParameter(oauth.getToken().getOauthToken()));
 	}
 	
-	public static void signGet(String apiSharedSecret, String url, List<Parameter>  parameters) throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException {
+	public static void signGet(String apiSharedSecret, String url, List<Parameter>  parameters) throws FlickrException {
 		sign(OAuthUtils.REQUEST_METHOD_GET, url, apiSharedSecret, parameters);
 	}
 	
-	public static void signPost(String apiSharedSecret, String url, List<Parameter>  parameters) throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException {
+	public static void signPost(String apiSharedSecret, String url, List<Parameter>  parameters) throws FlickrException {
 		sign(OAuthUtils.REQUEST_METHOD_POST, url, apiSharedSecret, parameters);
 	}
 	
-	public static void sign(String requestMethod, String url, String apiSharedSecret, List<Parameter>  parameters) throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException {
+	public static void sign(String requestMethod, String url, String apiSharedSecret, List<Parameter>  parameters) throws FlickrException {
 		OAuth oauth = RequestContext.getRequestContext().getOAuth();
 		
 		String tokenSecret = oauth != null && oauth.getToken() != null 
@@ -83,7 +84,7 @@ public class OAuthUtils {
 		return oauth.getToken() != null;
 	}
 	
-	public static void addBasicOAuthParams(String apiSharedSecret, List<Parameter> parameters) {
+	public static void addBasicOAuthParams(List<Parameter> parameters) {
 		OAuthUtils.addOAuthNonce(parameters);
 		OAuthUtils.addOAuthTimestamp(parameters);
 		OAuthUtils.addOAuthSignatureMethod(parameters);
@@ -92,16 +93,25 @@ public class OAuthUtils {
 	
 	public static String getSignature(String requestMethod, String url, List<Parameter> parameters
 			, String apiSecret, String tokenSecret)
-	throws UnsupportedEncodingException, NoSuchAlgorithmException,
-	InvalidKeyException {
-		String baseString = getRequestBaseString(requestMethod, url.toLowerCase(Locale.US), parameters);
-		return hmacsha1(baseString, apiSecret, tokenSecret);
+	throws FlickrException {
+		String baseString;
+		try {
+			baseString = getRequestBaseString(requestMethod, url.toLowerCase(Locale.US), parameters);
+			return hmacsha1(baseString, apiSecret, tokenSecret);
+		} catch (UnsupportedEncodingException e) {
+			throw new FlickrException(e);
+		} catch (InvalidKeyException e) {
+			throw new FlickrException(e);
+		} catch (IllegalStateException e) {
+			throw new FlickrException(e);
+		} catch (NoSuchAlgorithmException e) {
+			throw new FlickrException(e);
+		}
 	}
 	
 	public static String getSignature(String url, List<Parameter> parameters
 			, String apiSecret, String tokenSecret)
-	throws UnsupportedEncodingException, NoSuchAlgorithmException,
-	InvalidKeyException {
+	throws FlickrException {
 		return getSignature(REQUEST_METHOD_GET, url, parameters, apiSecret, tokenSecret);
 	}
 	

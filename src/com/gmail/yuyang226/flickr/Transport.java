@@ -4,8 +4,6 @@
 package com.gmail.yuyang226.flickr;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
@@ -89,13 +87,7 @@ public abstract class Transport {
     	parameters.add(new Parameter("nojsoncallback", "1"));
 		parameters.add(new Parameter("format", "json"));
 		if (isOAuth) {
-			try {
-				OAuthUtils.addOAuthParams(apiSharedSecret, OAuthInterface.URL_REST, parameters);
-			} catch (InvalidKeyException e) {
-				throw new FlickrException(e);
-			} catch (NoSuchAlgorithmException e) {
-				throw new FlickrException(e);
-			}
+			OAuthUtils.addOAuthParams(apiSharedSecret, OAuthInterface.URL_REST, parameters);
 		}
     	return post(OAuthInterface.PATH_REST, parameters);
     }

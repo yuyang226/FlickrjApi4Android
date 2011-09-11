@@ -18,7 +18,6 @@ import com.gmail.yuyang226.flickr.groups.members.MembersInterface;
 import com.gmail.yuyang226.flickr.groups.pools.PoolsInterface;
 import com.gmail.yuyang226.flickr.interestingness.InterestingnessInterface;
 import com.gmail.yuyang226.flickr.machinetags.MachinetagsInterface;
-import com.gmail.yuyang226.flickr.oauth.OAuth;
 import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.panda.PandaInterface;
 import com.gmail.yuyang226.flickr.people.PeopleInterface;
@@ -78,7 +77,6 @@ public class Flickr {
     private String apiKey;
     private String sharedSecret;
     private Transport transport;
-    private OAuth oauth;
 
     private OAuthInterface oAuthInterface;
     private ActivityInterface activityInterface;
@@ -287,19 +285,6 @@ public class Flickr {
             throw new IllegalArgumentException("API key must not be null");
         }
         this.apiKey = apiKey;
-    }
-
-    public void setOAuth(OAuth oauth) {
-        this.oauth = oauth;
-    }
-
-    /**
-     * Get the OAuth-object.
-     *
-     * @return The OAuth-object
-     */
-    public OAuth getOAuth() {
-        return oauth;
     }
 
     /**
