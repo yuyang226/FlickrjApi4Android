@@ -24,6 +24,7 @@ import com.gmail.yuyang226.flickr.photos.Extras;
 import com.gmail.yuyang226.flickr.photos.Photo;
 import com.gmail.yuyang226.flickr.photos.PhotoContext;
 import com.gmail.yuyang226.flickr.photos.PhotoList;
+import com.gmail.yuyang226.flickr.photos.PhotoUtils;
 import com.gmail.yuyang226.flickr.util.JSONUtils;
 import com.gmail.yuyang226.flickr.util.StringUtilities;
 
@@ -437,7 +438,7 @@ public class PhotosetsInterface {
 
         for (int i = 0; photoElements != null && i < photoElements.length(); i++) {
         	JSONObject photoElement = photoElements.getJSONObject(i);
-            //photos.add(PhotoUtils.createPhoto(photoElement, photoset));
+            photos.add(PhotoUtils.createPhoto(photoElement));
         }
 
         return photos;

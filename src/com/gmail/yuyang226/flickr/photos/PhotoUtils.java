@@ -12,7 +12,7 @@ import com.gmail.yuyang226.flickr.util.JSONUtils;
 
 /**
  * Utilitiy-methods to transfer requested XML to Photo-objects.
- *
+ * 
  * @author till, x-mago
  * @version $Id: PhotoUtils.java,v 1.20 2009/07/23 21:49:35 x-mago Exp $
  */
@@ -23,14 +23,14 @@ public final class PhotoUtils {
 	}
 
 	/**
-	 * Transfer the Information of a photo from a JSONObject
-	 * to a Photo-object.
-	 *
+	 * Transfer the Information of a photo from a JSONObject to a Photo-object.
+	 * 
 	 * @param photoElement
 	 * @return Photo
-	 * @throws JSONException 
+	 * @throws JSONException
 	 */
-	public static final Photo createPhoto(JSONObject photoElement) throws JSONException {
+	public static final Photo createPhoto(JSONObject photoElement)
+			throws JSONException {
 		Photo photo = new Photo();
 		photo.setId(photoElement.getString("id"));
 		photo.setPlaceId(photoElement.optString("place_id", null));
@@ -105,35 +105,40 @@ public final class PhotoUtils {
 			photo.setSizes(sizes);
 		}
 
-		if (photo.getOriginalFormat() == null 
+		if (photo.getOriginalFormat() == null
 				|| photo.getOriginalFormat().equals("")) {
 			photo.setOriginalFormat("jpg");
 		}
 
 		User owner = new User();
-		Object obj = photoElement.get("owner");
-		if (obj instanceof JSONObject) {
-			JSONObject ownerObj = (JSONObject)obj;
-			owner.setId(ownerObj.getString("nsid"));
-			owner.setUsername(ownerObj.optString("username", null));
-			owner.setRealName(ownerObj.optString("realname", null));
-			owner.setLocation(ownerObj.optString("location", null));
-			photo.setOwner(owner);
-		} else {
-			owner.setId(photoElement.getString("owner"));
-			owner.setUsername(photoElement.optString("ownername", null));
-			photo.setOwner(owner);
+		if (photoElement.has("owner")) {
+			Object obj = photoElement.get("owner");
+			if (obj instanceof JSONObject) {
+				JSONObject ownerObj = (JSONObject) obj;
+				owner.setId(ownerObj.getString("nsid"));
+				owner.setUsername(ownerObj.optString("username", null));
+				owner.setRealName(ownerObj.optString("realname", null));
+				owner.setLocation(ownerObj.optString("location", null));
+				photo.setOwner(owner);
+			} else {
+				owner.setId(photoElement.getString("owner"));
+				owner.setUsername(photoElement.optString("ownername", null));
+				photo.setOwner(owner);
+			}
+			
+			photo.setUrl("http://flickr.com/photos/" + owner.getId() + "/"
+					+ photo.getId());
 		}
 		
-		photo.setUrl("http://flickr.com/photos/" + owner.getId() + "/" + photo.getId());
 		JSONObject titleObj = photoElement.optJSONObject("title");
 		if (titleObj != null) {
 			photo.setTitle(titleObj.getString("_content"));
 		} else {
 			photo.setTitle(photoElement.getString("title"));
 		}
-		
-		photo.setDescription(JSONUtils.getChildValue(photoElement, "description"));
+
+		photo.setDescription(JSONUtils.getChildValue(photoElement,
+				"description"));
 
 		// here the flags are set, if the photo is read by getInfo().
 		photo.setPublicFlag("1".equals(photoElement.optString("ispublic")));
@@ -141,40 +146,47 @@ public final class PhotoUtils {
 		photo.setFamilyFlag("1".equals(photoElement.optString("isfamily")));
 
 		// Parse either photo by getInfo, or from list
-		/*try {
-			JSONObject datesElement = photoElement.optJSONObject("dates");
-			photo.setDatePosted(datesElement.getAttribute("posted"));
-			photo.setDateTaken(datesElement.getAttribute("taken"));
-			photo.setTakenGranularity(datesElement.getAttribute("takengranularity"));
-			photo.setLastUpdate(datesElement.getAttribute("lastupdate"));
-		} catch (IndexOutOfBoundsException e) {
-			photo.setDateTaken(photoElement.getAttribute("datetaken"));
-		} catch (NullPointerException e) {
-			photo.setDateTaken(photoElement.getAttribute("datetaken"));
-		}*/
+		/*
+		 * try { JSONObject datesElement = photoElement.optJSONObject("dates");
+		 * photo.setDatePosted(datesElement.getAttribute("posted"));
+		 * photo.setDateTaken(datesElement.getAttribute("taken"));
+		 * photo.setTakenGranularity
+		 * (datesElement.getAttribute("takengranularity"));
+		 * photo.setLastUpdate(datesElement.getAttribute("lastupdate")); } catch
+		 * (IndexOutOfBoundsException e) {
+		 * photo.setDateTaken(photoElement.getAttribute("datetaken")); } catch
+		 * (NullPointerException e) {
+		 * photo.setDateTaken(photoElement.getAttribute("datetaken")); }
+		 */
 
-		/*NodeList permissionsNodes = photoElement.getElementsByTagName("permissions");
-		if (permissionsNodes.getLength() > 0) {
-			Element permissionsElement = (Element) permissionsNodes.item(0);
-			Permissions permissions = new Permissions();
-			permissions.setComment(permissionsElement.getAttribute("permcomment"));
-			permissions.setAddmeta(permissionsElement.getAttribute("permaddmeta"));
-		}*/
+		/*
+		 * NodeList permissionsNodes =
+		 * photoElement.getElementsByTagName("permissions"); if
+		 * (permissionsNodes.getLength() > 0) { Element permissionsElement =
+		 * (Element) permissionsNodes.item(0); Permissions permissions = new
+		 * Permissions();
+		 * permissions.setComment(permissionsElement.getAttribute(
+		 * "permcomment"));
+		 * permissions.setAddmeta(permissionsElement.getAttribute
+		 * ("permaddmeta")); }
+		 */
 
-		/*try {
-			Element editabilityElement = (Element) photoElement.getElementsByTagName("editability").item(0);
-			Editability editability = new Editability();
-			editability.setComment("1".equals(editabilityElement.getAttribute("cancomment")));
-			editability.setAddmeta("1".equals(editabilityElement.getAttribute("canaddmeta")));
-			photo.setEditability(editability);
-		} catch (IndexOutOfBoundsException e) {
-		} catch (NullPointerException e) {
-			// nop
-		}*/
+		/*
+		 * try { Element editabilityElement = (Element)
+		 * photoElement.getElementsByTagName("editability").item(0); Editability
+		 * editability = new Editability();
+		 * editability.setComment("1".equals(editabilityElement
+		 * .getAttribute("cancomment")));
+		 * editability.setAddmeta("1".equals(editabilityElement
+		 * .getAttribute("canaddmeta"))); photo.setEditability(editability); }
+		 * catch (IndexOutOfBoundsException e) { } catch (NullPointerException
+		 * e) { // nop }
+		 */
 
 		if (photoElement.has("comments")) {
 			JSONObject commentsElement = photoElement.getJSONObject("comments");
-			//photo.setComments(((Text) commentsElement.getFirstChild()).getData());
+			// photo.setComments(((Text)
+			// commentsElement.getFirstChild()).getData());
 		}
 
 		JSONObject notesElement = photoElement.optJSONObject("notes");
@@ -187,8 +199,9 @@ public final class PhotoUtils {
 				note.setId(noteElement.getString("id"));
 				note.setAuthor(noteElement.getString("author"));
 				note.setAuthorName(noteElement.getString("authorname"));
-				note.setBounds(noteElement.getString("x"), noteElement.getString("y"),
-						noteElement.getString("w"), noteElement.getString("h"));
+				note.setBounds(noteElement.getString("x"), noteElement
+						.getString("y"), noteElement.getString("w"),
+						noteElement.getString("h"));
 				note.setText(noteElement.getString("_content"));
 				notes.add(note);
 			}
@@ -201,9 +214,9 @@ public final class PhotoUtils {
 		// Elements.
 		try {
 			List<Tag> tags = new ArrayList<Tag>();
-			obj = photoElement.opt("tags");
+			Object obj = photoElement.opt("tags");
 			if (obj instanceof JSONObject) {
-				JSONObject tagsObject = (JSONObject)obj;
+				JSONObject tagsObject = (JSONObject) obj;
 				JSONArray tagNodes = tagsObject.optJSONArray("tag");
 				for (int i = 0; tagNodes != null && i < tagNodes.length(); i++) {
 					JSONObject tagElement = tagNodes.getJSONObject(i);
@@ -214,7 +227,7 @@ public final class PhotoUtils {
 					tag.setValue(tagElement.optString("_content"));
 					tags.add(tag);
 				}
-			} else if (obj instanceof String){
+			} else if (obj instanceof String) {
 				String tagsAttr = obj.toString();
 				String[] values = tagsAttr.split(" ");
 				for (int i = 0; i < values.length; i++) {
@@ -228,24 +241,20 @@ public final class PhotoUtils {
 			photo.setTags(new ArrayList<Tag>());
 		}
 
-		/*try {
-			Element urlsElement = (Element) photoElement.getElementsByTagName("urls").item(0);
-			List<PhotoUrl> urls = new ArrayList<PhotoUrl>();
-			NodeList urlNodes = urlsElement.getElementsByTagName("url");
-			for (int i = 0; i < urlNodes.getLength(); i++) {
-				Element urlElement = (Element) urlNodes.item(i);
-				PhotoUrl photoUrl = new PhotoUrl();
-				photoUrl.setType(urlElement.getAttribute("type"));
-				photoUrl.setUrl(XMLUtilities.getValue(urlElement));
-				if (photoUrl.getType().equals("photopage")) {
-					photo.setUrl(photoUrl.getUrl());
-				}
-			}
-			photo.setUrls(urls);
-		} catch (IndexOutOfBoundsException e) {
-		} catch (NullPointerException e) {
-			photo.setUrls(new ArrayList<PhotoUrl>());
-		}*/
+		/*
+		 * try { Element urlsElement = (Element)
+		 * photoElement.getElementsByTagName("urls").item(0); List<PhotoUrl>
+		 * urls = new ArrayList<PhotoUrl>(); NodeList urlNodes =
+		 * urlsElement.getElementsByTagName("url"); for (int i = 0; i <
+		 * urlNodes.getLength(); i++) { Element urlElement = (Element)
+		 * urlNodes.item(i); PhotoUrl photoUrl = new PhotoUrl();
+		 * photoUrl.setType(urlElement.getAttribute("type"));
+		 * photoUrl.setUrl(XMLUtilities.getValue(urlElement)); if
+		 * (photoUrl.getType().equals("photopage")) {
+		 * photo.setUrl(photoUrl.getUrl()); } } photo.setUrls(urls); } catch
+		 * (IndexOutOfBoundsException e) { } catch (NullPointerException e) {
+		 * photo.setUrls(new ArrayList<PhotoUrl>()); }
+		 */
 
 		String longitude = photoElement.optString("longitude", null);
 		String latitude = photoElement.optString("latitude", null);
@@ -263,12 +272,13 @@ public final class PhotoUtils {
 
 	/**
 	 * Parse a list of Photos from given Element.
-	 *
+	 * 
 	 * @param responseData
 	 * @return PhotoList
-	 * @throws JSONException 
+	 * @throws JSONException
 	 */
-	public static final PhotoList createPhotoList(JSONObject responseData) throws JSONException {
+	public static final PhotoList createPhotoList(JSONObject responseData)
+			throws JSONException {
 		JSONObject photosElement = responseData.getJSONObject("photos");
 		PhotoList photos = new PhotoList();
 		photos.setPage(photosElement.optInt("page"));
