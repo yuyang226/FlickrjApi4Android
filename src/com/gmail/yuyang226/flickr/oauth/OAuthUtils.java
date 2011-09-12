@@ -4,7 +4,6 @@ package com.gmail.yuyang226.flickr.oauth;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
@@ -20,6 +19,7 @@ import org.apache.commons.codec.binary.Base64;
 import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.RequestContext;
+import com.gmail.yuyang226.flickr.util.UrlUtilities;
 
 /**
  * a simple program to get flickr token and token secret.
@@ -119,7 +119,7 @@ public class OAuthUtils {
 		StringBuffer result = new StringBuffer();
 		result.append(oauth_request_method);
 		result.append(PARAMETER_SEPARATOR);
-		result.append(URLEncoder.encode(url, ENC));
+		result.append(UrlUtilities.encode(url));
 		result.append(PARAMETER_SEPARATOR);
 		
 		Collections.sort(parameters, new Comparator<Parameter>() {
@@ -135,7 +135,7 @@ public class OAuthUtils {
 			
 		});
 		
-		return result.append(URLEncoder.encode(format(parameters, ENC), ENC)).toString();
+		return result.append(UrlUtilities.encode(format(parameters, ENC))).toString();
 	}
 	
 	public static String hmacsha1(String data, String key, String tokenSecret) throws IllegalStateException, UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
@@ -163,9 +163,9 @@ public class OAuthUtils {
 			final String encoding) {
 		final StringBuilder result = new StringBuilder();
 		for (final Parameter parameter : parameters) {
-			final String encodedName = encode(parameter.getName(), encoding);
+			final String encodedName = UrlUtilities.encode(parameter.getName());
 			final String value = String.valueOf(parameter.getValue());
-			final String encodedValue = value != null ? encode(value, encoding) : "";
+			final String encodedValue = value != null ? UrlUtilities.encode(value) : "";
 			if (result.length() > 0)
 				result.append(PARAMETER_SEPARATOR);
 			result.append(encodedName);
@@ -179,15 +179,6 @@ public class OAuthUtils {
 		try {
 			return URLDecoder.decode(content,
 					encoding != null ? encoding : DEFAULT_CONTENT_CHARSET);
-		} catch (UnsupportedEncodingException problem) {
-			throw new IllegalArgumentException(problem);
-		}
-	}
-
-	public static String encode (final String content, final String encoding) {
-		try {
-			return URLEncoder.encode(content,
-					encoding != null ? encoding : DEFAULT_CONTENT_CHARSET).replace("+", "%20");
 		} catch (UnsupportedEncodingException problem) {
 			throw new IllegalArgumentException(problem);
 		}

@@ -8,13 +8,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -202,6 +200,18 @@ public class REST extends Transport {
 		}
 		return result;
 	}
+	
+	private void setOAuthPostHeaders(HttpURLConnection conn, List<Parameter> parameters) {
+		List<Parameter> oauthParams = new ArrayList<Parameter>(parameters.size());
+		for (Parameter param : parameters) {
+			if (param.getName().startsWith("oauth_")) {
+				oauthParams.add(param);
+			}
+		}
+		if (oauthParams.isEmpty() == false) {
+			conn.addRequestProperty("Authorization", encodeParameters(oauthParams, ",", true));
+		}
+	}
 
 	public String sendPost(String path, List<Parameter> parameters) throws IOException{
 		HttpURLConnection conn = null;
@@ -209,42 +219,36 @@ public class REST extends Transport {
 		try {
 			URL url = UrlUtilities.buildPostUrl(getHost(), getPort(), path);
 			conn = (HttpURLConnection)url.openConnection();
+			//setOAuthPostHeaders(conn, parameters);
 			conn.setRequestMethod("POST");
-			conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			conn.setRequestProperty("Connection", "Keep-Alive");
-			conn.setRequestProperty("Cache-Control", "no-cache,max-age=0"); 
-			conn.setRequestProperty("Pragma", "no-cache");
+			String postParam = encodeParameters(parameters);
+			System.err.println("Encoded Params: " + postParam);
+		    byte[] bytes = postParam.getBytes("UTF-8");
+		    conn.setRequestProperty("Content-Length", Integer.toString(bytes.length));
+			conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			conn.addRequestProperty("Cache-Control", "no-cache,max-age=0"); 
+			conn.addRequestProperty("Pragma", "no-cache");
 			conn.setUseCaches(false);
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
 			out = new DataOutputStream(conn.getOutputStream());
-
-			Iterator<?> iter = parameters.iterator();
-			while (iter.hasNext()) {
-				Parameter p = (Parameter) iter.next();
-				out.writeBytes(p.getName());
-				out.writeBytes("=");
-				try {
-					out.writeBytes(
-							URLEncoder.encode(
-									String.valueOf(p.getValue()),
-									UTF8
-							)
-					);
-				} catch (UnsupportedEncodingException e) {
-					// Should never happen, but just in case
-				}
-				if (iter.hasNext()) {
-					out.writeBytes("&");
-				}
-			}
+			out.write(bytes);
 			out.flush();
 			out.close();
 
-			if ((conn.getResponseCode() != HttpURLConnection.HTTP_OK)) {
+			int responseCode = HttpURLConnection.HTTP_OK;
+			try {
+				responseCode = conn.getResponseCode();
+			} catch (IOException e) {
+				e.printStackTrace();
+				if (conn.getErrorStream() != null) {
+					responseCode = conn.getResponseCode();
+				}
+			}
+			if ((responseCode != HttpURLConnection.HTTP_OK)) {
 				String errorMessage = readFromStream(conn.getErrorStream());
 				throw new IOException("Connection Failed. Response Code: "
-						+ conn.getResponseCode() + ", Response Message: " + conn.getResponseMessage()
+						+ responseCode + ", Response Message: " + conn.getResponseMessage()
 						+ ", Error: " + errorMessage);
 			}
 
@@ -298,4 +302,43 @@ public class REST extends Transport {
 				Base64.encode((proxyUser + ":" + proxyPassword).getBytes())
 		);
 	}
+	
+	public static String encodeParameters(List<Parameter> parameters, String splitter, boolean quot) {
+        StringBuffer buf = new StringBuffer();
+        for (Parameter param : parameters) {
+        	if (buf.length() != 0) {
+        		if (quot) {
+        			buf.append("\"");
+        		}
+        		buf.append(splitter);
+        	}
+        	buf.append(UrlUtilities.encode(param.getName())).append("=");
+        	if (quot) {
+        		buf.append("\"");
+        	}
+        	buf.append(UrlUtilities.encode(String.valueOf(param.getValue())));
+        }
+        if (buf.length() != 0) {
+            if (quot) {
+                buf.append("\"");
+            }
+        }
+        return buf.toString();
+    }
+	
+	public static String encodeParameters(List<Parameter> parameters) {
+        if (parameters == null || parameters.isEmpty()) {
+            return "";
+        }
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < parameters.size(); i++) {
+            if (i != 0) {
+                buf.append("&");
+            }
+            Parameter param = parameters.get(i);
+            buf.append(UrlUtilities.encode(param.getName()))
+                    .append("=").append(UrlUtilities.encode(String.valueOf(param.getValue())));
+        }
+        return buf.toString();
+    }
 }

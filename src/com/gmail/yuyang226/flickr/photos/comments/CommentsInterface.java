@@ -137,17 +137,25 @@ public class CommentsInterface {
      * This method does not require authentication.
      *
      * @param photoId The id of the photo to fetch comments for.
+     * @param minCommentDate Minimum date that a a comment was added.
+     * @param maxCommentDate Maximum date that a comment was added.
      * @return a List of {@link Comment} objects.
      * @throws FlickrException
      * @throws IOException
      * @throws JSONException 
      */
-    public List<Comment> getList(String photoId)
+    public List<Comment> getList(String photoId, Date minCommentDate, Date maxCommentDate)
       throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
         parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("photo_id", photoId));
+        if (minCommentDate != null) {
+        	parameters.add(new Parameter("min_comment_date", minCommentDate.getTime() / 1000L));
+        }
+        if (maxCommentDate != null) {
+        	parameters.add(new Parameter("max_comment_date", maxCommentDate.getTime() / 1000L));
+        }
 
         Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {

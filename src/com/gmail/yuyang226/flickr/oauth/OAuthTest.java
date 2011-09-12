@@ -27,9 +27,6 @@ public class OAuthTest {
 	 */
 	public OAuthTest() {
 		super();
-		System.out.println(DATA);
-		String v = "'"+DATA+"'";  
-	    System.out.println(v);  
 	}
 
 	private static String readParamFromCommand(String message) throws IOException {
@@ -61,6 +58,7 @@ public class OAuthTest {
 			user.setId("8308954@N06");
 			user.setUsername("Yang and Yun's Album");
 			auth.setToken(new OAuthToken("72157627458295241-83050bfaaeffd445", "07c38a749dc7d36e"));
+			//auth.setToken(new OAuthToken("72157627641862382-904dfd0d8fb0294e", "07c38a749dc7d36e"));
 			RequestContext.getRequestContext().setOAuth(auth);
 			//f.getGalleriesInterface().getListForPhoto("5772049100", 0, 0);
 			System.out.println(f.getPeopleInterface().getPhotos("8308954@N06", 
