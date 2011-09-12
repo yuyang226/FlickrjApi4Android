@@ -222,8 +222,7 @@ public class REST extends Transport {
 			//setOAuthPostHeaders(conn, parameters);
 			conn.setRequestMethod("POST");
 			String postParam = encodeParameters(parameters);
-			System.err.println("Encoded Params: " + postParam);
-		    byte[] bytes = postParam.getBytes("UTF-8");
+		    byte[] bytes = postParam.getBytes(UTF8);
 		    conn.setRequestProperty("Content-Length", Integer.toString(bytes.length));
 			conn.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			conn.addRequestProperty("Cache-Control", "no-cache,max-age=0"); 

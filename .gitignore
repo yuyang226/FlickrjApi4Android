@@ -1,2 +1,5 @@
 .settings
 build
+target
+*/target
+*/*/target

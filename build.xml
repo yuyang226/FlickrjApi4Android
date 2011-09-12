@@ -6,9 +6,6 @@
 
         <path id="build.classpath">
           <pathelement location="${lib.dir}/commons-codec.jar"/>
-          <pathelement location="${lib.dir}/commons-discovery-0.2.jar"/>
-          <pathelement location="${lib.dir}/commons-logging-1.0.4.jar"/>
-          <pathelement location="${lib.dir}/log4j-1.2.8.jar"/>
         </path>
 
     	<path id="examples.classpath">
