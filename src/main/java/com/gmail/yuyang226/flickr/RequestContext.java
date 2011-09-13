@@ -7,6 +7,9 @@ package com.gmail.yuyang226.flickr;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.gmail.yuyang226.flickr.oauth.OAuth;
 
 /**
@@ -17,6 +20,7 @@ import com.gmail.yuyang226.flickr.oauth.OAuth;
  * @author Anthony Eden
  */
 public class RequestContext {
+	private static final Logger logger = LoggerFactory.getLogger(RequestContext.class);
 
     private static RequestContextThreadLocal threadLocal =
             new RequestContextThreadLocal();
@@ -32,12 +36,19 @@ public class RequestContext {
     public static RequestContext getRequestContext() {
         return (RequestContext) threadLocal.get();
     }
+    
+    public static void resetThreadLocals() {
+        if( threadLocal.get() != null) {
+        	threadLocal.remove();
+        }
+    }
 
     public OAuth getOAuth() {
         return auth;
     }
 
     public void setOAuth(OAuth auth) {
+    	logger.info("Set new OAuth {} to the current RequestContext instance {}", auth, this);
         this.auth = auth;
     }
 

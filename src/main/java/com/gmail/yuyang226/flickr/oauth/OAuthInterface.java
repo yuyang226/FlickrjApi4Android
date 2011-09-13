@@ -6,14 +6,13 @@ package com.gmail.yuyang226.flickr.oauth;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
-import org.xml.sax.SAXException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gmail.yuyang226.flickr.Flickr;
 import com.gmail.yuyang226.flickr.FlickrException;
@@ -57,7 +56,7 @@ public class OAuthInterface {
 	private String apiKey;
 	private String sharedSecret;
 	private REST oauthTransport;
-	private static final Logger logger = Logger.getLogger(OAuthInterface.class.getName());
+	private static final Logger logger = LoggerFactory.getLogger(OAuthInterface.class);
 
 	/**
 	 * Construct the AuthInterface.
@@ -101,9 +100,7 @@ public class OAuthInterface {
 	 *
 	 * @return the frob
 	 * @throws IOException
-	 * @throws SAXException
 	 * @throws FlickrException
-	 * @throws URISyntaxException 
 	 */
 	public OAuthToken getRequestToken(String callbackUrl) throws IOException, FlickrException {
 		if (callbackUrl == null)
@@ -114,6 +111,7 @@ public class OAuthInterface {
 		OAuthUtils.addBasicOAuthParams(parameters);
 		OAuthUtils.signGet(this.sharedSecret, URL_REQUEST_TOKEN, parameters);
 
+		logger.info("Getting Request Token with parameters: {}", parameters);
 		Map<String, String> response = this.oauthTransport.getMapData(
 				true, PATH_OAUTH_REQUEST_TOKEN, parameters);
 		if (response.isEmpty()) {
@@ -126,7 +124,7 @@ public class OAuthInterface {
 		}
 		String token = response.get(KEY_OAUTH_TOKEN);
 		String token_secret = response.get(KEY_OAUTH_TOKEN_SECRET);
-		logger.info("Response: " + response);
+		logger.info("Response: {}", response);
 		OAuth oauth = new OAuth();
 		oauth.setToken(new OAuthToken(token, token_secret));
 		//RequestContext.getRequestContext().setOAuth(oauth);
@@ -163,7 +161,7 @@ public class OAuthInterface {
 		if (response.isEmpty()) {
 			throw new FlickrException("Empty Response", "Empty Response");
 		}
-		logger.info("Response: " + response);
+		logger.info("Response: {}", response);
 		OAuth result = new OAuth();
 		User user = new User();
 		user.setId(response.get("user_nsid"));

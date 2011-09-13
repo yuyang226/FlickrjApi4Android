@@ -6,15 +6,19 @@ package com.gmail.yuyang226.flickr.oauth;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.HashSet;
+
+import junit.framework.Assert;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import com.gmail.yuyang226.flickr.Flickr;
+import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.RequestContext;
-import com.gmail.yuyang226.flickr.oauth.OAuth;
-import com.gmail.yuyang226.flickr.oauth.OAuthToken;
+import com.gmail.yuyang226.flickr.org.json.JSONException;
 import com.gmail.yuyang226.flickr.people.User;
-import com.gmail.yuyang226.flickr.photos.Photo;
+import com.gmail.yuyang226.flickr.test.TestConstants;
 
 
 
@@ -23,15 +27,37 @@ import com.gmail.yuyang226.flickr.photos.Photo;
  *
  */
 public class OAuthTest {
-	public static final String DATA = "\\u4e0a\\u6d77\\u98ce\\u534e\\u521d\\u4e2d";
+	private Flickr f;
 	/**
 	 * 
 	 */
 	public OAuthTest() {
 		super();
 	}
+	
+	@Before
+	public void setup() throws Exception {
+		f = new Flickr(TestConstants.FLICKR_API_KEY, TestConstants.FLICKR_API_SECRET);
+		OAuth auth = new OAuth();
+		User user = new User();
+		user.setId(TestConstants.USE_ID);
+		auth.setToken(new OAuthToken(TestConstants.OAUTH_TOKEN, TestConstants.OAUTH_TOKEN_SECRET));
+		RequestContext.getRequestContext().setOAuth(auth);
+	}
+	
+	@Test
+	public void testOAuthInterfaceTestLogin() throws FlickrException, IOException, JSONException {
+		Assert.assertNotNull("Login failed", f.getOAuthInterface().testLogin());
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		RequestContext.getRequestContext().setOAuth(null);
+		RequestContext.resetThreadLocals();
+		f = null;
+	}
 
-	private static String readParamFromCommand(String message) throws IOException {
+	public static String readParamFromCommand(String message) throws IOException {
 		//  prompt the user to enter their name
 		System.out.print(message);
 		//  open up standard input
@@ -63,15 +89,12 @@ public class OAuthTest {
 			//auth.setToken(new OAuthToken("72157627641862382-904dfd0d8fb0294e", "07c38a749dc7d36e"));
 			RequestContext.getRequestContext().setOAuth(auth);
 			//f.getGalleriesInterface().getListForPhoto("5772049100", 0, 0);
-			System.out.println(f.getPeopleInterface().getPhotos("8308954@N06", 
-					new HashSet<String>(Arrays.asList(new String[]{"owner_name","tags","geo"})), 18, 1));
 			System.out.println(f.getOAuthInterface().testLogin());
 			//f.getPhotosInterface().addTags("5772049100", new String[]{"Hello", "World"});
 			//f.getCommentsInterface().addComment("5772049100", "Hello World");
 			//Collection<Exif> exifs = f.getPhotosInterface().getExif("5772049100", null);
 			//f.getPhotosInterface().getInfo("6024664723", null);
 			//f.getCommentsInterface().getList("6024664723");
-			f.getPeopleInterface().getInfo("8308954@N06");
 			System.out.println(f.getGalleriesInterface().getList("8308954@N06", 0, 0));
 			System.out.println(f.getGalleriesInterface().getPhotos("8263632-72157623259986613", null, 0, 0));
 //			System.out.println(f.getActivityInterface().userComments(0, 0));
@@ -83,19 +106,13 @@ public class OAuthTest {
 //			System.out.println(f.getContactsInterface().getPublicList("8308954@N06"));
 //			System.out.println(f.getContactsInterface().getListRecentlyUploaded(
 //					new Date(System.currentTimeMillis() - 24L * 60L * 60L * 1000L), null));
-//			System.out.println(f.getPeopleInterface().findByEmail("wanyun892@yahoo.cn"));
-//			System.out.println(f.getPeopleInterface().findByUsername("wanyun(Wandy)"));
-//			System.out.println(f.getPeopleInterface().getInfo("8308954@N06"));
-//			System.out.println(f.getPeopleInterface().getPublicGroups("8308954@N06"));
-//			System.out.println(f.getPeopleInterface().getUploadStatus());
-			Photo photo = f.getPeopleInterface().getPublicPhotos("8308954@N06", 0, 0).get(0);
+			
 			//Photoset ID: 72157626738803062
 //			Photoset set = f.getPhotosetsInterface().getList("8308954@N06").getPhotosets().iterator().next();
 //			System.out.println(f.getPhotosetsInterface().getInfo(set.getId()));
 //			System.out.println(f.getPhotosetsInterface().getPhotos("72157626738803062", 0, 0));
 //			System.out.println(f.getPhotosetsInterface().getContext("5726077435", "72157626738803062"));
 			//photo ID: 6024664723
-			//System.out.println(f.getPeopleInterface().getPhotos("8308954@N06", null, 0, 0));
 			//f.getFavoritesInterface().add(photo.getId());
 //			System.out.println("Favourites List: \n" + f.getFavoritesInterface().getList("8308954@N06", 0, 0, null));
 //			System.out.println("Favourites Public List: \n" + f.getFavoritesInterface().getPublicList("8308954@N06", 0, 0, null));

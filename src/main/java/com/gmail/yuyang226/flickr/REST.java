@@ -11,17 +11,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
 import com.gmail.yuyang226.flickr.util.Base64;
-import com.gmail.yuyang226.flickr.util.DebugInputStream;
 import com.gmail.yuyang226.flickr.util.IOUtilities;
 import com.gmail.yuyang226.flickr.util.StringUtilities;
 import com.gmail.yuyang226.flickr.util.UrlUtilities;
@@ -33,6 +34,7 @@ import com.gmail.yuyang226.flickr.util.UrlUtilities;
  * @version $Id: REST.java,v 1.26 2009/07/01 22:07:08 x-mago Exp $
  */
 public class REST extends Transport {
+	private static final Logger logger = LoggerFactory.getLogger(REST.class);
 
 	private static final String UTF8 = "UTF-8";
 	public static final String PATH = "/services/rest/";
@@ -124,7 +126,9 @@ public class REST extends Transport {
 
 	private InputStream getInputStream(String path, List<Parameter> parameters) throws IOException {
 		URL url = UrlUtilities.buildUrl(getHost(), getPort(), path, parameters);
-		if (Flickr.debugRequest) System.out.println("GET: " + url);
+		if (logger.isDebugEnabled()) {
+			logger.debug("GET URL: {}", url.toString());
+		}
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.addRequestProperty("Cache-Control", "no-cache,max-age=0"); 
 		conn.addRequestProperty("Pragma", "no-cache"); 
@@ -136,14 +140,7 @@ public class REST extends Transport {
 			);
 		}
 		conn.connect();
-
-		InputStream in = null;
-		if (Flickr.debugStream) {
-			in = new DebugInputStream(conn.getInputStream(), System.out);
-		} else {
-			in = conn.getInputStream();
-		}
-		return in;
+		return conn.getInputStream();
 	}
 
 	/**
@@ -200,26 +197,20 @@ public class REST extends Transport {
 		}
 		return result;
 	}
-	
-	private void setOAuthPostHeaders(HttpURLConnection conn, List<Parameter> parameters) {
-		List<Parameter> oauthParams = new ArrayList<Parameter>(parameters.size());
-		for (Parameter param : parameters) {
-			if (param.getName().startsWith("oauth_")) {
-				oauthParams.add(param);
-			}
-		}
-		if (oauthParams.isEmpty() == false) {
-			conn.addRequestProperty("Authorization", encodeParameters(oauthParams, ",", true));
-		}
-	}
 
 	public String sendPost(String path, List<Parameter> parameters) throws IOException{
+		if (logger.isDebugEnabled()) {
+			logger.debug("Send Post Input Params: path '{}'; parameters {}", path, parameters);
+		}
 		HttpURLConnection conn = null;
 		DataOutputStream out = null;
+		String data = null;
 		try {
 			URL url = UrlUtilities.buildPostUrl(getHost(), getPort(), path);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Post URL: {}", url.toString());
+			}
 			conn = (HttpURLConnection)url.openConnection();
-			//setOAuthPostHeaders(conn, parameters);
 			conn.setRequestMethod("POST");
 			String postParam = encodeParameters(parameters);
 		    byte[] bytes = postParam.getBytes(UTF8);
@@ -239,7 +230,7 @@ public class REST extends Transport {
 			try {
 				responseCode = conn.getResponseCode();
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("Failed to get the POST response code", e);
 				if (conn.getErrorStream() != null) {
 					responseCode = conn.getResponseCode();
 				}
@@ -252,12 +243,15 @@ public class REST extends Transport {
 			}
 
 			String result = readFromStream(conn.getInputStream());
-			return URLDecoder.decode(result.trim(), OAuthUtils.ENC);
+			data = URLDecoder.decode(result.trim(), OAuthUtils.ENC);
+			return data;
 		} finally {
 			IOUtilities.close(out);
-
 			if (conn != null)
 				conn.disconnect() ;
+			if (logger.isDebugEnabled()) {
+				logger.debug("Send Post Result: {}", data);
+			}
 		}
 	}
 

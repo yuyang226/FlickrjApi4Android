@@ -14,11 +14,11 @@ import java.util.Locale;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.codec.binary.Base64;
 
 import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.RequestContext;
+import com.gmail.yuyang226.flickr.util.Base64;
 import com.gmail.yuyang226.flickr.util.UrlUtilities;
 
 /**
@@ -148,7 +148,7 @@ public class OAuthUtils {
 		mac.init(spec);
 		byteHMAC = mac.doFinal(data.getBytes(ENC));
 
-		return new String(Base64.encodeBase64(byteHMAC));
+		return new String(Base64.encode(byteHMAC));
 	}
 
 	/**

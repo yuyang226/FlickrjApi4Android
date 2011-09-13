@@ -64,6 +64,4 @@ public class OAuth implements Serializable {
 				+ ", user=" + user + "]";
 	}
 	
-	
-
 }

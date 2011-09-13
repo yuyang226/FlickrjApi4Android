@@ -60,16 +60,6 @@ public class Flickr {
     public static final String DEFAULT_API_HOST = "api.flickr.com";
 
     /**
-     * Set to true to enable response debugging (print the response stream)
-     */
-    public static boolean debugStream = false;
-
-    /**
-     * Set to true to enable request debugging (print the request stream, used for "post")
-     */
-    public static boolean debugRequest = false;
-
-    /**
      * If set to true, trace messages will be printed to STDOUT.
      */
     public static boolean tracing = false;

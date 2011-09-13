@@ -5,12 +5,8 @@
 	<property file="build.properties"/>
 
         <path id="build.classpath">
-          <pathelement location="${lib.dir}/commons-codec.jar"/>
+          <pathelement location="${lib.dir}/slf4j-api-1.6.2.jar"/>
         </path>
-
-    	<path id="examples.classpath">
-    	  <pathelement location="${build.dir}/${vname}.jar"/>
-		</path>
 	
 	<!-- ==================================================== -->
 	<!-- Initialize Ant                                       -->
@@ -54,34 +50,6 @@
 	</target>
 	
 	<!-- ==================================================== -->
-	<!-- Generate the API documentation.                      -->
-	<!-- ==================================================== -->
-	
-	<target	name="javadocs"	depends="init">
-		<mkdir dir="${build.javadocs}"/>
-		<javadoc
-			packagenames="${packages}"
-			sourcepath="${src.dir}"
-			destdir="${build.javadocs}"
-			classpathref="build.classpath"
-			overview="${overview}"
-			author="${javadoc.author}"
-			version="${javadoc.version}"
-			windowtitle="${vName} API"
-			doctitle="${vName}"
-			bottom="${copyright}"
-			stylesheetfile="docs/stylesheet.css"/>
-	</target>
-	
-	<!-- ==================================================== -->
-	<!-- Generate the API documentation and compress to ZIP   -->
-	<!-- ==================================================== -->
-	
-	<target name="javadocs-zip" depends="javadocs">
-		<zip zipfile="${vname}-javadocs.zip" basedir="${build.javadocs}"/>
-	</target>
-	
-	<!-- ==================================================== -->
 	<!-- Build the application.                               -->
 	<!-- ==================================================== -->
 	
@@ -105,7 +73,7 @@
 	<!-- Create the distribution                              -->
 	<!-- ==================================================== -->
 
-	<target name="dist" depends="clean, build, javadocs">
+	<target name="dist" depends="clean, build">
 		<copy file="README.txt" todir="${build.dir}"/>
 		<copy file="LICENSE-apache.txt" todir="${build.dir}"/>
 		<copy file="LICENSE.txt" todir="${build.dir}"/>
@@ -115,11 +83,6 @@
 		
 		<copy todir="${build.docs}">
 			<fileset dir="${docs.dir}"/>
-		</copy>
-		
-		<mkdir dir="${build.dir}/examples"/>
-		<copy todir="${build.dir}/examples">
-			<fileset dir="${examples.dir}"/>
 		</copy>
 		
 		<delete dir="${build.classes}"/>
@@ -133,19 +96,6 @@
 		<gzip zipfile="${name}-${version}.tar.gz" src="${name}-${version}.tar"/>
 		<delete file="${name}-${version}.tar"/>
 		<delete dir="zip"/>
-	</target>
-
-	<!-- =================================================================== -->
-	<!-- Compiles the example code                                           -->
-	<!-- =================================================================== -->
-	<target name="examples" depends="jar">
-	    <javac srcdir="${examples.dir}"
-	    	classpathref="examples.classpath"
-			debug="${javac.debug}"
-			deprecation="${javac.deprecation}"
-			optimize="${javac.optimize}">
-			<include name="**/*.java"/>
-	    </javac>
 	</target>
 	
 	<!-- ==================================================== -->
