@@ -9,7 +9,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import com.gmail.yuyang226.flickr.contacts.OnlineStatus;
-import com.gmail.yuyang226.flickr.people.User;
+import com.gmail.yuyang226.flickr.people.test.User;
 import com.gmail.yuyang226.flickr.photos.Editability;
 import com.gmail.yuyang226.flickr.photos.GeoData;
 import com.gmail.yuyang226.flickr.photos.Note;

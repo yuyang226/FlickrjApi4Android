@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gmail.yuyang226.flickr.oauth;
+package com.gmail.yuyang226.flickr.oauth.test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,16 +9,16 @@ import java.io.InputStreamReader;
 
 import junit.framework.Assert;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.gmail.yuyang226.flickr.Flickr;
 import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.RequestContext;
+import com.gmail.yuyang226.flickr.oauth.OAuth;
+import com.gmail.yuyang226.flickr.oauth.OAuthToken;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
 import com.gmail.yuyang226.flickr.people.User;
-import com.gmail.yuyang226.flickr.test.TestConstants;
+import com.gmail.yuyang226.flickr.test.AbstractFlickrTest;
 
 
 
@@ -26,8 +26,7 @@ import com.gmail.yuyang226.flickr.test.TestConstants;
  * @author Toby Yu(yuyang226@gmail.com)
  *
  */
-public class OAuthTest {
-	private Flickr f;
+public class OAuthTest extends AbstractFlickrTest{
 	/**
 	 * 
 	 */
@@ -35,26 +34,9 @@ public class OAuthTest {
 		super();
 	}
 	
-	@Before
-	public void setup() throws Exception {
-		f = new Flickr(TestConstants.FLICKR_API_KEY, TestConstants.FLICKR_API_SECRET);
-		OAuth auth = new OAuth();
-		User user = new User();
-		user.setId(TestConstants.USE_ID);
-		auth.setToken(new OAuthToken(TestConstants.OAUTH_TOKEN, TestConstants.OAUTH_TOKEN_SECRET));
-		RequestContext.getRequestContext().setOAuth(auth);
-	}
-	
 	@Test
 	public void testOAuthInterfaceTestLogin() throws FlickrException, IOException, JSONException {
 		Assert.assertNotNull("Login failed", f.getOAuthInterface().testLogin());
-	}
-	
-	@After
-	public void tearDown() throws Exception {
-		RequestContext.getRequestContext().setOAuth(null);
-		RequestContext.resetThreadLocals();
-		f = null;
 	}
 
 	public static String readParamFromCommand(String message) throws IOException {
@@ -95,8 +77,6 @@ public class OAuthTest {
 			//Collection<Exif> exifs = f.getPhotosInterface().getExif("5772049100", null);
 			//f.getPhotosInterface().getInfo("6024664723", null);
 			//f.getCommentsInterface().getList("6024664723");
-			System.out.println(f.getGalleriesInterface().getList("8308954@N06", 0, 0));
-			System.out.println(f.getGalleriesInterface().getPhotos("8263632-72157623259986613", null, 0, 0));
 //			System.out.println(f.getActivityInterface().userComments(0, 0));
 //			System.out.println(f.getActivityInterface().userPhotos(1, 1, null));
 //			System.out.println(f.getBlogsInterface().getServices());
@@ -128,12 +108,6 @@ public class OAuthTest {
 			//shanghai place ID: JAJiM7JTU78IjzqC
 //			System.out.println(f.getPlacesInterface().getInfoByUrl(place.getPlaceUrl()));
 //			System.out.println(f.getPlacesInterface().getInfo(place.getPlaceId(), place.getWoeId()));
-			
-//			System.out.println(f.getPrefsInterface().getContentType());
-//			System.out.println(f.getPrefsInterface().getGeoPerms());
-//			System.out.println(f.getPrefsInterface().getHidden());
-//			System.out.println(f.getPrefsInterface().getPrivacy());
-//			System.out.println(f.getPrefsInterface().getSafetyLevel());
 			
 //			System.out.println(f.getUrlsInterface().lookupUser(f.getUrlsInterface().getUserProfile("8308954@N06")));
 //			System.out.println(f.getUrlsInterface().getUserPhotos("8308954@N06"));

@@ -15,8 +15,8 @@ import org.xml.sax.SAXException;
 
 import com.gmail.yuyang226.flickr.auth.Auth;
 import com.gmail.yuyang226.flickr.auth.AuthInterface;
-import com.gmail.yuyang226.flickr.people.PeopleInterface;
-import com.gmail.yuyang226.flickr.people.User;
+import com.gmail.yuyang226.flickr.people.test.PeopleInterface;
+import com.gmail.yuyang226.flickr.people.test.User;
 import com.gmail.yuyang226.flickr.photos.PhotoList;
 import com.gmail.yuyang226.flickr.util.IOUtilities;
 

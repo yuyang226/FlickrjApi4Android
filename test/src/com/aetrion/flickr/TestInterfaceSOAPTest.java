@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 
 import org.xml.sax.SAXException;
 
-import com.gmail.yuyang226.flickr.people.User;
+import com.gmail.yuyang226.flickr.people.test.User;
 import com.gmail.yuyang226.flickr.test.TestInterface;
 import com.gmail.yuyang226.flickr.util.IOUtilities;
 

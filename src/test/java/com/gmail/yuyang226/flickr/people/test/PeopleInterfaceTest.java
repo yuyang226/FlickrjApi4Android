@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gmail.yuyang226.flickr.people;
+package com.gmail.yuyang226.flickr.people.test;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -10,47 +10,17 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-import com.gmail.yuyang226.flickr.Flickr;
 import com.gmail.yuyang226.flickr.FlickrException;
-import com.gmail.yuyang226.flickr.RequestContext;
-import com.gmail.yuyang226.flickr.oauth.OAuth;
-import com.gmail.yuyang226.flickr.oauth.OAuthToken;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
-import com.gmail.yuyang226.flickr.test.TestConstants;
+import com.gmail.yuyang226.flickr.test.AbstractFlickrTest;
 
 /**
  * @author Toby Yu(yuyang226@gmail.com)
  *
  */
-public class PeopleInterfaceTest {
-	private Flickr f;
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-		f = new Flickr(TestConstants.FLICKR_API_KEY, TestConstants.FLICKR_API_SECRET);
-		OAuth auth = new OAuth();
-		User user = new User();
-		user.setId(TestConstants.USE_ID);
-		auth.setToken(new OAuthToken(TestConstants.OAUTH_TOKEN, TestConstants.OAUTH_TOKEN_SECRET));
-		RequestContext.getRequestContext().setOAuth(auth);
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-		RequestContext.getRequestContext().setOAuth(null);
-		RequestContext.resetThreadLocals();
-		f = null;
-	}
+public class PeopleInterfaceTest extends AbstractFlickrTest{
 
 	/**
 	 * Test method for {@link com.gmail.yuyang226.flickr.people.PeopleInterface#PeopleInterface(java.lang.String, java.lang.String, com.gmail.yuyang226.flickr.Transport)}.

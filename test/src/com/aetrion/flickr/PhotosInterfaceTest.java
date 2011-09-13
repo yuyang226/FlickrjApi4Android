@@ -23,7 +23,7 @@ import org.xml.sax.SAXException;
 import com.gmail.yuyang226.flickr.auth.Auth;
 import com.gmail.yuyang226.flickr.auth.AuthInterface;
 import com.gmail.yuyang226.flickr.auth.Permission;
-import com.gmail.yuyang226.flickr.people.User;
+import com.gmail.yuyang226.flickr.people.test.User;
 import com.gmail.yuyang226.flickr.photos.Note;
 import com.gmail.yuyang226.flickr.photos.Permissions;
 import com.gmail.yuyang226.flickr.photos.Photo;
