@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import com.gmail.yuyang226.flickr.Flickr;
 import com.gmail.yuyang226.flickr.FlickrException;
@@ -37,8 +38,9 @@ public class OAuthTest extends AbstractFlickrTest{
 	@Test
 	public void testOAuthInterfaceTestLogin() throws FlickrException, IOException, JSONException {
 		Assert.assertNotNull("Login failed", f.getOAuthInterface().testLogin());
+		Assert.assertNotNull(f.getPhotosInterface().getAllContexts("5772049100"));
 	}
-
+	
 	public static String readParamFromCommand(String message) throws IOException {
 		//  prompt the user to enter their name
 		System.out.print(message);
@@ -137,7 +139,7 @@ public class OAuthTest extends AbstractFlickrTest{
 			//System.out.println(f.getPhotosInterface().getContactsPhotos(10, false, false, false));
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LoggerFactory.getLogger(OAuthTest.class).error(e.getLocalizedMessage(), e);
 		}
 	}
 

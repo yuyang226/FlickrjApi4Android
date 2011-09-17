@@ -168,11 +168,17 @@ public class PhotosInterface {
         List<PhotoPlace> list = new ArrayList<PhotoPlace>();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_ALL_CONTEXTS));
-        parameters.add(new Parameter("api_key", apiKey));
-
+        boolean signed = OAuthUtils.hasSigned();
         parameters.add(new Parameter("photo_id", photoId));
+        if (signed) {
+        	parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+        	OAuthUtils.addOAuthToken(parameters);
+        } else {
+        	parameters.add(new Parameter("api_key", apiKey));
+        }
 
-        Response response = transport.get(transport.getPath(), parameters);
+        Response response = signed ? transport.postJSON(sharedSecret, parameters) : 
+        	transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -509,14 +515,20 @@ public class PhotosInterface {
     public Photo getInfo(String photoId, String secret) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_INFO));
-        parameters.add(new Parameter("api_key", apiKey));
-
+        boolean signed = OAuthUtils.hasSigned();
         parameters.add(new Parameter("photo_id", photoId));
         if (secret != null) {
             parameters.add(new Parameter("secret", secret));
         }
+        if (signed) {
+        	parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+        	OAuthUtils.addOAuthToken(parameters);
+        } else {
+        	parameters.add(new Parameter("api_key", apiKey));
+        }
 
-        Response response = transport.get(transport.getPath(), parameters);
+        Response response = signed ? transport.postJSON(sharedSecret, parameters) : 
+        	transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }

@@ -148,7 +148,12 @@ public class CommentsInterface {
       throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
-        parameters.add(new Parameter("api_key", apiKey));
+        boolean signed = OAuthUtils.hasSigned();
+        if (signed) {
+        	parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+        } else {
+        	parameters.add(new Parameter("api_key", apiKey));
+        }
         parameters.add(new Parameter("photo_id", photoId));
         if (minCommentDate != null) {
         	parameters.add(new Parameter("min_comment_date", minCommentDate.getTime() / 1000L));
@@ -156,8 +161,13 @@ public class CommentsInterface {
         if (maxCommentDate != null) {
         	parameters.add(new Parameter("max_comment_date", maxCommentDate.getTime() / 1000L));
         }
+        
+        if (signed) {
+        	OAuthUtils.addOAuthToken(parameters);
+        }
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = signed ? transportAPI.postJSON(sharedSecret, parameters) :
+        	transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
