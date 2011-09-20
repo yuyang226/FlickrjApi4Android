@@ -266,6 +266,13 @@ public final class PhotoUtils {
 				photo.setGeoData(new GeoData(longitude, latitude, accuracy));
 			}
 		}
+		
+		JSONObject statsElement = photoElement.optJSONObject("stats");
+		if (statsElement != null) {
+			photo.setViews(statsElement.getInt("views"));
+			photo.setComments(statsElement.getInt("comments"));
+			photo.setFavorites(statsElement.getInt("favorites"));
+		}
 
 		return photo;
 	}

@@ -151,7 +151,7 @@ public class TagsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        JSONObject tagsElement = response.getData().getJSONObject("tags");
+        JSONObject tagsElement = response.getData().getJSONObject("hottags");
 
         List<HotlistTag> tags = new ArrayList<HotlistTag>();
         JSONArray tagElements = tagsElement.optJSONArray("tag");

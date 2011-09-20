@@ -72,6 +72,7 @@ public class Photo {
     private Editability editability;
     private int comments;
     private int views = -1;
+    private int favorites;
     private int rotation;
     private Collection<Note> notes;
     private Collection<Tag> tags;
@@ -340,7 +341,6 @@ public class Photo {
      * and will be set to -1.
      *
      * @param views
-     * @deprecated attribute no longer available
      */
     public void setViews(String views) {
         if (views != null) {
@@ -355,7 +355,6 @@ public class Photo {
     /**
      * 
      * @param views
-     * @deprecated attribute no longer available
      */
     public void setViews(int views) {
         this.views = views;
@@ -365,13 +364,26 @@ public class Photo {
      * Number of views. Set to -1 if the value is not available.
      * 
      * @return Number of views
-     * @deprecated attribute no longer available
      */
     public int getViews() {
         return views;
     }
-
+    
     /**
+	 * @return the favorites
+	 */
+	public int getFavorites() {
+		return favorites;
+	}
+
+	/**
+	 * @param favorites the favorites to set
+	 */
+	public void setFavorites(int favorites) {
+		this.favorites = favorites;
+	}
+
+	/**
      * Set the degrees of rotation. Value will be set to -1,
      * if not available.
      *

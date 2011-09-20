@@ -32,6 +32,7 @@ import com.gmail.yuyang226.flickr.photosets.comments.PhotosetsCommentsInterface;
 import com.gmail.yuyang226.flickr.places.PlacesInterface;
 import com.gmail.yuyang226.flickr.prefs.PrefsInterface;
 import com.gmail.yuyang226.flickr.reflection.ReflectionInterface;
+import com.gmail.yuyang226.flickr.stats.StatsInterface;
 import com.gmail.yuyang226.flickr.tags.TagsInterface;
 import com.gmail.yuyang226.flickr.test.TestInterface;
 import com.gmail.yuyang226.flickr.urls.UrlsInterface;
@@ -92,6 +93,7 @@ public class Flickr {
     private PlacesInterface placesInterface;
     private PrefsInterface prefsInterface;
     private ReflectionInterface reflectionInterface;
+    private StatsInterface statsInterface;
     private TagsInterface tagsInterface;
     private TestInterface testInterface;
     private TransformInterface transformInterface;
@@ -495,7 +497,14 @@ public class Flickr {
         }
         return reflectionInterface;
     }
-
+    
+    public StatsInterface getStatsInterface() {
+        if (statsInterface == null) {
+        	statsInterface = new StatsInterface(apiKey, sharedSecret, transport);
+        }
+        return statsInterface;
+    }
+    
     /**
      * Get the TagsInterface for working with Flickr Tags.
      *
