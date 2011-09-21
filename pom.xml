@@ -11,8 +11,6 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.6.2</version>
 		</dependency>
-		<!-- <dependency> <groupId>commons-codec</groupId> <artifactId>commons-codec</artifactId> 
-			<version>1.5</version> </dependency> -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-jdk14</artifactId>
