@@ -70,9 +70,9 @@ public class Photo {
     private String takenGranularity;
     private Permissions permissions;
     private Editability editability;
-    private int comments;
+    private int comments = -1;
     private int views = -1;
-    private int favorites;
+    private int favorites = -1;
     private int rotation;
     private Collection<Note> notes;
     private Collection<Tag> tags;

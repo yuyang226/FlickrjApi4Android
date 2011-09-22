@@ -269,9 +269,9 @@ public final class PhotoUtils {
 		
 		JSONObject statsElement = photoElement.optJSONObject("stats");
 		if (statsElement != null) {
-			photo.setViews(statsElement.getInt("views"));
-			photo.setComments(statsElement.getInt("comments"));
-			photo.setFavorites(statsElement.getInt("favorites"));
+			photo.setViews(statsElement.optInt("views", -1));
+			photo.setComments(statsElement.optInt("comments", -1));
+			photo.setFavorites(statsElement.optInt("favorites", -1));
 		}
 
 		return photo;
