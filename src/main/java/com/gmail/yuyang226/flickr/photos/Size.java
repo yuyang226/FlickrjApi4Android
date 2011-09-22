@@ -16,7 +16,7 @@ import com.gmail.yuyang226.flickr.util.StringUtilities;
  * @version $Id: Size.java,v 1.7 2009/07/23 20:41:03 x-mago Exp $
  */
 public class Size {
-	private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
 	/**
      * Thumbnail, 100 on longest side.

@@ -41,7 +41,7 @@ import com.gmail.yuyang226.flickr.util.StringUtilities;
  * @version $Id: PhotosInterface.java,v 1.51 2010/07/20 20:11:16 x-mago Exp $
  */
 public class PhotosInterface {
-	private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
     public static final String METHOD_ADD_TAGS = "flickr.photos.addTags";
     public static final String METHOD_DELETE = "flickr.photos.delete";

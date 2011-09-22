@@ -8,7 +8,7 @@ package com.gmail.yuyang226.flickr.groups;
  * @version $Id: Throttle.java,v 1.3 2009/07/12 22:43:07 x-mago Exp $
  */
 public class Throttle {
-    private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
     private int count;
     private String mode;

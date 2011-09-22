@@ -1,8 +1,6 @@
 To build flickrj for android you must download the source code from GitHub.
 
-flickrj4android is built with Ant/Maven.  Install the current version of Ant/Maven, cd into the 
-flickrj4android root directory downloaded from GitHub and type 'ant' or 'mvn clean javadoc:javadoc install'.
+flickrj4android is built with Maven.  Install the current version of Maven, cd into the 
+flickrj4android root directory downloaded from GitHub and type 'mvn clean javadoc:javadoc install'.
 
 You should be able to build flickrj with JDK 1.6 only. The default distribution is built to JDK 1.6.
-
-To execute tests cd into flickrj/api/test and type 'ant test'.

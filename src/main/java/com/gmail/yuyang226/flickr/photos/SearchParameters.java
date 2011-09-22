@@ -20,7 +20,7 @@ import com.gmail.yuyang226.flickr.util.StringUtilities;
  * @version $Id: SearchParameters.java,v 1.20 2009/07/23 20:41:03 x-mago Exp $
  */
 public class SearchParameters {
-	private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
     private String userId;
     private String groupId;

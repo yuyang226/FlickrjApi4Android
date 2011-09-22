@@ -17,7 +17,7 @@ import com.gmail.yuyang226.flickr.util.JSONUtils;
  * @version $Id: PhotoUtils.java,v 1.20 2009/07/23 21:49:35 x-mago Exp $
  */
 public final class PhotoUtils {
-	private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
 	private PhotoUtils() {
 	}

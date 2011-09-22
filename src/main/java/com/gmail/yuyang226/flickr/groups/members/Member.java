@@ -8,7 +8,7 @@ package com.gmail.yuyang226.flickr.groups.members;
  */
 
 public class Member {
-	private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
 	private String id;
     private String userName;

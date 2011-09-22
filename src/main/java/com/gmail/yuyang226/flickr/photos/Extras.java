@@ -13,7 +13,7 @@ import java.util.Set;
  * @version $Id: Extras.java,v 1.12 2009/07/23 20:41:03 x-mago Exp $
  */
 public class Extras {
-	private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
     public static final String KEY_EXTRAS = "extras";
 
     public static final String LICENSE = "license";

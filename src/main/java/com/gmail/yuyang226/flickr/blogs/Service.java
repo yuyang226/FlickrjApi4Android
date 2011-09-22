@@ -6,7 +6,7 @@ package com.gmail.yuyang226.flickr.blogs;
  * @version $Id: Service.java,v 1.2 2009/07/12 22:43:07 x-mago Exp $
  */
 public class Service {
-	private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
 	private String id;
     private String name;

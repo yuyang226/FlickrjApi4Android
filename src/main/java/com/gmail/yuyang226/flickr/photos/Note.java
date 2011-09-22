@@ -13,7 +13,7 @@ import com.gmail.yuyang226.flickr.util.StringUtilities;
  * @author Anthony Eden
  */
 public class Note {
-	private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
     private String id;
     private String author;
     private String authorName;

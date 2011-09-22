@@ -11,7 +11,7 @@ import java.util.Collection;
  * @author Anthony Eden
  */
 public class Category {
-	private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
     private String name;
     private String path;

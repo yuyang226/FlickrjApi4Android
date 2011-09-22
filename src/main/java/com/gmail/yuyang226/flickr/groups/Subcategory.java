@@ -9,7 +9,7 @@ package com.gmail.yuyang226.flickr.groups;
  * @author Anthony Eden
  */
 public class Subcategory {
-	private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
     private int id;
     private String name;

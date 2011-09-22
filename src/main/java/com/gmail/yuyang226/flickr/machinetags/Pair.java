@@ -6,13 +6,20 @@ package com.gmail.yuyang226.flickr.machinetags;
  * @version $Id: Pair.java,v 1.2 2009/07/12 22:43:07 x-mago Exp $
  */
 public class Pair implements ITag {
-    private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
-    String namespace;
-    String predicate;
-    int usage;
+    private String namespace;
+    private String predicate;
+    private int usage;
+    
+    /**
+	 * 
+	 */
+	public Pair() {
+		super();
+	}
 
-    public String getNamespace() {
+	public String getNamespace() {
         return namespace;
     }
 

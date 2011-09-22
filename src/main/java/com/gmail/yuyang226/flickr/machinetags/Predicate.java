@@ -6,13 +6,20 @@ package com.gmail.yuyang226.flickr.machinetags;
  * @version $Id: Predicate.java,v 1.2 2009/07/12 22:43:07 x-mago Exp $
  */
 public class Predicate implements ITag {
-    private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
-    int usage;
-    int namespaces;
-    String value;
+    private int usage;
+    private int namespaces;
+    private String value;
+    
+    /**
+	 * 
+	 */
+	public Predicate() {
+		super();
+	}
 
-    public String getValue() {
+	public String getValue() {
         return value;
     }
 

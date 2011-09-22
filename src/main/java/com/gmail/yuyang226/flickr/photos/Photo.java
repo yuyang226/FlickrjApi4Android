@@ -28,7 +28,7 @@ import com.gmail.yuyang226.flickr.tags.Tag;
  * @version $Id: Photo.java,v 1.28 2009/07/23 21:49:35 x-mago Exp $
  */
 public class Photo {
-    private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
     private static final ThreadLocal<DateFormat> DATE_FORMATS = new ThreadLocal<DateFormat>() {
         protected synchronized DateFormat initialValue() {

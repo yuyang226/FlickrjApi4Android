@@ -8,16 +8,23 @@ import java.util.Date;
  * @version $Id: Value.java,v 1.3 2009/07/12 22:43:07 x-mago Exp $
  */
 public class Value implements ITag {
-    private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
-    String value;
-    int usage;
-    String namespace;
-    String predicate;
-    Date firstAdded;
-    Date lastAdded;
+    private String value;
+    private int usage;
+    private String namespace;
+    private String predicate;
+    private Date firstAdded;
+    private Date lastAdded;
+    
+    /**
+	 * 
+	 */
+	public Value() {
+		super();
+	}
 
-    public String getValue() {
+	public String getValue() {
         return value;
     }
 
@@ -80,4 +87,19 @@ public class Value implements ITag {
     public void setUsage(int usage) {
         this.usage = usage;
     }
+
+	/**
+	 * @return the firstAdded
+	 */
+	public Date getFirstAdded() {
+		return firstAdded;
+	}
+
+	/**
+	 * @return the lastAdded
+	 */
+	public Date getLastAdded() {
+		return lastAdded;
+	}
+    
 }

@@ -8,9 +8,9 @@ package com.gmail.yuyang226.flickr.panda;
  * @see com.gmail.yuyang226.flickr.panda.PandaInterface#getPhotos(Panda, java.util.Set, int, int)
  */
 public class Panda {
-    private static final long serialVersionUID = 12L;
+	public static final long serialVersionUID = 12L;
 
-    String name;
+    private String name;
 
     public String getName() {
         return name;
