@@ -272,6 +272,8 @@ public final class PhotoUtils {
 			photo.setViews(statsElement.optInt("views", -1));
 			photo.setComments(statsElement.optInt("comments", -1));
 			photo.setFavorites(statsElement.optInt("favorites", -1));
+		} else {
+			photo.setViews(photoElement.optInt("views", -1));
 		}
 
 		return photo;
