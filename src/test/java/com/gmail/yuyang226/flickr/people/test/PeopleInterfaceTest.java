@@ -15,6 +15,7 @@ import org.junit.Test;
 import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
 import com.gmail.yuyang226.flickr.test.AbstractFlickrTest;
+import com.gmail.yuyang226.flickr.test.TestConstants;
 
 /**
  * @author Toby Yu(yuyang226@gmail.com)
@@ -61,7 +62,7 @@ public class PeopleInterfaceTest extends AbstractFlickrTest{
 	@Test
 	public void testGetInfo() throws IOException, FlickrException, JSONException {
 		Assert.assertNotNull("Request returned empty photo list", 
-				f.getPeopleInterface().getInfo("8308954@N06"));
+				f.getPeopleInterface().getInfo(TestConstants.USER_ID));
 	}
 
 	/**
@@ -73,7 +74,7 @@ public class PeopleInterfaceTest extends AbstractFlickrTest{
 	@Test
 	public void testGetPublicGroups() throws IOException, FlickrException, JSONException {
 		Assert.assertNotNull("Request returned empty photo list", 
-				f.getPeopleInterface().getPublicGroups("8308954@N06"));
+				f.getPeopleInterface().getPublicGroups(TestConstants.USER_ID));
 	}
 
 	/**
@@ -85,7 +86,7 @@ public class PeopleInterfaceTest extends AbstractFlickrTest{
 	@Test
 	public void testGetPublicPhotosStringIntInt() throws IOException, FlickrException, JSONException {
 		Assert.assertFalse("Request returned empty photo list", 
-				f.getPeopleInterface().getPublicPhotos("8308954@N06", 0, 0).isEmpty());
+				f.getPeopleInterface().getPublicPhotos(TestConstants.USER_ID, 0, 0).isEmpty());
 	}
 
 	/**
@@ -99,7 +100,7 @@ public class PeopleInterfaceTest extends AbstractFlickrTest{
 		Set<String> extras = new HashSet<String>();
 		extras.add("geo");
 		Assert.assertFalse("Request returned empty photo list", 
-				f.getPeopleInterface().getPublicPhotos("8308954@N06", extras, 0, 0).isEmpty());
+				f.getPeopleInterface().getPublicPhotos(TestConstants.USER_ID, extras, 0, 0).isEmpty());
 	}
 
 	/**
@@ -121,7 +122,7 @@ public class PeopleInterfaceTest extends AbstractFlickrTest{
 	 */
 	@Test
 	public void testGetPhotos() throws IOException, FlickrException, JSONException {
-		Assert.assertFalse("Request returned empty photo list", f.getPeopleInterface().getPhotos("8308954@N06", 
+		Assert.assertFalse("Request returned empty photo list", f.getPeopleInterface().getPhotos(TestConstants.USER_ID, 
 				new HashSet<String>(Arrays.asList(new String[]{"owner_name","tags","geo"})), 18, 1).isEmpty());
 	}
 

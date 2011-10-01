@@ -31,7 +31,7 @@ public abstract class AbstractFlickrTest {
 		f = new Flickr(TestConstants.FLICKR_API_KEY, TestConstants.FLICKR_API_SECRET);
 		OAuth auth = new OAuth();
 		User user = new User();
-		user.setId(TestConstants.USE_ID);
+		user.setId(TestConstants.USER_ID);
 		auth.setToken(new OAuthToken(TestConstants.OAUTH_TOKEN, TestConstants.OAUTH_TOKEN_SECRET));
 		RequestContext.getRequestContext().setOAuth(auth);
 	}

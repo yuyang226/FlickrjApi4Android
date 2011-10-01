@@ -22,7 +22,7 @@ public class PhotosInterfaceTest extends AbstractFlickrTest {
 	
 	@Test
 	public void testPhotos() throws FlickrException, IOException, JSONException {
-		Assert.assertFalse(f.getPhotosInterface().getAllContexts("5772049100").isEmpty());
+		Assert.assertFalse(f.getPhotosInterface().getAllContexts("5116571240").isEmpty());
 	}
 
 }

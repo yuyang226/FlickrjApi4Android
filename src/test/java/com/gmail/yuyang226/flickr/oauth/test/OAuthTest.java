@@ -57,7 +57,7 @@ public class OAuthTest extends AbstractFlickrTest{
 			Flickr f = new Flickr("da4fadd0084ea1799ad33048f0d6a5c5", "186b04791439c326");
 			/*OAuthToken oauthToken = f.getOAuthInterface().getRequestToken("http://localhost");
 			System.out.println(oauthToken);
-			System.out.println(f.getOAuthInterface().buildAuthenticationUrl(Permission.WRITE, oauthToken));
+			System.out.println(f.getOAuthInterface().buildAuthenticationUrl(Permission.DELETE, oauthToken));
 			String tokenVerifier = readParamFromCommand("Enter Token Verifier: ");
 			OAuth oauth = f.getOAuthInterface().getAccessToken(oauthToken.getOauthToken(), 
 					oauthToken.getOauthTokenSecret(), tokenVerifier);
