@@ -3,9 +3,10 @@
  */
 package com.gmail.yuyang226.flickr.galleries.test;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -13,6 +14,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gmail.yuyang226.flickr.FlickrException;
+import com.gmail.yuyang226.flickr.galleries.Gallery;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
 import com.gmail.yuyang226.flickr.test.AbstractFlickrTest;
 import com.gmail.yuyang226.flickr.test.TestConstants;
@@ -31,7 +33,8 @@ public class GalleriesInterfaceTest extends AbstractFlickrTest {
 	 */
 	@Test
 	public void testGetList() throws IOException, FlickrException, JSONException {
-		Assert.assertNotNull(f.getGalleriesInterface().getList(TestConstants.USER_ID, 0, 0));
+		List<Gallery> galleries = f.getGalleriesInterface().getList(TestConstants.USER_ID, 0, 0);
+		Assert.assertNotNull(galleries);
 	}
 
 	/**
@@ -42,7 +45,7 @@ public class GalleriesInterfaceTest extends AbstractFlickrTest {
 	 */
 	@Test
 	public void testGetPhotos() throws IOException, FlickrException, JSONException {
-		Assert.assertNotNull(f.getGalleriesInterface().getPhotos("8263632-72157623259986613", null, 0, 0));
+		Assert.assertNotNull(f.getGalleriesInterface().getPhotos("54369659-72157627796895282", null, 0, 0));
 	}
 
 	/**
@@ -53,16 +56,42 @@ public class GalleriesInterfaceTest extends AbstractFlickrTest {
 	 */
 	@Test
 	public void testGetListForPhoto() throws IOException, FlickrException, JSONException {
-		Assert.assertNotNull(f.getGalleriesInterface().getListForPhoto("5116571240", 0, 0));
+		Assert.assertNotNull(f.getGalleriesInterface().getListForPhoto("6176571289", 0, 0));
 	}
 
 	/**
 	 * Test method for {@link com.gmail.yuyang226.flickr.galleries.GalleriesInterface#create(java.lang.String, java.lang.String, java.lang.String)}.
+	 * @throws JSONException 
+	 * @throws FlickrException 
+	 * @throws IOException 
 	 */
-	@Ignore
+	@Ignore("we only need to run it once")
 	@Test
-	public void testCreate() {
-		fail("Not yet implemented");
+	public void testCreate() throws IOException, FlickrException, JSONException {
+		String galleryId = f.getGalleriesInterface().create("My Test Gallery - " + new Date(System.currentTimeMillis()), "test gallery", "6176571289");
+		System.out.println(galleryId);
+		Assert.assertNotNull(galleryId);
+	}
+	
+	@Test
+	public void testEditMetadata() throws IOException, JSONException, FlickrException {
+		f.getGalleriesInterface().editMetadata("54369659-72157627796895282", "Modified My Test Gallery",
+				"Modified at " + new Date(System.currentTimeMillis()));
+	}
+	
+	@Test
+	public void testEditPhoto() throws IOException, JSONException, FlickrException {
+		f.getGalleriesInterface().editPhoto("54369659-72157627796895282", "6176571289", "Modified at " + new Date(System.currentTimeMillis()));
+	}
+	
+	@Test
+	public void testAddPhoto() throws IOException, JSONException, FlickrException {
+		f.getGalleriesInterface().addPhoto("54369659-72157627796895282", "6176568709", "testing");
+	}
+	
+	@Test
+	public void testEditPhotos() throws IOException, JSONException, FlickrException {
+		f.getGalleriesInterface().editPhotos("54369659-72157627796895282", "6176571289", new ArrayList<String>(1));
 	}
 
 }

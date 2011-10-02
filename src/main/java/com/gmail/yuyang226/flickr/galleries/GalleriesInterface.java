@@ -45,7 +45,11 @@ public class GalleriesInterface {
 	private static final String METHOD_GET_PHOTOS = "flickr.galleries.getPhotos"; //$NON-NLS-1$
 	private static final String METHOD_CREATE = "flickr.galleries.create"; //$NON-NLS-1$
 	private static final String METHOD_GET_LIST_FOR_PHOTO = "flickr.galleries.getListForPhoto"; //$NON-NLS-1$
-
+	private static final String METHOD_ADD_PHOTO = "flickr.galleries.addPhoto"; //$NON-NLS-1$
+	private static final String METHOD_EDIT_METADATA = "flickr.galleries.editMeta"; //$NON-NLS-1$
+	private static final String METHOD_EDIT_PHOTO = "flickr.galleries.editPhoto"; //$NON-NLS-1$
+	private static final String METHOD_EDIT_PHOTOS = "flickr.galleries.editPhotos"; //$NON-NLS-1$
+	
 	/**
 	 * The api key.
 	 */
@@ -69,6 +73,32 @@ public class GalleriesInterface {
 		this.mApiKey = apiKey;
 		this.mTransport = transport;
 		this.mSharedSecret = sharedSecret;
+	}
+	
+	/**
+	 * @param galleryId The ID of the gallery to add a photo to. Note: this is the compound ID returned in methods like flickr.galleries.getList, and flickr.galleries.getListForPhoto.
+	 * @param photoId photo ID to add to the gallery
+	 * @param comment An optional short comment or story to accompany the photo.
+	 * @throws FlickrException 
+	 * @throws JSONException 
+	 * @throws IOException 
+	 */
+	public void addPhoto(String galleryId, String photoId, String comment) throws IOException, JSONException, FlickrException {
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		parameters.add(new Parameter(KEY_METHOD, METHOD_ADD_PHOTO));
+		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, this.mApiKey));
+
+		parameters.add(new Parameter("gallery_id", galleryId)); //$NON-NLS-1$
+		parameters.add(new Parameter("photo_id", photoId)); //$NON-NLS-1$
+		if (comment != null) {
+		parameters.add(new Parameter("comment", comment)); //$NON-NLS-1$
+		}
+		OAuthUtils.addOAuthToken(parameters);
+		Response response = mTransport.postJSON(mSharedSecret, parameters);
+		if (response.isError()) {
+			throw new FlickrException(response.getErrorCode(),
+					response.getErrorMessage());
+		}
 	}
 
 	/**
@@ -206,10 +236,10 @@ public class GalleriesInterface {
 	 * Creates a gallery, return -1 says there is error, returns the gallery id
 	 * if success.
 	 * 
-	 * @param title
-	 * @param description
-	 * @param primaryPhotoId
-	 * @return
+	 * @param title The name of the gallery
+	 * @param description A short description for the gallery
+	 * @param primaryPhotoId The optional first photo to add to your gallery
+	 * @return the gallery ID for successful creation
 	 * @throws IOException
 	 * @throws FlickrException
 	 * @throws JSONException 
@@ -224,7 +254,9 @@ public class GalleriesInterface {
 		parameters.add(new Parameter("title", title)); //$NON-NLS-1$
 		parameters.add(new Parameter(
 				"description", description == null ? title : description)); //$NON-NLS-1$
-		parameters.add(new Parameter("primary_photo_id", primaryPhotoId)); //$NON-NLS-1$
+		if (primaryPhotoId != null) {
+			parameters.add(new Parameter("primary_photo_id", primaryPhotoId)); //$NON-NLS-1$
+		}
 		OAuthUtils.addOAuthToken(parameters);
 		Response response = mTransport.postJSON(mSharedSecret, parameters);
 		if (response.isError()) {
@@ -234,4 +266,77 @@ public class GalleriesInterface {
 		JSONObject gallery = response.getData().getJSONObject("gallery");
 		return gallery.getString("id"); //$NON-NLS-1$
 	}
+	
+	public void editMetadata(String galleryId, String title, String description) throws IOException, JSONException, FlickrException {
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		parameters.add(new Parameter(KEY_METHOD, METHOD_EDIT_METADATA));
+		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, this.mApiKey));
+		parameters.add(new Parameter("gallery_id", galleryId)); //$NON-NLS-1$
+		parameters.add(new Parameter("title", title)); //$NON-NLS-1$
+		if (description != null) {
+			parameters.add(new Parameter("description", description)); //$NON-NLS-1$
+		}
+		OAuthUtils.addOAuthToken(parameters);
+		Response response = mTransport.postJSON(mSharedSecret, parameters);
+		if (response.isError()) {
+			throw new FlickrException(response.getErrorCode(),
+					response.getErrorMessage());
+		}
+	}
+	
+	/**
+	 * Edit the comment for a gallery photo.
+	 * 
+	 * @param galleryId The ID of the gallery to add a photo to
+	 * @param photoId The photo ID to add to the gallery
+	 * @param comment The updated comment the photo
+	 * @throws IOException
+	 * @throws JSONException
+	 * @throws FlickrException
+	 */
+	public void editPhoto(String galleryId, String photoId, String comment) throws IOException, JSONException, FlickrException {
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		parameters.add(new Parameter(KEY_METHOD, METHOD_EDIT_PHOTO));
+		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, this.mApiKey));
+
+		parameters.add(new Parameter("gallery_id", galleryId)); //$NON-NLS-1$
+		parameters.add(new Parameter("photo_id", photoId)); //$NON-NLS-1$
+		parameters.add(new Parameter("comment", comment)); //$NON-NLS-1$
+		OAuthUtils.addOAuthToken(parameters);
+		Response response = mTransport.postJSON(mSharedSecret, parameters);
+		if (response.isError()) {
+			throw new FlickrException(response.getErrorCode(),
+					response.getErrorMessage());
+		}
+	}
+	
+	/**
+	 * Modify the photos in a gallery. Use this method to add, remove and re-order photos.
+	 * 
+	 * @param galleryId The id of the gallery to modify. The gallery must belong to the calling user.
+	 * @param primaryPhotoId The id of the photo to use as the 'primary' photo for the gallery. This id must also be passed along in photo_ids list argument.
+	 * @param photoIds A comma-delimited list of photo ids to include in the gallery. They will appear in the set in the order sent. This list must contain the primary photo id. This list of photos replaces the existing list.
+	 * @throws IOException
+	 * @throws JSONException
+	 * @throws FlickrException
+	 */
+	public void editPhotos(String galleryId, String primaryPhotoId, List<String> photoIds) throws IOException, JSONException, FlickrException {
+		List<Parameter> parameters = new ArrayList<Parameter>();
+		parameters.add(new Parameter(KEY_METHOD, METHOD_EDIT_PHOTOS));
+		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, this.mApiKey));
+
+		parameters.add(new Parameter("gallery_id", galleryId)); //$NON-NLS-1$
+		parameters.add(new Parameter("primary_photo_id", primaryPhotoId)); //$NON-NLS-1$
+		if (photoIds.contains(primaryPhotoId) == false) {
+			photoIds.add(primaryPhotoId);
+		}
+		parameters.add(new Parameter("photo_ids", StringUtilities.join(photoIds, ","))); //$NON-NLS-1$
+		OAuthUtils.addOAuthToken(parameters);
+		Response response = mTransport.postJSON(mSharedSecret, parameters);
+		if (response.isError()) {
+			throw new FlickrException(response.getErrorCode(),
+					response.getErrorMessage());
+		}
+	}
+	
 }
