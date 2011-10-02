@@ -243,7 +243,12 @@ public class REST extends Transport {
 			}
 
 			String result = readFromStream(conn.getInputStream());
-			data = URLDecoder.decode(result.trim(), OAuthUtils.ENC);
+			try {
+				data = URLDecoder.decode(result.trim(), OAuthUtils.ENC);
+			} catch (IllegalArgumentException e) {
+				//this might happen for unicode encoding
+				data = result.trim();
+			}
 			return data;
 		} finally {
 			IOUtilities.close(out);

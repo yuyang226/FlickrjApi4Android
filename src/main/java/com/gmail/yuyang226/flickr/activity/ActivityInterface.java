@@ -57,13 +57,7 @@ public class ActivityInterface {
         List<Parameter> parameters = new ArrayList<Parameter>();
 		parameters.add(new Parameter("method", METHOD_USER_COMMENTS));
 		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
-		if (perPage > 0) {
-            parameters.add(new Parameter("per_page", String.valueOf(perPage)));
-        }
-
-        if (page > 0) {
-            parameters.add(new Parameter("page", String.valueOf(page)));
-        }
+		parameters.add(new Parameter("per_page", String.valueOf(perPage)));
         OAuthUtils.addOAuthToken(parameters);
         
 		Response response = this.transportAPI.postJSON(this.sharedSecret, parameters);

@@ -9,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import com.gmail.yuyang226.flickr.activity.ActivityInterface;
 import com.gmail.yuyang226.flickr.blogs.BlogsInterface;
+import com.gmail.yuyang226.flickr.collections.CollectionsInterface;
 import com.gmail.yuyang226.flickr.commons.CommonsInterface;
 import com.gmail.yuyang226.flickr.contacts.ContactsInterface;
 import com.gmail.yuyang226.flickr.favorites.FavoritesInterface;
@@ -72,6 +73,7 @@ public class Flickr {
     private OAuthInterface oAuthInterface;
     private ActivityInterface activityInterface;
     private BlogsInterface blogsInterface;
+    private CollectionsInterface collectionsInterface;
     private CommentsInterface commentsInterface;
     private CommonsInterface commonsInterface;
     private ContactsInterface contactsInterface;
@@ -346,6 +348,13 @@ public class Flickr {
             blogsInterface = new BlogsInterface(apiKey, sharedSecret, transport);
         }
         return blogsInterface;
+    }
+    
+    public CollectionsInterface getCollectionsInterface() {
+    	if (collectionsInterface == null) {
+    		collectionsInterface = new CollectionsInterface(apiKey, sharedSecret, transport);
+        }
+        return collectionsInterface;
     }
 
     public CommentsInterface getCommentsInterface() {
