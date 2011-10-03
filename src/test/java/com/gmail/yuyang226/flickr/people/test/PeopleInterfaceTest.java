@@ -10,10 +10,10 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
+import org.json.JSONException;
 import org.junit.Test;
 
 import com.gmail.yuyang226.flickr.FlickrException;
-import com.gmail.yuyang226.flickr.org.json.JSONException;
 import com.gmail.yuyang226.flickr.test.AbstractFlickrTest;
 import com.gmail.yuyang226.flickr.test.TestConstants;
 

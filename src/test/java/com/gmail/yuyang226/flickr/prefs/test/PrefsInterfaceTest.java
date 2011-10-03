@@ -5,11 +5,11 @@ package com.gmail.yuyang226.flickr.prefs.test;
 
 import java.io.IOException;
 
+import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.gmail.yuyang226.flickr.FlickrException;
-import com.gmail.yuyang226.flickr.org.json.JSONException;
 import com.gmail.yuyang226.flickr.test.AbstractFlickrTest;
 
 /**

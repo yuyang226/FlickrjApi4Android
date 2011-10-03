@@ -6,10 +6,11 @@ package com.gmail.yuyang226.flickr;
 import java.io.IOException;
 import java.util.List;
 
+import org.json.JSONException;
+
 import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.oauth.OAuthTokenParameter;
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
-import com.gmail.yuyang226.flickr.org.json.JSONException;
 
 /**
  * The abstract Transport class provides a common interface for transporting requests to the Flickr servers. Flickr

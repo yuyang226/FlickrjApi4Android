@@ -4,8 +4,8 @@
 
 package com.gmail.yuyang226.flickr;
 
-import com.gmail.yuyang226.flickr.org.json.JSONException;
-import com.gmail.yuyang226.flickr.org.json.JSONObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Anthony Eden

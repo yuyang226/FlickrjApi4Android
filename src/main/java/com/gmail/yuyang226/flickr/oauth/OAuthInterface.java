@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +24,6 @@ import com.gmail.yuyang226.flickr.RequestContext;
 import com.gmail.yuyang226.flickr.Response;
 import com.gmail.yuyang226.flickr.Transport;
 import com.gmail.yuyang226.flickr.auth.Permission;
-import com.gmail.yuyang226.flickr.org.json.JSONException;
-import com.gmail.yuyang226.flickr.org.json.JSONObject;
 import com.gmail.yuyang226.flickr.people.User;
 import com.gmail.yuyang226.flickr.util.UrlUtilities;
 

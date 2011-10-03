@@ -3,8 +3,8 @@
  */
 package com.gmail.yuyang226.flickr.util;
 
-import com.gmail.yuyang226.flickr.org.json.JSONException;
-import com.gmail.yuyang226.flickr.org.json.JSONObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Toby Yu(yuyang226@gmail.com)

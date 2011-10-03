@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.gmail.yuyang226.flickr.org.json.JSONArray;
-import com.gmail.yuyang226.flickr.org.json.JSONException;
-import com.gmail.yuyang226.flickr.org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.gmail.yuyang226.flickr.people.User;
 import com.gmail.yuyang226.flickr.tags.Tag;
 import com.gmail.yuyang226.flickr.util.JSONUtils;

@@ -6,9 +6,9 @@ package com.gmail.yuyang226.flickr.stats;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.gmail.yuyang226.flickr.org.json.JSONArray;
-import com.gmail.yuyang226.flickr.org.json.JSONException;
-import com.gmail.yuyang226.flickr.org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * @author Toby Yu(yuyang226@gmail.com)

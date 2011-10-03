@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 
 import junit.framework.Assert;
 
+import org.json.JSONException;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,6 @@ import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.RequestContext;
 import com.gmail.yuyang226.flickr.oauth.OAuth;
 import com.gmail.yuyang226.flickr.oauth.OAuthToken;
-import com.gmail.yuyang226.flickr.org.json.JSONException;
 import com.gmail.yuyang226.flickr.people.User;
 import com.gmail.yuyang226.flickr.test.AbstractFlickrTest;
 

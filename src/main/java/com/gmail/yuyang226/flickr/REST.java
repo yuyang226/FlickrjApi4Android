@@ -17,11 +17,11 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
-import com.gmail.yuyang226.flickr.org.json.JSONException;
 import com.gmail.yuyang226.flickr.util.Base64;
 import com.gmail.yuyang226.flickr.util.IOUtilities;
 import com.gmail.yuyang226.flickr.util.StringUtilities;

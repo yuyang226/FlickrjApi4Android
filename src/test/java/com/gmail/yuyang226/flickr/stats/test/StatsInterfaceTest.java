@@ -7,10 +7,15 @@ import java.io.IOException;
 
 import junit.framework.Assert;
 
+import org.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.gmail.yuyang226.flickr.FlickrException;
-import com.gmail.yuyang226.flickr.org.json.JSONException;
+import com.gmail.yuyang226.flickr.RequestContext;
+import com.gmail.yuyang226.flickr.oauth.OAuth;
+import com.gmail.yuyang226.flickr.oauth.OAuthToken;
+import com.gmail.yuyang226.flickr.people.User;
 import com.gmail.yuyang226.flickr.photos.PhotoList;
 import com.gmail.yuyang226.flickr.stats.AccountStats;
 import com.gmail.yuyang226.flickr.stats.DomainList;
@@ -24,6 +29,19 @@ import com.gmail.yuyang226.flickr.test.AbstractFlickrTest;
  *
  */
 public class StatsInterfaceTest extends AbstractFlickrTest {
+	/**
+	 * @throws java.lang.Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		super.setup();
+		OAuth auth = new OAuth();
+		User user = new User();
+		user.setId("8308954@N06");
+		user.setUsername("Yang and Yun's Album");
+		auth.setToken(new OAuthToken("72157627458295241-83050bfaaeffd445", "07c38a749dc7d36e"));
+		RequestContext.getRequestContext().setOAuth(auth);
+	}
 
 	/**
 	 * Test method for {@link com.gmail.yuyang226.flickr.stats.StatsInterface#getPopularPhotos(java.util.Date, java.lang.String, int, int)}.
@@ -77,7 +95,7 @@ public class StatsInterfaceTest extends AbstractFlickrTest {
 	
 	@Test
 	public void testGetCollectionStats() throws IOException, JSONException, FlickrException {
-		Stats stats = f.getStatsInterface().getCollectionStats("2011-09-21", "72157626776713094");
+		Stats stats = f.getStatsInterface().getCollectionStats("2011-09-21", "8263632-72157622779124185");
 		Assert.assertNotNull(stats);
 		Assert.assertTrue(stats.getViews() > 0);
 		Assert.assertTrue(stats.getComments() >= 0);
