@@ -12,7 +12,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -318,33 +317,7 @@ public class PhotosInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        PhotoContext photoContext = new PhotoContext();
-        JSONObject payload = response.getData();
-        Iterator<?> iter = payload.keys();
-        while (iter.hasNext()) {
-            String tagName = String.valueOf(iter.next());
-            JSONObject payloadElement = payload.optJSONObject(tagName);
-            if (payloadElement == null)
-            	continue;
-            if (tagName.equals("prevphoto")) {
-                Photo photo = new Photo();
-                photo.setId(payloadElement.getString("id"));
-                photo.setSecret(payloadElement.getString("secret"));
-                photo.setTitle(payloadElement.getString("title"));
-                photo.setFarm(payloadElement.getString("farm"));
-                photo.setUrl(payloadElement.getString("url"));
-                photoContext.setPreviousPhoto(photo);
-            } else if (tagName.equals("nextphoto")) {
-                Photo photo = new Photo();
-                photo.setId(payloadElement.getString("id"));
-                photo.setSecret(payloadElement.getString("secret"));
-                photo.setTitle(payloadElement.getString("title"));
-                photo.setFarm(payloadElement.getString("farm"));
-                photo.setUrl(payloadElement.getString("url"));
-                photoContext.setNextPhoto(photo);
-            }
-        }
-        return photoContext;
+        return PhotoUtils.createPhotoContext(response.getData());
     }
 
     /**

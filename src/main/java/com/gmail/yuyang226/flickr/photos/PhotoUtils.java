@@ -1,6 +1,7 @@
 package com.gmail.yuyang226.flickr.photos;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.gmail.yuyang226.flickr.org.json.JSONArray;
@@ -20,6 +21,46 @@ public final class PhotoUtils {
 	public static final long serialVersionUID = 12L;
 
 	private PhotoUtils() {
+		super();
+	}
+	
+	/**
+	 * Transfer the Information of a photo context from a JSONObject to a PhotoContext-object.
+	 * 
+	 * @param data
+	 * @return
+	 * @throws JSONException
+	 */
+	public static final PhotoContext createPhotoContext(JSONObject data) throws JSONException {
+		String count = JSONUtils.getChildValue(data, "count");
+		PhotoContext photoContext = new PhotoContext();
+		photoContext.setCount(Integer.parseInt(count));
+        JSONObject payload = data;
+        Iterator<?> iter = payload.keys();
+        while (iter.hasNext()) {
+            String tagName = String.valueOf(iter.next());
+            JSONObject payloadElement = payload.optJSONObject(tagName);
+            if (payloadElement == null)
+            	continue;
+            if (tagName.equals("prevphoto")) {
+                Photo photo = new Photo();
+                photo.setId(payloadElement.getString("id"));
+                photo.setSecret(payloadElement.getString("secret"));
+                photo.setTitle(payloadElement.getString("title"));
+                photo.setFarm(payloadElement.getString("farm"));
+                photo.setUrl(payloadElement.getString("url"));
+                photoContext.setPreviousPhoto(photo);
+            } else if (tagName.equals("nextphoto")) {
+                Photo photo = new Photo();
+                photo.setId(payloadElement.getString("id"));
+                photo.setSecret(payloadElement.getString("secret"));
+                photo.setTitle(payloadElement.getString("title"));
+                photo.setFarm(payloadElement.getString("farm"));
+                photo.setUrl(payloadElement.getString("url"));
+                photoContext.setNextPhoto(photo);
+            }
+        }
+        return photoContext;
 	}
 
 	/**

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import com.gmail.yuyang226.flickr.Transport;
 import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
 import com.gmail.yuyang226.flickr.org.json.JSONException;
+import com.gmail.yuyang226.flickr.photos.PhotoContext;
 import com.gmail.yuyang226.flickr.photos.PhotoList;
 import com.gmail.yuyang226.flickr.photos.PhotoUtils;
 import com.gmail.yuyang226.flickr.util.StringUtilities;
@@ -30,6 +32,7 @@ import com.gmail.yuyang226.flickr.util.StringUtilities;
 public class FavoritesInterface {
 
     public static final String METHOD_ADD = "flickr.favorites.add";
+    public static final String METHOD_GET_CONTEXT = "flickr.favorites.getContext";
     public static final String METHOD_GET_LIST = "flickr.favorites.getList";
     public static final String METHOD_GET_PUBLIC_LIST = "flickr.favorites.getPublicList";
     public static final String METHOD_REMOVE = "flickr.favorites.remove";
@@ -66,11 +69,47 @@ public class FavoritesInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
     }
+    
+    /**
+     * Returns next and previous favorites for a photo in a user's favorites.
+     * 
+     * @param photoId The id of the photo to fetch the context for.
+     * @param userId The user who counts the photo as a favorite.
+     * @return
+     * @throws IOException
+     * @throws JSONException
+     * @throws FlickrException
+     */
+    public PhotoContext getContext(String photoId, String userId) throws IOException, JSONException, FlickrException {
+    	List<Parameter> parameters = new ArrayList<Parameter>();
+		parameters.add(new Parameter("method", METHOD_GET_CONTEXT));
+		boolean signed = OAuthUtils.hasSigned();
+		if (signed) {
+			parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY,
+				apiKey));
+		} else {
+			parameters.add(new Parameter("api_key", apiKey));
+		}
+		parameters.add(new Parameter("photo_id", photoId));
+		parameters.add(new Parameter("user_id", userId));
+		
+		if (signed) {
+			OAuthUtils.addOAuthToken(parameters);
+		}
+		Response response = transportAPI.postJSON(sharedSecret, parameters);
+		if (response.isError()) {
+			throw new FlickrException(response.getErrorCode(), response
+					.getErrorMessage());
+		}
+        return PhotoUtils.createPhotoContext(response.getData());
+    }
 
     /**
      * Get the collection of favorites for the calling user or the specified user ID.
      *
      * @param userId The optional user ID.  Null value will be ignored.
+     * @param minFaveDate The optional minimum date that a photo was favorited on.
+     * @param maxFaveDate The optional maximum date that a photo was favorited on.
      * @param perPage The optional per page value.  Values <= 0 will be ignored.
      * @param page The page to view.  Values <= 0 will be ignored.
      * @param extras a Set Strings representing extra parameters to send
@@ -79,13 +118,19 @@ public class FavoritesInterface {
      * @throws IOException
      * @throws JSONException 
      */
-    public PhotoList getList(String userId, int perPage, int page, Set<String> extras) throws IOException,
+    public PhotoList getList(String userId, Date minFaveDate, Date maxFaveDate, int perPage, int page, Set<String> extras) throws IOException,
              FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
         parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         if (userId != null) {
             parameters.add(new Parameter("user_id", userId));
+        }
+        if (minFaveDate != null) {
+        	parameters.add(new Parameter("min_fave_date", String.valueOf(minFaveDate.getTime() / 1000L)));
+        }
+        if (maxFaveDate != null) {
+        	parameters.add(new Parameter("max_fave_date", String.valueOf(maxFaveDate.getTime() / 1000L)));
         }
         if (extras != null) {
             parameters.add(new Parameter("extras", StringUtilities.join(extras, ",")));
@@ -111,6 +156,8 @@ public class FavoritesInterface {
      * This method does not require authentication.
      *
      * @param userId The user ID
+     * @param minFaveDate The optional minimum date that a photo was favorited on.
+     * @param maxFaveDate The optional maximum date that a photo was favorited on.
      * @param perPage The optional per page value.  Values <= 0 will be ignored.
      * @param page The optional page to view.  Values <= 0 will be ignored
      * @param extras A Set of extra parameters to send
@@ -120,14 +167,19 @@ public class FavoritesInterface {
      * @throws JSONException 
      * @see com.gmail.yuyang226.flickr.photos.Extras
      */
-    public PhotoList getPublicList(String userId, int perPage, int page, Set<String> extras)
+    public PhotoList getPublicList(String userId, Date minFaveDate, Date maxFaveDate, int perPage, int page, Set<String> extras)
             throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PUBLIC_LIST));
         parameters.add(new Parameter("api_key", apiKey));
 
         parameters.add(new Parameter("user_id", userId));
-
+        if (minFaveDate != null) {
+        	parameters.add(new Parameter("min_fave_date", String.valueOf(minFaveDate.getTime() / 1000L)));
+        }
+        if (maxFaveDate != null) {
+        	parameters.add(new Parameter("max_fave_date", String.valueOf(maxFaveDate.getTime() / 1000L)));
+        }
         if (extras != null) {
             parameters.add(new Parameter("extras", StringUtilities.join(extras, ",")));
         }
