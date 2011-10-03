@@ -3,6 +3,8 @@
  */
 package com.gmail.yuyang226.flickr.galleries;
 
+import java.util.Date;
+
 /**
  * Represents the flickr gallery.
  * 
@@ -15,8 +17,19 @@ public class Gallery {
 	private String primaryPhotoId;
 	private int photoCount;
 	private int videoCount;
+	private int viewsCount;
+	private int commentsCount;
 	private String title;
 	private String description;
+	private Date dateCreate;
+	private Date dateUpdate;
+	
+	/**
+	 * 
+	 */
+	public Gallery() {
+		super();
+	}
 
 	public String getGalleryId() {
 		return galleryId;
@@ -85,6 +98,74 @@ public class Gallery {
 	public int getTotalCount() {
 		return getPhotoCount() + getVideoCount();
 	}
+	
+	/**
+	 * @return the dateCreate
+	 */
+	public Date getDateCreate() {
+		return dateCreate;
+	}
+
+	/**
+	 * @param dateCreate the dateCreate to set
+	 */
+	public void setDateCreate(Date dateCreate) {
+		this.dateCreate = dateCreate;
+	}
+	
+	public void setDateCreate(String dateCreate) {
+		if (dateCreate == null || "".equals(dateCreate)) return;
+		long unixTime = Long.parseLong(dateCreate);
+		setDateCreate(new Date(unixTime * 1000L));
+	}
+	
+	/**
+	 * @return the dateUpdate
+	 */
+	public Date getDateUpdate() {
+		return dateUpdate;
+	}
+
+	/**
+	 * @param dateUpdate the dateUpdate to set
+	 */
+	public void setDateUpdate(Date dateUpdate) {
+		this.dateUpdate = dateUpdate;
+	}
+	
+	public void setDateUpdate(String dateUpdate) {
+		if (dateUpdate == null || "".equals(dateUpdate)) return;
+		long unixTime = Long.parseLong(dateUpdate);
+		setDateUpdate(new Date(unixTime * 1000L));
+	}
+	
+	/**
+	 * @return the viewsCount
+	 */
+	public int getViewsCount() {
+		return viewsCount;
+	}
+
+	/**
+	 * @param viewsCount the viewsCount to set
+	 */
+	public void setViewsCount(int viewsCount) {
+		this.viewsCount = viewsCount;
+	}
+
+	/**
+	 * @return the commentsCount
+	 */
+	public int getCommentsCount() {
+		return commentsCount;
+	}
+
+	/**
+	 * @param commentsCount the commentsCount to set
+	 */
+	public void setCommentsCount(int commentsCount) {
+		this.commentsCount = commentsCount;
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
@@ -93,6 +174,11 @@ public class Gallery {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + commentsCount;
+		result = prime * result
+				+ ((dateCreate == null) ? 0 : dateCreate.hashCode());
+		result = prime * result
+				+ ((dateUpdate == null) ? 0 : dateUpdate.hashCode());
 		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
 		result = prime * result
@@ -105,6 +191,7 @@ public class Gallery {
 				+ ((primaryPhotoId == null) ? 0 : primaryPhotoId.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		result = prime * result + videoCount;
+		result = prime * result + viewsCount;
 		return result;
 	}
 
@@ -120,6 +207,18 @@ public class Gallery {
 		if (!(obj instanceof Gallery))
 			return false;
 		Gallery other = (Gallery) obj;
+		if (commentsCount != other.commentsCount)
+			return false;
+		if (dateCreate == null) {
+			if (other.dateCreate != null)
+				return false;
+		} else if (!dateCreate.equals(other.dateCreate))
+			return false;
+		if (dateUpdate == null) {
+			if (other.dateUpdate != null)
+				return false;
+		} else if (!dateUpdate.equals(other.dateUpdate))
+			return false;
 		if (description == null) {
 			if (other.description != null)
 				return false;
@@ -154,6 +253,8 @@ public class Gallery {
 			return false;
 		if (videoCount != other.videoCount)
 			return false;
+		if (viewsCount != other.viewsCount)
+			return false;
 		return true;
 	}
 
@@ -165,7 +266,10 @@ public class Gallery {
 		return "Gallery [galleryId=" + galleryId + ", galleryUrl=" + galleryUrl
 				+ ", ownerId=" + ownerId + ", primaryPhotoId=" + primaryPhotoId
 				+ ", photoCount=" + photoCount + ", videoCount=" + videoCount
-				+ ", title=" + title + ", description=" + description + "]";
+				+ ", viewsCount=" + viewsCount + ", commentsCount="
+				+ commentsCount + ", title=" + title + ", description="
+				+ description + ", dateCreate=" + dateCreate + ", dateUpdate="
+				+ dateUpdate + "]";
 	}
-	
+
 }

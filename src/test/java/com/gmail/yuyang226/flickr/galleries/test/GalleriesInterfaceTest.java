@@ -36,6 +36,11 @@ public class GalleriesInterfaceTest extends AbstractFlickrTest {
 		List<Gallery> galleries = f.getGalleriesInterface().getList(TestConstants.USER_ID, 0, 0);
 		Assert.assertNotNull(galleries);
 	}
+	
+	@Test
+	public void testGetInfo() throws IOException, JSONException, FlickrException {
+		Assert.assertNotNull(f.getGalleriesInterface().getInfo("54369659-72157627796895282"));
+	}
 
 	/**
 	 * Test method for {@link com.gmail.yuyang226.flickr.galleries.GalleriesInterface#getPhotos(java.lang.String, java.util.Set, int, int)}.
