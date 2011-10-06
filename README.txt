@@ -7,5 +7,8 @@ It resolve the following issues that currently exist in FlickrJ
 1. Non-Java5 Syntax. This has caused a lot of WARNING, and not leverage the latest JDK features.
 2. Support for Android and GAE. The old FlickrJ uses SOAP API which is not supported on GAE.
 3. New Flickr OAuth 1a support: http://www.flickr.com/services/api/auth.oauth.html
+4. Completely re-written with JSON response format
+5. Now built by Maven instead of Ant
+6. Added some fuctions missings in the original FlickrJ, such as GalleryInterface and CollectionInterface
 
 -Toby Yu(yuyang226@gmail.com)
