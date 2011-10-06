@@ -36,6 +36,7 @@ import com.gmail.yuyang226.flickr.reflection.ReflectionInterface;
 import com.gmail.yuyang226.flickr.stats.StatsInterface;
 import com.gmail.yuyang226.flickr.tags.TagsInterface;
 import com.gmail.yuyang226.flickr.test.TestInterface;
+import com.gmail.yuyang226.flickr.uploader.Uploader;
 import com.gmail.yuyang226.flickr.urls.UrlsInterface;
 
 /**
@@ -99,6 +100,7 @@ public class Flickr {
     private TagsInterface tagsInterface;
     private TestInterface testInterface;
     private TransformInterface transformInterface;
+    private Uploader uploader;
     private UrlsInterface urlsInterface;
 
     /**
@@ -538,6 +540,13 @@ public class Flickr {
             transformInterface = new TransformInterface(apiKey, sharedSecret, transport);
         }
         return transformInterface;
+    }
+    
+    public Uploader getUploader() {
+        if (uploader == null) {
+            uploader = new Uploader(apiKey, sharedSecret);
+        }
+        return uploader;
     }
 
     public UrlsInterface getUrlsInterface() {

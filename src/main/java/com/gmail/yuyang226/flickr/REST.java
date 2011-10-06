@@ -12,16 +12,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
+import com.gmail.yuyang226.flickr.uploader.ImageParameter;
+import com.gmail.yuyang226.flickr.uploader.UploaderResponse;
 import com.gmail.yuyang226.flickr.util.Base64;
 import com.gmail.yuyang226.flickr.util.IOUtilities;
 import com.gmail.yuyang226.flickr.util.StringUtilities;
@@ -41,6 +49,7 @@ public class REST extends Transport {
 	private boolean proxyAuth = false;
 	private String proxyUser = "";
 	private String proxyPassword = "";
+	private DocumentBuilder builder;
 
 	/**
 	 * Construct a new REST transport instance.
@@ -52,6 +61,8 @@ public class REST extends Transport {
 		setHost(Flickr.DEFAULT_HOST);
 		setPath(PATH);
 		setResponseClass(RESTResponse.class);
+		DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        builder = builderFactory.newDocumentBuilder();
 	}
 
 	/**
@@ -197,6 +208,74 @@ public class REST extends Transport {
 		}
 		return result;
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.gmail.yuyang226.flickr.Transport#sendUpload(java.lang.String, java.util.List)
+	 */
+	@Override
+	protected Response sendUpload(String path, List<Parameter> parameters)
+			throws IOException, FlickrException, SAXException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Send Upload Input Params: path '{}'; parameters {}", path, parameters);
+		}
+		HttpURLConnection conn = null;
+		DataOutputStream out = null;
+		String data = null;
+		try {
+			URL url = UrlUtilities.buildPostUrl(getHost(), getPort(), path);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Post URL: {}", url.toString());
+			}
+			conn = (HttpURLConnection)url.openConnection();
+			conn.setRequestMethod("POST");
+			//String authorizationHeader = "OAuth " + encodeParameters(parameters, ",", true);
+			//conn.addRequestProperty("Authorization", authorizationHeader);
+			String boundary = "---------------------------7d273f7a0d3";
+			conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+			conn.setRequestProperty("Host", "api.flickr.com");
+			conn.setDoInput(true);
+			conn.setDoOutput(true);
+			conn.connect();
+			out = new DataOutputStream(conn.getOutputStream());
+			boundary = "--" + boundary;
+			out.writeBytes(boundary);
+            Iterator<?> iter = parameters.iterator();
+            while (iter.hasNext()) {
+                Parameter p = (Parameter) iter.next();
+                writeParam(p, out, boundary);
+            }
+            out.writeBytes("--\r\n\r\n");
+			out.flush();
+			out.close();
+
+			int responseCode = HttpURLConnection.HTTP_OK;
+			try {
+				responseCode = conn.getResponseCode();
+			} catch (IOException e) {
+				logger.error("Failed to get the POST response code", e);
+				if (conn.getErrorStream() != null) {
+					responseCode = conn.getResponseCode();
+				}
+			}
+			if ((responseCode != HttpURLConnection.HTTP_OK)) {
+				String errorMessage = readFromStream(conn.getErrorStream());
+				throw new IOException("Connection Failed. Response Code: "
+						+ responseCode + ", Response Message: " + conn.getResponseMessage()
+						+ ", Error: " + errorMessage);
+			}
+			UploaderResponse response = new UploaderResponse();
+            Document document = builder.parse(conn.getInputStream());
+            response.parse(document);
+            return response;
+		} finally {
+			IOUtilities.close(out);
+			if (conn != null)
+				conn.disconnect() ;
+			if (logger.isDebugEnabled()) {
+				logger.debug("Send Upload Result: {}", data);
+			}
+		}
+	}
 
 	public String sendPost(String path, List<Parameter> parameters) throws IOException{
 		if (logger.isDebugEnabled()) {
@@ -221,6 +300,7 @@ public class REST extends Transport {
 			conn.setUseCaches(false);
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
+			conn.connect();
 			out = new DataOutputStream(conn.getOutputStream());
 			out.write(bytes);
 			out.flush();
@@ -243,12 +323,7 @@ public class REST extends Transport {
 			}
 
 			String result = readFromStream(conn.getInputStream());
-			try {
-				data = URLDecoder.decode(result.trim(), OAuthUtils.ENC);
-			} catch (IllegalArgumentException e) {
-				//this might happen for unicode encoding
-				data = result.trim();
-			}
+			data = result.trim();
 			return data;
 		} finally {
 			IOUtilities.close(out);
@@ -304,17 +379,19 @@ public class REST extends Transport {
 	public static String encodeParameters(List<Parameter> parameters, String splitter, boolean quot) {
         StringBuffer buf = new StringBuffer();
         for (Parameter param : parameters) {
-        	if (buf.length() != 0) {
+        	if ((param instanceof ImageParameter) == false) {
+        		if (buf.length() != 0) {
+        			if (quot) {
+        				buf.append("\"");
+        			}
+        			buf.append(splitter);
+        		}
+        		buf.append(UrlUtilities.encode(param.getName())).append("=");
         		if (quot) {
         			buf.append("\"");
         		}
-        		buf.append(splitter);
+        		buf.append(UrlUtilities.encode(String.valueOf(param.getValue())));
         	}
-        	buf.append(UrlUtilities.encode(param.getName())).append("=");
-        	if (quot) {
-        		buf.append("\"");
-        	}
-        	buf.append(UrlUtilities.encode(String.valueOf(param.getValue())));
         }
         if (buf.length() != 0) {
             if (quot) {
@@ -339,4 +416,33 @@ public class REST extends Transport {
         }
         return buf.toString();
     }
+	
+	private void writeParam(Parameter param, DataOutputStream out, String boundary)
+			throws IOException {
+		String name = param.getName();
+		out.writeBytes("\r\n");
+		if (param instanceof ImageParameter) {
+			ImageParameter imageParam = (ImageParameter)param; 
+			Object value = param.getValue();
+			out.writeBytes(String.format(Locale.US, "Content-Disposition: form-data; name=\"%s\"; filename=\"%s\";\r\n", name, imageParam.getImageName()));
+			out.writeBytes(String.format(Locale.US, "Content-Type: image/%s\r\n\r\n", imageParam.getImageType()));
+			if (value instanceof InputStream) {
+				InputStream in = (InputStream) value;
+				byte[] buf = new byte[512];
+				@SuppressWarnings("unused")
+				int res = -1;
+				while ((res = in.read(buf)) != -1) {
+					out.write(buf);
+				}
+			} else if (value instanceof byte[]) {
+				out.write((byte[]) value);
+			}
+		} else {
+			out.writeBytes("Content-Disposition: form-data; name=\"" + name + "\"\r\n");
+			out.writeBytes("Content-Type: text/plain; charset=UTF-8\r\n\r\n");
+			out.write(((String) param.getValue()).getBytes("UTF-8"));
+		}
+		out.writeBytes("\r\n");
+		out.writeBytes(boundary);
+	}
 }

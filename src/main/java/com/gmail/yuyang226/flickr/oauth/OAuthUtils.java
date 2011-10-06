@@ -14,9 +14,13 @@ import java.util.Locale;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.Parameter;
 import com.gmail.yuyang226.flickr.RequestContext;
+import com.gmail.yuyang226.flickr.uploader.ImageParameter;
 import com.gmail.yuyang226.flickr.util.Base64;
 import com.gmail.yuyang226.flickr.util.UrlUtilities;
 
@@ -38,6 +42,8 @@ public class OAuthUtils {
 	
 	public static final String REQUEST_METHOD_GET = "GET";
 	public static final String REQUEST_METHOD_POST = "POST";
+	
+	private static final Logger logger = LoggerFactory.getLogger(OAuthUtils.class);
 	
 	public static void addOAuthParams(String apiSharedSecret, String url, List<Parameter> parameters) 
 	throws FlickrException {
@@ -96,6 +102,9 @@ public class OAuthUtils {
 		String baseString;
 		try {
 			baseString = getRequestBaseString(requestMethod, url.toLowerCase(Locale.US), parameters);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Generated OAuth Base String: {}", baseString);
+			}
 			return hmacsha1(baseString, apiSecret, tokenSecret);
 		} catch (UnsupportedEncodingException e) {
 			throw new FlickrException(e);
@@ -125,6 +134,13 @@ public class OAuthUtils {
 
 			@Override
 			public int compare(Parameter o1, Parameter o2) {
+				if (o1 instanceof ImageParameter && (o2 instanceof ImageParameter) == false) {
+					return 1;
+				}
+				if (o2 instanceof ImageParameter && (o1 instanceof ImageParameter) == false) {
+					return -1;
+				}
+				
 				int result = o1.getName().compareTo(o2.getName());
 				if (result == 0) {
 					result = o1.getValue().toString().compareTo(o2.getValue().toString());
@@ -162,14 +178,17 @@ public class OAuthUtils {
 			final String encoding) {
 		final StringBuilder result = new StringBuilder();
 		for (final Parameter parameter : parameters) {
-			final String encodedName = UrlUtilities.encode(parameter.getName());
-			final String value = String.valueOf(parameter.getValue());
-			final String encodedValue = value != null ? UrlUtilities.encode(value) : "";
-			if (result.length() > 0)
-				result.append(PARAMETER_SEPARATOR);
-			result.append(encodedName);
-			result.append(NAME_VALUE_SEPARATOR);
-			result.append(encodedValue);
+			Object valueObj = parameter.getValue();
+			if ((parameter instanceof ImageParameter) == false) {
+				final String encodedName = UrlUtilities.encode(parameter.getName());
+				final String value = String.valueOf(valueObj);
+				final String encodedValue = value != null ? UrlUtilities.encode(value) : "";
+				if (result.length() > 0)
+					result.append(PARAMETER_SEPARATOR);
+				result.append(encodedName);
+				result.append(NAME_VALUE_SEPARATOR);
+				result.append(encodedValue);
+			}
 		}
 		return result.toString();
 	}

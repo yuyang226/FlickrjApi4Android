@@ -7,10 +7,12 @@ import java.io.IOException;
 import java.util.List;
 
 import org.json.JSONException;
+import org.xml.sax.SAXException;
 
 import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
 import com.gmail.yuyang226.flickr.oauth.OAuthTokenParameter;
 import com.gmail.yuyang226.flickr.oauth.OAuthUtils;
+import com.gmail.yuyang226.flickr.uploader.Uploader;
 
 /**
  * The abstract Transport class provides a common interface for transporting requests to the Flickr servers. Flickr
@@ -75,6 +77,24 @@ public abstract class Transport {
      * @throws JSONException
      */
     protected abstract Response post(String path, List<Parameter> parameters) throws IOException, JSONException;
+    
+    public Response upload(String apiSharedSecret, 
+    		List<Parameter> parameters) throws IOException, FlickrException, SAXException {
+//    	parameters.add(new Parameter("nojsoncallback", "1"));
+//		parameters.add(new Parameter("format", "json"));
+		OAuthUtils.addOAuthParams(apiSharedSecret, Uploader.URL_UPLOAD, parameters);
+		return sendUpload(Uploader.UPLOAD_PATH, parameters);
+    }
+    
+    public Response replace(String apiSharedSecret, 
+    		List<Parameter> parameters) throws IOException, FlickrException, SAXException {
+//    	parameters.add(new Parameter("nojsoncallback", "1"));
+//		parameters.add(new Parameter("format", "json"));
+		OAuthUtils.addOAuthParams(apiSharedSecret, Uploader.URL_REPLACE, parameters);
+		return sendUpload(Uploader.REPLACE_PATH, parameters);
+    }
+    
+    protected abstract Response sendUpload(String path, List<Parameter> parameters) throws IOException, FlickrException, SAXException;
     
     public Response postJSON(String apiSharedSecret, 
     		List<Parameter> parameters) throws IOException, JSONException, FlickrException {
