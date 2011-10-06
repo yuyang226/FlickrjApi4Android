@@ -7,8 +7,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.Locale;
 
 import org.json.JSONException;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -20,6 +22,7 @@ import com.gmail.yuyang226.flickr.uploader.UploadMetaData;
  * @author Toby Yu(yuyang226@gmail.com)
  *
  */
+@Ignore("I certainly do not want to upload to many photos")
 public class UploaderTest extends AbstractFlickrTest {
 
 	/**
@@ -36,7 +39,8 @@ public class UploaderTest extends AbstractFlickrTest {
 
 			UploadMetaData metadata = new UploadMetaData();
 			metadata.setTitle("TestUploadPhoto");
-			metadata.setDescription("Uploaded at " + new Date(System.currentTimeMillis()));
+			metadata.setDescription(String.format(Locale.US, "Uploaded at %s by %s", 
+					new Date(System.currentTimeMillis()), System.getProperty("user.name")));
 			metadata.setAsync(false);
 			String result = f.getUploader().upload("icon.jpg", photoData, metadata);
 			System.out.println(result);
@@ -64,7 +68,8 @@ public class UploaderTest extends AbstractFlickrTest {
 			input = Thread.currentThread().getContextClassLoader().getResourceAsStream("icon.jpg");
 			UploadMetaData metadata = new UploadMetaData();
 			metadata.setTitle("TestUploadPhoto");
-			metadata.setDescription("Uploaded at " + new Date(System.currentTimeMillis()));
+			metadata.setDescription(String.format(Locale.US, "Uploaded at %s by %s", 
+					new Date(System.currentTimeMillis()), System.getProperty("user.name")));
 			metadata.setAsync(false);
 			String result = f.getUploader().upload("icon.jpg", input, metadata);
 			System.out.println(result);
