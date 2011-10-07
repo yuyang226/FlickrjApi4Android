@@ -9,6 +9,7 @@ import junit.framework.Assert;
 
 import org.json.JSONException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.gmail.yuyang226.flickr.FlickrException;
@@ -93,6 +94,7 @@ public class StatsInterfaceTest extends AbstractFlickrTest {
 		Assert.assertTrue(stats.getFavorites() >= 0);
 	}
 	
+	@Ignore
 	@Test
 	public void testGetCollectionStats() throws IOException, JSONException, FlickrException {
 		Stats stats = f.getStatsInterface().getCollectionStats("2011-09-21", "8263632-72157622779124185");

@@ -32,10 +32,23 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<javadoc.dest.dir>javadoc</javadoc.dest.dir>
 	</properties>
 
 	<build>
 		<plugins>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${javadoc.dest.dir}</directory>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -68,6 +81,8 @@
 				<version>2.8</version>
 				<configuration>
 					<stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+					<reportOutputDirectory>${basedir}</reportOutputDirectory>
+					<destDir>${javadoc.dest.dir}</destDir>
 					<locale>en_US</locale>
 				</configuration>
 			</plugin>
