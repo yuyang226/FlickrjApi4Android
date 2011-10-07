@@ -11,4 +11,6 @@ It resolve the following issues that currently exist in FlickrJ
 5. Now built by Maven instead of Ant
 6. Added some fuctions missings in the original FlickrJ, such as GalleryInterface and CollectionInterface
 
+This project is now available on both Google Code(http://code.google.com/p/flickrj-android/) and GitHub(https://github.com/yuyang226/FlickrjApi4Android).
+
 -Toby Yu(yuyang226@gmail.com)
