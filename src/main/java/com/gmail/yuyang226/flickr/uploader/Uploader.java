@@ -181,6 +181,7 @@ public class Uploader {
 
     /**
      * Upload a photo from an InputStream.
+     * 
      *
      * @param imageName
      * @param in
@@ -189,6 +190,7 @@ public class Uploader {
      * @throws IOException
      * @throws FlickrException
      * @throws SAXException
+     * @deprecated This is not working at moment!
      */
     public String replace(String imageName, InputStream in, String photoId, boolean async) throws IOException, FlickrException, SAXException {
         List<Parameter> parameters = new ArrayList<Parameter>();
@@ -223,6 +225,7 @@ public class Uploader {
      * @throws IOException
      * @throws FlickrException
      * @throws SAXException
+     * @deprecated This is not working at moment!
      */
     public String replace(String imageName, byte[] data, String photoId, boolean async) throws IOException, FlickrException, SAXException {
         List<Parameter> parameters = new ArrayList<Parameter>();

@@ -228,8 +228,6 @@ public class REST extends Transport {
 			}
 			conn = (HttpURLConnection)url.openConnection();
 			conn.setRequestMethod("POST");
-			//String authorizationHeader = "OAuth " + encodeParameters(parameters, ",", true);
-			//conn.addRequestProperty("Authorization", authorizationHeader);
 			String boundary = "---------------------------7d273f7a0d3";
 			conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 			conn.setRequestProperty("Host", "api.flickr.com");
@@ -375,31 +373,6 @@ public class REST extends Transport {
 				Base64.encode((proxyUser + ":" + proxyPassword).getBytes())
 		);
 	}
-	
-	public static String encodeParameters(List<Parameter> parameters, String splitter, boolean quot) {
-        StringBuffer buf = new StringBuffer();
-        for (Parameter param : parameters) {
-        	if ((param instanceof ImageParameter) == false) {
-        		if (buf.length() != 0) {
-        			if (quot) {
-        				buf.append("\"");
-        			}
-        			buf.append(splitter);
-        		}
-        		buf.append(UrlUtilities.encode(param.getName())).append("=");
-        		if (quot) {
-        			buf.append("\"");
-        		}
-        		buf.append(UrlUtilities.encode(String.valueOf(param.getValue())));
-        	}
-        }
-        if (buf.length() != 0) {
-            if (quot) {
-                buf.append("\"");
-            }
-        }
-        return buf.toString();
-    }
 	
 	public static String encodeParameters(List<Parameter> parameters) {
         if (parameters == null || parameters.isEmpty()) {
