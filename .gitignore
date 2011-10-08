@@ -6,3 +6,6 @@ target
 gen
 */gen
 */*/gen
+bin
+classes
+*/war/WEB-INF/lib/*.jar

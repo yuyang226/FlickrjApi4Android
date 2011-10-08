@@ -1,0 +1,1 @@
+copy the original-flickrj-anroid-xxx.jar to this folder

@@ -10,6 +10,5 @@
 	<modules>
 	    <module>flickrj-android</module>
 		<module>flickrj-android-test</module>
-		<!--<module>flickrj-android-sample-android</module>-->
   </modules>
 </project>
