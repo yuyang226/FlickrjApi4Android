@@ -85,17 +85,17 @@ public class UploaderResponse implements Response {
     }
 
     /**
-     * @see com.aetrion.flickr.Response#getPayload()
+     * @see com.gmail.yuyang226.flickr.Response#getPayload()
      */
     public Element getPayload() {
         return responsePayLoad;
     }
 
     /**
-     * @see com.aetrion.flickr.Response#getPayloadCollection()
+     * @see com.gmail.yuyang226.flickr.Response#getPayloadCollection()
      */
-    public Collection getPayloadCollection() {
-        return null;
+    public Collection<Object> getPayloadCollection() {
+    	throw new UnsupportedOperationException();
     }
 
 	/* (non-Javadoc)
@@ -103,8 +103,7 @@ public class UploaderResponse implements Response {
 	 */
 	@Override
 	public void parse(String rawMessage) throws JSONException {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -112,8 +111,7 @@ public class UploaderResponse implements Response {
 	 */
 	@Override
 	public JSONObject getData() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -121,8 +119,7 @@ public class UploaderResponse implements Response {
 	 */
 	@Override
 	public String getRawResponse() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 }

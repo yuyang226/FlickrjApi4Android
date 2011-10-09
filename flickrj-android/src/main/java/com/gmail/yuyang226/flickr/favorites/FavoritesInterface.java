@@ -76,7 +76,7 @@ public class FavoritesInterface {
      * 
      * @param photoId The id of the photo to fetch the context for.
      * @param userId The user who counts the photo as a favorite.
-     * @return
+     * @return an instance of <code>PhotoContext</code>
      * @throws IOException
      * @throws JSONException
      * @throws FlickrException

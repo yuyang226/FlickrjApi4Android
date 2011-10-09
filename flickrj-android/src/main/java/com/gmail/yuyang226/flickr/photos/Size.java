@@ -23,7 +23,6 @@ public class Size {
      *
      * @see com.gmail.yuyang226.flickr.photos.Size#getLabel()
      * @see com.gmail.yuyang226.flickr.photos.Size#setLabel(int)
-     * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImage(Photo, int)
      * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImageAsStream(Photo, int)
      */
     public static final int THUMB = 0;
@@ -33,7 +32,6 @@ public class Size {
      *
      * @see com.gmail.yuyang226.flickr.photos.Size#getLabel()
      * @see com.gmail.yuyang226.flickr.photos.Size#setLabel(int)
-     * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImage(Photo, int)
      * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImageAsStream(Photo, int)
      */
     public static final int SQUARE = 1;
@@ -43,7 +41,6 @@ public class Size {
      *
      * @see com.gmail.yuyang226.flickr.photos.Size#getLabel()
      * @see com.gmail.yuyang226.flickr.photos.Size#setLabel(int)
-     * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImage(Photo, int)
      * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImageAsStream(Photo, int)
      */
     public static final int SMALL = 2;
@@ -53,7 +50,6 @@ public class Size {
      *
      * @see com.gmail.yuyang226.flickr.photos.Size#getLabel()
      * @see com.gmail.yuyang226.flickr.photos.Size#setLabel(int)
-     * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImage(Photo, int)
      * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImageAsStream(Photo, int)
      */
     public static final int MEDIUM = 3;
@@ -63,7 +59,6 @@ public class Size {
      *
      * @see com.gmail.yuyang226.flickr.photos.Size#getLabel()
      * @see com.gmail.yuyang226.flickr.photos.Size#setLabel(int)
-     * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImage(Photo, int)
      * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImageAsStream(Photo, int)
      */
     public static final int LARGE = 4;
@@ -74,7 +69,6 @@ public class Size {
      *
      * @see com.gmail.yuyang226.flickr.photos.Size#getLabel()
      * @see com.gmail.yuyang226.flickr.photos.Size#setLabel(int)
-     * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImage(Photo, int)
      * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImageAsStream(Photo, int)
      */
     public static final int ORIGINAL = 5;

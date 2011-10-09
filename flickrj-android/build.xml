@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="flickrj-android" default="upload" basedir=".">
+	<tstamp>
+		<format property="timestamp" pattern="yyyyMMddHHmmss" locale="en,US"/>
+	</tstamp>
+
+	<property name="project-name" value="${ant.project.name}" />
+	<property name="version" value="1.0.0" />
+	<property name="full_version" value="${version}.${timestamp}" />
+	<property name="archive_name" value="${project-name}-${version}" />
+	<property name="target_archive_name" value="${project-name}-${full_version}" />
+	<property environment="env" />
+	
+	<target name="upload" >
+		<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" classpath="lib/ant-googlecode-0.0.3.jar" name="gcupload"/>
+		<!-- please set your google code user/password to system property first -->
+		<echo>Sending new build '${archive_name}.jar' to your project site for user ${env.gcode.user}</echo>
+		<gcupload 
+		        username="${env.gcode.user}" 
+		        password="${env.gcode.pwd}" 
+		        projectname="${project-name}" 
+		        filename="${basedir}/target/${archive_name}.jar" 
+		        targetfilename="${target_archive_name}.jar"
+		        summary="Binary Bundle(excluding dependencies) Release ${full_version}"
+		        labels="Featured, Type-Package, OpSys-All, Type-Archive" />
+		<gcupload 
+		        username="${env.gcode.user}" 
+		        password="${env.gcode.pwd}" 
+		        projectname="${project-name}" 
+		        filename="${basedir}/target/${archive_name}-sources.jar" 
+		        targetfilename="${target_archive_name}-sources.jar"
+		        summary="Source Bundle Release ${full_version}"
+		        labels="Featured, Type-Package, OpSys-All, Type-Archive, Type-Source" />
+	</target>
+	
+</project>

@@ -25,11 +25,9 @@ import com.gmail.yuyang226.flickr.util.JSONUtils;
 import com.gmail.yuyang226.flickr.util.StringUtilities;
 
 /**
- * Represents the interface to get the gallery information from flickr. To get
- * an instance of this class, use the following way: <br/>
- * GalleriesInterface gi = FlickrHelper.getInstance().getGalleryInterface();
+ * Represents the interface to get the gallery information from flickr.
  * 
- * @author charles
+ * @author charleszq@gmail.com
  * 
  */
 public class GalleriesInterface {
@@ -111,7 +109,7 @@ public class GalleriesInterface {
 	 * @param userId
 	 * @param pageSize
 	 * @param pageNo
-	 * @return
+	 * @return a list of <code>Gallery</code> instances
 	 * @throws IOException
 	 * @throws FlickrException
 	 * @throws JSONException 
@@ -148,7 +146,7 @@ public class GalleriesInterface {
 	
 	/**
 	 * @param galleryId The gallery ID you are requesting information for.
-	 * @return
+	 * @return an instance of <code>Gallery</code>
 	 * @throws IOException
 	 * @throws JSONException
 	 * @throws FlickrException

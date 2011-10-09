@@ -242,7 +242,6 @@ public class Flickr {
      *
      * @param apiKey The API key, must be non-null
      * @param sharedSecret
-     * @param transport
      */
     public Flickr(String apiKey, String sharedSecret) {
         this(apiKey);

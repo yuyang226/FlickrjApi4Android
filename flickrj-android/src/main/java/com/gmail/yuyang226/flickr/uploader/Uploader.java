@@ -28,14 +28,14 @@ import com.gmail.yuyang226.flickr.util.StringUtilities;
 /**
  * Upload a photo.<p>
  *
- * Setting {@link com.aetrion.flickr.uploader.UploadMetaData#setAsync(boolean)}
+ * Setting {@link com.gmail.yuyang226.flickr.uploader.UploadMetaData#setAsync(boolean)}
  * you can switch between synchronous and asynchronous uploads.<p>
  *
  * Synchronous uploads return the photoId, whilst asynchronous uploads
  * return a ticketId.<p>
  *
  * TicketId's can be tracked with
- * {@link com.aetrion.flickr.photos.upload.UploadInterface#checkTickets(Set)}
+ * {@link com.gmail.yuyang226.flickr.photos.upload.UploadInterface#checkTickets(Set)}
  * for completion.
  *
  * @author Anthony Eden

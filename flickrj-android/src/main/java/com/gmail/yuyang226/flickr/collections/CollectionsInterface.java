@@ -41,7 +41,7 @@ public class CollectionsInterface {
     /**
      * Returns information for a single collection. Currently can only be called by the collection owner, this may change.
      * @param collectionId The ID of the collection to fetch information for.
-     * @return
+     * @return an instance of <code>Collection</code> for the given collection ID, or null if can not be found.
      * @throws FlickrException 
      * @throws JSONException 
      * @throws IOException 
@@ -90,7 +90,7 @@ public class CollectionsInterface {
      * Returns a tree (or sub tree) of collections belonging to a given user.
      * @param collectionId The ID of the collection to fetch a tree for, or zero to fetch the root collection. Defaults to zero.
      * @param userId The ID of the account to fetch the collection tree for. Deafults to the calling user.
-     * @return
+     * @return a list of <code>Collection</code> instances
      * @throws JSONException 
      * @throws IOException 
      * @throws FlickrException 

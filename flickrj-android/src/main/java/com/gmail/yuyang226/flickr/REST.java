@@ -159,7 +159,7 @@ public class REST extends Transport {
 	 * then return the response as a String.
 	 * @param path
 	 * @param parameters
-	 * @return
+	 * @return the data in String
 	 * @throws IOException
 	 */
 	public String getLine(String path, List<Parameter> parameters) throws IOException {
@@ -188,7 +188,7 @@ public class REST extends Transport {
 	 * <p>Please make sure the response data is a Map before calling this method.</p> 
 	 * @param path
 	 * @param parameters
-	 * @return
+	 * @return the data in Map with key value pairs
 	 * @throws IOException
 	 */
 	public Map<String, String> getMapData(boolean getRequestMethod, String path, List<Parameter> parameters) throws IOException {
