@@ -109,6 +109,7 @@ public class OAuthInterface {
 		parameters.add(new Parameter("oauth_callback", callbackUrl));
 		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
 		OAuthUtils.addBasicOAuthParams(parameters);
+		RequestContext.getRequestContext().setOAuth(null);
 		OAuthUtils.signGet(this.sharedSecret, URL_REQUEST_TOKEN, parameters);
 
 		logger.info("Getting Request Token with parameters: {}", parameters);
