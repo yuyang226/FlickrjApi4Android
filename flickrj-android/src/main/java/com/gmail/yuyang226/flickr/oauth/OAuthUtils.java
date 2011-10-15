@@ -102,9 +102,7 @@ public class OAuthUtils {
 		String baseString;
 		try {
 			baseString = getRequestBaseString(requestMethod, url.toLowerCase(Locale.US), parameters);
-			if (logger.isDebugEnabled()) {
-				logger.debug("Generated OAuth Base String: {}", baseString);
-			}
+			logger.debug("Generated OAuth Base String: {}", baseString);
 			return hmacsha1(baseString, apiSecret, tokenSecret);
 		} catch (UnsupportedEncodingException e) {
 			throw new FlickrException(e);

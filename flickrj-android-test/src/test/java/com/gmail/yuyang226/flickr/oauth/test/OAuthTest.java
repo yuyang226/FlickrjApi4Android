@@ -6,6 +6,7 @@ package com.gmail.yuyang226.flickr.oauth.test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 
 import junit.framework.Assert;
 
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.gmail.yuyang226.flickr.Flickr;
 import com.gmail.yuyang226.flickr.FlickrException;
 import com.gmail.yuyang226.flickr.RequestContext;
+import com.gmail.yuyang226.flickr.auth.Permission;
 import com.gmail.yuyang226.flickr.oauth.OAuth;
 import com.gmail.yuyang226.flickr.oauth.OAuthToken;
 import com.gmail.yuyang226.flickr.people.User;
@@ -37,8 +39,17 @@ public class OAuthTest extends AbstractFlickrTest{
 	
 	@Test
 	public void testOAuthInterfaceTestLogin() throws FlickrException, IOException, JSONException {
-		Assert.assertNotNull("Login failed", f.getOAuthInterface().testLogin());
-		Assert.assertNotNull(f.getPhotosInterface().getAllContexts("5772049100"));
+		Assert.assertNotNull("Login failed", f.getOAuthInterface().testLogin()); //$NON-NLS-1$
+		Assert.assertNotNull(f.getPhotosInterface().getAllContexts("5772049100")); //$NON-NLS-1$
+	}
+	
+	@Test
+	public void testGetRequestToken() throws IOException, FlickrException {
+		OAuthToken token = f.getOAuthInterface().getRequestToken("http://localhost:8080"); //$NON-NLS-1$
+		Assert.assertNotNull(token);
+		URL url = f.getOAuthInterface().buildAuthenticationUrl(Permission.READ, token);
+		System.out.println("OAuth URL: " + url); //$NON-NLS-1$
+		Assert.assertNotNull(url);
 	}
 	
 	public static String readParamFromCommand(String message) throws IOException {

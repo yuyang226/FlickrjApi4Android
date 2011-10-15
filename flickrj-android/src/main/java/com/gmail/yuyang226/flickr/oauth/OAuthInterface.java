@@ -109,8 +109,13 @@ public class OAuthInterface {
 		parameters.add(new Parameter("oauth_callback", callbackUrl));
 		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
 		OAuthUtils.addBasicOAuthParams(parameters);
-		RequestContext.getRequestContext().setOAuth(null);
-		OAuthUtils.signGet(this.sharedSecret, URL_REQUEST_TOKEN, parameters);
+		String signature = OAuthUtils.getSignature(
+				OAuthUtils.REQUEST_METHOD_GET, 
+				URL_REQUEST_TOKEN, 
+				parameters,
+				sharedSecret, null);
+		// This method call must be signed.
+		parameters.add(new Parameter("oauth_signature", signature));
 
 		logger.info("Getting Request Token with parameters: {}", parameters);
 		Map<String, String> response = this.oauthTransport.getMapData(
