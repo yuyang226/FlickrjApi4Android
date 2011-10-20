@@ -328,14 +328,23 @@ public class PhotosetsInterface {
     public Photosets getList(String userId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_LIST));
-        parameters.add(new Parameter("api_key", apiKey));
+        
+        boolean signed = OAuthUtils.hasSigned();
+        if (signed) {
+        	parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+        } else {
+        	parameters.add(new Parameter("api_key", apiKey));
+        }
 
         if (userId != null) {
             parameters.add(new Parameter("user_id", userId));
         }
         
-        //OAuthUtils.addOAuthToken(parameters);
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        if (signed) {
+        	OAuthUtils.addOAuthToken(parameters);
+        }
+
+        Response response = signed ? transportAPI.postJSON(sharedSecret, parameters) : transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -404,7 +413,12 @@ public class PhotosetsInterface {
         PhotoList photos = new PhotoList();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PHOTOS));
-        parameters.add(new Parameter("api_key", apiKey));
+        boolean signed = OAuthUtils.hasSigned();
+        if (signed) {
+        	parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+        } else {
+        	parameters.add(new Parameter("api_key", apiKey));
+        }
 
         parameters.add(new Parameter("photoset_id", photosetId));
 
@@ -423,9 +437,11 @@ public class PhotosetsInterface {
         if (extras != null && !extras.isEmpty()) {
             parameters.add(new Parameter(Extras.KEY_EXTRAS, StringUtilities.join(extras, ",")));
         }
-        //OAuthUtils.addOAuthToken(parameters);
+        if (signed) {
+        	OAuthUtils.addOAuthToken(parameters);
+        }
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        Response response = signed ? transportAPI.postJSON(sharedSecret, parameters) : transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
