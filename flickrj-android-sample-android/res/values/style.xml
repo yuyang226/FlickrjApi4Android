@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="TitleBar">
+		<item name="android:id">@+id/title_container</item>
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">@dimen/title_height</item>
+		<item name="android:orientation">horizontal</item>
+		<item name="android:background">@color/title_background</item>
+	</style>
+
+	<style name="TitleBarAction">
+		<item name="android:layout_width">@dimen/title_height</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:background">@drawable/title_button</item>
+	</style>
+	<style name="TitleBarSeparator">
+		<item name="android:layout_width">1px</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:background">@color/title_separator</item>
+	</style>
+
+	<style name="TitleBarLogo">
+		<item name="android:id">@+id/title_logo</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:clickable">true</item>
+	</style>
+	<style name="TitleBarProgressIndicator" parent="@android:style/Widget.ProgressBar.Small">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:layout_marginLeft">14dip</item>
+		<item name="android:layout_marginRight">15dip</item>
+		<item name="android:layout_marginTop">14dip</item>
+		<item name="android:indeterminate">true</item>
+	</style>
+	<style name="TitleBarSpring">
+		<item name="android:layout_width">0dp</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:layout_weight">1</item>
+	</style>
+
+	<style name="TitleBarText">
+		<item name="android:id">@+id/title_text</item>
+		<item name="android:layout_width">0dp</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:layout_weight">1</item>
+		<item name="android:gravity">center_vertical</item>
+		<item name="android:textSize">@dimen/text_size_medium</item>
+		<item name="android:paddingLeft">12dip</item>
+		<item name="android:paddingRight">12dip</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColor">@color/title_text</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:ellipsize">end</item>
+	</style>
+
+</resources>

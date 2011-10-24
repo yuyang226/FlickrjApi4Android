@@ -2,4 +2,10 @@
 <resources>
     <string name="hello">Hello World, FlickrjAndroidSampleActivity!</string>
     <string name="app_name">Flickrj-android-sample-android</string>
+    <string name="user_profile_view_name">User Profile</string>
+    <string name="main_no_items">No pictures to display</string>
+    
+    <!-- buttons -->
+    <string name="btn_refresh_user_profile_title">Refresh</string>
+    <string name="btn_add_more">Add More</string>
 </resources>

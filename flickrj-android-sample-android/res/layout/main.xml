@@ -1,12 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<LinearLayout style="@style/TitleBar" android:orientation="horizontal">
+
+		<TextView style="@style/TitleBarText" android:id="@+id/profilePageTitle"
+			android:text="@string/user_profile_view_name" />
+		<ImageView style="@style/TitleBarSeparator" />
+		<ImageButton style="@style/TitleBarAction" 
+			android:id="@+id/btnRefreshUserProfile"
+			android:contentDescription="@string/btn_refresh_user_profile_title" android:src="@drawable/refresh" />
+		<ImageView style="@style/TitleBarSeparator" />
+	</LinearLayout>
+	<RelativeLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:padding="5dip">
+		<ImageView android:id="@+id/userImage"
+			android:layout_alignParentLeft="true" android:layout_centerInParent="true"
+			android:layout_marginRight="8dip" android:src="@drawable/icon" 
+			android:minHeight="24dp" android:minWidth="24dp" android:layout_width="48dp"
+			android:layout_height="48dp"/>
+		<TextView android:text="" android:id="@+id/userScreenName"
+			android:layout_toRightOf="@id/userImage" android:layout_marginTop="10dip"
+			android:layout_alignParentTop="true" android:layout_width="fill_parent"
+			android:textColor="#aaaa00" android:layout_height="wrap_content"
+			android:gravity="right" android:textStyle="bold" />
+		<TextView android:text="" android:id="@+id/userId"
+			android:layout_below="@id/userScreenName" android:layout_toRightOf="@id/userImage"
+			android:layout_alignLeft="@id/userScreenName"
+			android:layout_marginTop="10dip" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:gravity="right" />
+	</RelativeLayout>
+	<ListView android:id="@+id/imageList"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:drawSelectorOnTop="true" />
+	<TextView android:id="@+id/android:empty"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:text="@string/main_no_items" />
 </LinearLayout>

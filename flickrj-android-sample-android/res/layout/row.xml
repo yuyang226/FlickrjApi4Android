@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:padding="6dip" >
+
+    <ImageView
+        android:id="@+id/imageIcon"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginRight="6dip"
+        android:src="@drawable/icon" />
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/imageTitle"
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:gravity="top"
+            android:textColor="#aaaa00"
+            android:textSize="6pt"
+            android:textStyle="italic" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_weight="0.3"
+            android:orientation="horizontal" 
+            android:layout_gravity="bottom" >"
+
+            <ImageView
+                android:id="@+id/viewIcon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginRight="6dip"
+                android:src="@drawable/views" />
+
+            <TextView
+                android:id="@+id/viewsText"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:singleLine="true" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
