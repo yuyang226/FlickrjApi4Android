@@ -5,13 +5,13 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -28,7 +28,7 @@ import com.gmail.yuyang226.flickrj.sample.android.tasks.LoadPhotostreamTask;
 import com.gmail.yuyang226.flickrj.sample.android.tasks.LoadUserTask;
 import com.gmail.yuyang226.flickrj.sample.android.tasks.OAuthTask;
 
-public class FlickrjAndroidSampleActivity extends FragmentActivity {
+public class FlickrjAndroidSampleActivity extends Activity {
 	public static final String CALLBACK_SCHEME = "flickrj-android-sample-oauth"; //$NON-NLS-1$
 	public static final String PREFS_NAME = "flickrj-android-sample-pref"; //$NON-NLS-1$
 	public static final String KEY_OAUTH_TOKEN = "flickrj-android-oauthToken"; //$NON-NLS-1$
