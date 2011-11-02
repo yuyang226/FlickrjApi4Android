@@ -1,0 +1,28 @@
+-locale
+'en_US'
+-classpath
+'E:/dev/git/flickrj-android/flickrj-android/target/classes;C:/Users/yayu/.m2/repository/org/json/json/20090211/json-20090211.jar;C:/Users/yayu/.m2/repository/org/slf4j/slf4j-api/1.6.2/slf4j-api-1.6.2.jar'
+-encoding
+'UTF-8'
+-protected
+-sourcepath
+'E:/dev/git/flickrj-android/flickrj-android/src/main/java;E:/dev/git/flickrj-android/flickrj-android/src/main/javadoc'
+-author
+-bottom
+'Copyright &#169; 2011. All Rights Reserved.'
+-charset
+'UTF-8'
+-d
+'E:/dev/git/flickrj-android/flickrj-android/javadoc'
+-docencoding
+'UTF-8'
+-doctitle
+'Java Flickr API for Android 1.0.0 API'
+-linkoffline
+'http://download.oracle.com/javase/6/docs/api' 'E:/dev/git/flickrj-android/flickrj-android/target/javadoc-bundle-options'
+-stylesheetfile
+'E:/dev/git/flickrj-android/flickrj-android/src/main/javadoc/stylesheet.css'
+-use
+-version
+-windowtitle
+'Java Flickr API for Android 1.0.0 API'

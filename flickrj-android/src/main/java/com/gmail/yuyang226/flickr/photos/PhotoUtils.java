@@ -226,9 +226,7 @@ public final class PhotoUtils {
 		 */
 
 		if (photoElement.has("comments")) {
-			JSONObject commentsElement = photoElement.getJSONObject("comments");
-			// photo.setComments(((Text)
-			// commentsElement.getFirstChild()).getData());
+			photo.setComments(JSONUtils.getChildValue(photoElement, "comments"));
 		}
 
 		JSONObject notesElement = photoElement.optJSONObject("notes");
