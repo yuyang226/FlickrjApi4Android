@@ -155,6 +155,22 @@ public class PlacesInterface {
         }
         return parsePlacesList(response.getData());
     }
+    
+    /**
+     * same as findByLatLon(latitude, longitude, 16);
+     * @param latitude
+     * @param longitude
+     * @return
+     * @throws FlickrException
+     * @throws IOException
+     * @throws JSONException
+     */
+    public PlacesList findByLatLon(
+            double latitude,
+            double longitude
+        ) throws FlickrException, IOException, JSONException {
+    	return findByLatLon(latitude, longitude, 16);
+    }
 
     /**
      * Return a place ID for a latitude, longitude and accuracy triple.<p>
@@ -206,7 +222,7 @@ public class PlacesInterface {
      *        Anything more than 4 decimal places will be truncated.
      * @param longitude The longitude whose valid range is -180 to 180.
      *        Anything more than 4 decimal places will be truncated.
-     * @param accuracy
+     * @param accuracy Optional recorded accuracy level of the location information. World level is 1, Country is ~3, Region ~6, City ~11, Street ~16. Current range is 1-16. The default is 16.
      * @return A PlacesList
      * @throws FlickrException
      * @throws IOException
@@ -221,9 +237,9 @@ public class PlacesInterface {
         parameters.add(new Parameter("method", METHOD_FIND_BY_LATLON));
         parameters.add(new Parameter("api_key", apiKey));
 
-        parameters.add(new Parameter("lat", "" + latitude));
-        parameters.add(new Parameter("lon", "" + longitude));
-        parameters.add(new Parameter("accuracy", "" + accuracy));
+        parameters.add(new Parameter("lat", String.valueOf(latitude)));
+        parameters.add(new Parameter("lon", String.valueOf(longitude)));
+        parameters.add(new Parameter("accuracy", String.valueOf(accuracy)));
 
         Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
@@ -796,11 +812,11 @@ public class PlacesInterface {
         place.setLatitude(placeElement.getString("latitude"));
         place.setLongitude(placeElement.getString("longitude"));
         place.setPhotoCount(placeElement.optString("photo_count"));
-        String typeString = placeElement.optString("place_type");
+        //String typeString = placeElement.optString("place_type");
         // Now the place-Id is directly available
         place.setPlaceType(placeElement.optString("place_type_id"));
         //place.setPlaceType(stringPlaceTypeToInt(typeString));
-        place.setName(placeElement.getString("_content"));
+        place.setName(placeElement.getString("name"));
         return place;
     }
 
