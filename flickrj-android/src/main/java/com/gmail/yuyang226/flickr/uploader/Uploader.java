@@ -59,7 +59,7 @@ public class Uploader {
         try {
             this.apiKey = apiKey;
             this.sharedSecret = sharedSecret;
-            this.transport = new REST();
+            this.transport = new REST(Flickr.DEFAULT_API_HOST);
             this.transport.setResponseClass(UploaderResponse.class);
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e.getMessage(), e);

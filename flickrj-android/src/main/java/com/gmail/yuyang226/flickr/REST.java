@@ -402,10 +402,9 @@ public class REST extends Transport {
 			if (value instanceof InputStream) {
 				InputStream in = (InputStream) value;
 				byte[] buf = new byte[512];
-				@SuppressWarnings("unused")
 				int res = -1;
 				while ((res = in.read(buf)) != -1) {
-					out.write(buf);
+					out.write(buf,0,res);
 				}
 			} else if (value instanceof byte[]) {
 				out.write((byte[]) value);
