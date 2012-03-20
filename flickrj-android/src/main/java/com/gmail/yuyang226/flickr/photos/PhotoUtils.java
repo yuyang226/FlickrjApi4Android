@@ -143,6 +143,15 @@ public final class PhotoUtils {
 			sizeT.setSource(urlTmp);
 			sizes.add(sizeT);
 		}
+		
+		urlTmp = photoElement.optString("url_q");
+		if (urlTmp.startsWith("http")) {
+			Size sizeT = new Size();
+			sizeT.setLabel(Size.LARGE_SQUARE);
+			sizeT.setSource(urlTmp);
+			sizes.add(sizeT);
+		}
+		
 		if (sizes.size() > 0) {
 			photo.setSizes(sizes);
 		}

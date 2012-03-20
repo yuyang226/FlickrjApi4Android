@@ -42,6 +42,7 @@ public class Photo {
     private static final String THUMBNAIL_IMAGE_SUFFIX = "_t.jpg";
     private static final String MEDIUM_IMAGE_SUFFIX = ".jpg";
     private static final String LARGE_IMAGE_SUFFIX = "_b.jpg";
+	private static final String LARGE_SQUARE_IMAGE_SUFFIX = "_q.jpg";
 
     private Size squareSize;
     private Size smallSize;
@@ -49,6 +50,7 @@ public class Photo {
     private Size mediumSize;
     private Size largeSize;
     private Size originalSize;
+	private Size largeSquareSize;
 
     private String id;
     private User owner;
@@ -507,6 +509,14 @@ public class Photo {
             return squareSize.getSource();
         }
     }
+	
+	public String getLargeSquareUrl() {
+        if (largeSquareSize == null) {
+            return getBaseImageUrl() + LARGE_SQUARE_IMAGE_SUFFIX;
+        } else {
+            return largeSquareSize.getSource();
+        }
+    }
 
     /**
      * @deprecated
@@ -733,7 +743,9 @@ public class Photo {
                 largeSize = size;
             } else if (size.getLabel() == Size.ORIGINAL) {
                 originalSize = size;
-            }
+            } else if( size.getLabel() == Size.LARGE_SQUARE) {
+				largeSquareSize = size;
+			}
         }
     }
 
@@ -755,6 +767,10 @@ public class Photo {
 
     public Size getLargeSize() {
         return largeSize;
+    }
+	
+	public Size getLargeSquareSize() {
+        return largeSquareSize;
     }
 
     public Size getOriginalSize() {
