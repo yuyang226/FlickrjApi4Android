@@ -96,6 +96,13 @@ public final class PhotoUtils {
 		photo.setMedia(photoElement.optString("media"));
 		photo.setMediaStatus(photoElement.optString("media_status"));
 		photo.setPathAlias(photoElement.optString("pathalias"));
+		
+		JSONObject dates = photoElement.optJSONObject("dates");
+		if (dates != null) {
+			photo.setDateTaken(dates.optString("taken"));
+			photo.setDatePosted(dates.optString("posted"));
+			photo.setLastUpdate(dates.optString("lastupdate"));
+		}
 
 		// If the attributes active that contain the image-urls,
 		// Size-objects created from them, which are used to override
