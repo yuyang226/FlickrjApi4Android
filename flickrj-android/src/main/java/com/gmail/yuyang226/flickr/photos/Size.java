@@ -72,6 +72,11 @@ public class Size {
      * @see com.gmail.yuyang226.flickr.photos.PhotosInterface#getImageAsStream(Photo, int)
      */
     public static final int ORIGINAL = 5;
+	
+	/**
+	 * Large square image, 150 * 150
+	 */
+	public static final int LARGE_SQUARE = 6;
 
     private int label;
     private int width;
@@ -117,7 +122,9 @@ public class Size {
             setLabel(LARGE);
         } else if (label.equals("Original")) {
             setLabel(ORIGINAL);
-        }
+        } else if( label.equals("Large Square")) {
+			setLabel(LARGE_SQUARE);
+		}
     }
 
     /**

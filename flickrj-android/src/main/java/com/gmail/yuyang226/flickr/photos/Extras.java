@@ -36,6 +36,11 @@ public class Extras {
     public static final String URL_M = "url_m";
     public static final String URL_L = "url_l";
     public static final String URL_O = "url_o";
+	
+	 /**
+     * The extras constants for large square url of a photo, which is 150*150.
+     */
+    public static final String URL_Q = "url_q";
 
     /**
      * Set of all extra-arguments. Used for requesting lists of photos.
@@ -94,6 +99,7 @@ public class Extras {
         ALL_EXTRAS.add(URL_M);
         ALL_EXTRAS.add(URL_O);
         ALL_EXTRAS.add(URL_L);
+		ALL_EXTRAS.add(URL_Q);
     }
 
     static {
