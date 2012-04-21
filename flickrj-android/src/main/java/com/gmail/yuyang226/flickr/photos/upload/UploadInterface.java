@@ -77,13 +77,6 @@ public class UploadInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        // <uploader>
-        //  <ticket id="128" complete="1" photoid="2995" />
-        //  <ticket id="129" complete="0" />
-        //  <ticket id="130" complete="2" />
-        //  <ticket id="131" invalid="1" />
-        // </uploader>
-
         List<Ticket> list = new ArrayList<Ticket>();
         JSONObject uploaderElement = response.getData().getJSONObject("uploader");
         JSONArray ticketNodes = uploaderElement.optJSONArray("ticket");
@@ -91,11 +84,14 @@ public class UploadInterface {
             JSONObject ticketElement = ticketNodes.getJSONObject(i);
             String id = ticketElement.getString("id");
             String complete = ticketElement.getString("complete");
-            boolean invalid = "1".equals(ticketElement.getString("invalid"));
             String photoId = ticketElement.getString("photoid");
             Ticket info = new Ticket();
             info.setTicketId(id);
-            info.setInvalid(invalid);
+            if (ticketElement.has("invalid")) {
+            	//if the ticket wasn't found, the invalid attribute is set.
+                boolean invalid = "1".equals(ticketElement.getString("invalid"));
+            	info.setInvalid(invalid);
+            }
             info.setStatus(Integer.parseInt(complete));
             info.setPhotoId(photoId);
             list.add(info);
