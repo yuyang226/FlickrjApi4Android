@@ -9,3 +9,4 @@ gen
 bin
 classes
 */war/WEB-INF/lib/*.jar
+flickrj-android-sample-android/libs/*.jar

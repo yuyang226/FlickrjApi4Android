@@ -48,5 +48,12 @@ public class PhotosInterfaceTest extends AbstractFlickrTest {
 	    LoggerFactory.getLogger("====" + PhotosInterfaceTest.class).info(photo.getLargeSquareUrl());
 		System.out.println(photo.getLargeSquareUrl());
 	}
+	
+	@Test
+	public void testGetInfo() throws Exception {
+		Photo photo = f.getPhotosInterface().getInfo("5457780455", null);
+		Assert.assertNotNull(photo);
+		Assert.assertNotNull(photo.getOwner());
+	}
 
 }
