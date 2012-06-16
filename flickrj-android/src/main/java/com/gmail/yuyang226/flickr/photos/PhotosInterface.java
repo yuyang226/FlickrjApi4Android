@@ -205,6 +205,7 @@ public class PhotosInterface {
      *
      * This method requires authentication with 'read' permission.
      *
+     * @see com.gmail.yuyang226.flickr.photos.Extras
      * @param count The number of photos to return
      * @param justFriends Set to true to only show friends photos
      * @param singlePhoto Set to true to get a single photo
@@ -215,6 +216,12 @@ public class PhotosInterface {
      * @throws JSONException 
      */
     public PhotoList getContactsPhotos(int count, boolean justFriends, boolean singlePhoto, boolean includeSelf)
+            throws IOException, FlickrException, JSONException {
+        return getContactsPhotos(count, Extras.MIN_EXTRAS, justFriends, singlePhoto, includeSelf);
+    }
+
+    public PhotoList getContactsPhotos(int count, Set<String> extras,
+            boolean justFriends, boolean singlePhoto, boolean includeSelf)
             throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_CONTACTS_PHOTOS));
@@ -232,6 +239,10 @@ public class PhotosInterface {
         if (includeSelf) {
             parameters.add(new Parameter("include_self", "1"));
         }
+        if (extras != null) {
+            parameters.add(new Parameter(Extras.KEY_EXTRAS, StringUtilities.join(extras, ",")));
+        }
+
         OAuthUtils.addOAuthToken(parameters);
 
         Response response = transport.postJSON(sharedSecret, parameters);
