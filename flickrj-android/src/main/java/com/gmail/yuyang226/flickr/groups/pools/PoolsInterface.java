@@ -148,6 +148,9 @@ public class PoolsInterface {
             group.setName(groupElement.getString("name"));
             group.setAdmin("1".equals(groupElement.getString("admin")));
             group.setPrivacy(groupElement.getString("privacy"));
+            group.setPhotoCount(groupElement.getString("photos"));
+            group.setIconServer(groupElement.getString("iconserver"));
+            group.setIconFarm(groupElement.getString("iconfarm"));
             groups.add(group);
         }
         return groups;
