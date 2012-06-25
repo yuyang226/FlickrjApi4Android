@@ -5,6 +5,7 @@ package com.gmail.yuyang226.flickr.photos;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
@@ -27,7 +28,7 @@ import com.gmail.yuyang226.flickr.tags.Tag;
  * @author Anthony Eden
  * @version $Id: Photo.java,v 1.28 2009/07/23 21:49:35 x-mago Exp $
  */
-public class Photo {
+public class Photo implements Serializable {
 	public static final long serialVersionUID = 12L;
 
     private static final ThreadLocal<DateFormat> DATE_FORMATS = new ThreadLocal<DateFormat>() {

@@ -7,12 +7,14 @@ import com.gmail.yuyang226.flickr.Flickr;
 import com.gmail.yuyang226.flickr.util.BuddyIconable;
 import com.gmail.yuyang226.flickr.util.UrlUtilities;
 
+import java.io.Serializable;
+
 /**
  * Class representing a Flickr Group.
  *
  * @author Anthony Eden
  */
-public class Group implements BuddyIconable {
+public class Group implements BuddyIconable, Serializable {
 	public static final long serialVersionUID = 12L;
 
     private String id;

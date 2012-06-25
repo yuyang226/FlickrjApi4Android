@@ -3,11 +3,14 @@
  */
 package com.gmail.yuyang226.flickr.photos;
 
+import com.gmail.yuyang226.flickr.util.StringUtilities;
+
+import java.io.Serializable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.regex.Matcher;
 
-import com.gmail.yuyang226.flickr.util.StringUtilities;
+import java.util.regex.Matcher;
 
 /**
  * This class descibes a Size of a Photo.<p>
@@ -15,7 +18,7 @@ import com.gmail.yuyang226.flickr.util.StringUtilities;
  * @author Anthony Eden
  * @version $Id: Size.java,v 1.7 2009/07/23 20:41:03 x-mago Exp $
  */
-public class Size {
+public class Size implements Serializable {
 	public static final long serialVersionUID = 12L;
 
 	/**
