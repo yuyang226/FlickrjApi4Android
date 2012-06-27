@@ -176,7 +176,6 @@ public class PoolsInterface {
       throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_PHOTOS));
-        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("group_id", groupId));
         if (tags != null) {
             parameters.add(new Parameter("tags", StringUtilities.join(tags, " ")));
@@ -200,7 +199,18 @@ public class PoolsInterface {
             parameters.add(new Parameter(Extras.KEY_EXTRAS, sb.toString()));
         }
 
-        Response response = transport.get(transport.getPath(), parameters);
+        boolean signed = OAuthUtils.hasSigned();
+        if (signed) {
+            parameters.add(new Parameter(
+                OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+            OAuthUtils.addOAuthToken(parameters);
+        } else {
+            parameters.add(new Parameter("api_key", apiKey));
+        }
+
+        Response response = signed ?
+            transport.postJSON(sharedSecret, parameters) :
+            transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
