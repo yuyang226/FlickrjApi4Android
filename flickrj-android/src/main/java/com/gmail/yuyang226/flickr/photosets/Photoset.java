@@ -6,13 +6,15 @@ package com.gmail.yuyang226.flickr.photosets;
 import com.gmail.yuyang226.flickr.people.User;
 import com.gmail.yuyang226.flickr.photos.Photo;
 
+import java.io.Serializable;
+
 /**
  * Meta information about a photoset.  To retrieve the photos in the photoset use PhotosetsInterface.getPhotos().
  *
  * @author Anthony Eden
  * @version $Id: Photoset.java,v 1.7 2009/07/12 22:43:07 x-mago Exp $
  */
-public class Photoset {
+public class Photoset implements Serializable {
 	private static final long serialVersionUID = 12L;
 
     private String id;
