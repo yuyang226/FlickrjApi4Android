@@ -138,8 +138,10 @@ public class CommentsInterface {
      * This method does not require authentication.
      *
      * @param photoId The id of the photo to fetch comments for.
-     * @param minCommentDate Minimum date that a a comment was added.
-     * @param maxCommentDate Maximum date that a comment was added.
+     * @param minCommentDate Minimum date that a a comment was added. Optional,
+     * can be null.
+     * @param maxCommentDate Maximum date that a comment was added. Optional,
+     * can be null.
      * @return a List of {@link Comment} objects.
      * @throws FlickrException
      * @throws IOException
