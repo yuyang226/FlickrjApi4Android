@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.gmail.yuyang226</groupId>
 	<artifactId>flickrj-android</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4-SNAPSHOT</version>
 	<name>Java Flickr API for Android</name>
 	<description>A Java Flickr API library built for POJO, Android and Google App Engine</description>
 	<url>https://code.google.com/p/flickrj-android/</url>
