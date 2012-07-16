@@ -58,6 +58,7 @@ public class StatsInterfaceTest extends AbstractFlickrTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testGetPhotoStats() throws IOException, JSONException, FlickrException {
 		Stats stats = f.getStatsInterface().getPhotoStats("2011-09-21", "6158374085");
 		Assert.assertNotNull(stats);
@@ -77,6 +78,7 @@ public class StatsInterfaceTest extends AbstractFlickrTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testGetPhotostreamStats() throws IOException, JSONException, FlickrException {
 		Stats stats = f.getStatsInterface().getPhotostreamStats("2011-09-21");
 		Assert.assertNotNull(stats);
@@ -86,6 +88,7 @@ public class StatsInterfaceTest extends AbstractFlickrTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testGetPhotosetStats() throws IOException, JSONException, FlickrException {
 		Stats stats = f.getStatsInterface().getPhotosetStats("2011-09-21", "72157626738803062");
 		Assert.assertNotNull(stats);
@@ -105,6 +108,7 @@ public class StatsInterfaceTest extends AbstractFlickrTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testGetPhotostreamReferrers() throws IOException, JSONException, FlickrException {
 		ReferrerList referrers = f.getStatsInterface().getPhotostreamReferrers("2011-09-21", "flickr.com");
 		Assert.assertNotNull(referrers);
@@ -112,6 +116,7 @@ public class StatsInterfaceTest extends AbstractFlickrTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testGetPhotostreamDomains() throws IOException, JSONException, FlickrException {
 		DomainList domains = f.getStatsInterface().getPhotostreamDomains("2011-09-21", 0, 0);
 		Assert.assertNotNull(domains);
@@ -119,12 +124,14 @@ public class StatsInterfaceTest extends AbstractFlickrTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testGetPhotosetReferrers() throws IOException, JSONException, FlickrException {
 		ReferrerList referrers = f.getStatsInterface().getPhotosetReferrers("2011-09-21", "flickr.com", null, 0, 0);
 		Assert.assertNotNull(referrers);
 	}
 	
 	@Test
+	@Ignore
 	public void testGetPhotoReferrers() throws IOException, JSONException, FlickrException {
 		ReferrerList referrers = f.getStatsInterface().getPhotoReferrers("2011-09-21", "flickr.com", null, 0, 0);
 		Assert.assertNotNull(referrers);
@@ -132,6 +139,7 @@ public class StatsInterfaceTest extends AbstractFlickrTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testGetPhotoDomains() throws IOException, JSONException, FlickrException {
 		DomainList domains = f.getStatsInterface().getPhotoDomains("2011-09-21", null, 0, 0);
 		Assert.assertNotNull(domains);
@@ -139,18 +147,21 @@ public class StatsInterfaceTest extends AbstractFlickrTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testGetCollectionDomains() throws IOException, JSONException, FlickrException {
 		DomainList domains = f.getStatsInterface().getCollectionDomains("2011-09-21", null, 0, 0);
 		Assert.assertNotNull(domains);
 	}
 	
 	@Test
+	@Ignore
 	public void testGetCollectionReferrers() throws IOException, JSONException, FlickrException {
 		ReferrerList referrers = f.getStatsInterface().getCollectionReferrers("2011-09-21", "flickr.com", null, 0, 0);
 		Assert.assertNotNull(referrers);
 	}
 	
 	@Test
+	@Ignore
 	public void testGetPhotosetDomains() throws IOException, JSONException, FlickrException {
 		DomainList domains = f.getStatsInterface().getPhotosetDomains("2011-09-21", null, 0, 0);
 		Assert.assertNotNull(domains);
