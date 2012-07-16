@@ -4,6 +4,7 @@
 	<groupId>com.googlecode.flickrj-android</groupId>
 	<artifactId>flickrj-android</artifactId>
 	<version>2.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>Java Flickr API for Android</name>
 	<description>A Java Flickr API library built for POJO, Android and Google App Engine</description>
 	<url>https://code.google.com/p/flickrj-android/</url>
@@ -23,9 +24,48 @@
 	</licenses>
 
 	<scm>
+		<url>https://code.google.com/p/flickrj-android/</url>
 		<connection>scm:git:https://code.google.com/p/flickrj-android/</connection>
 		<developerConnection>scm:git:https://code.google.com/p/flickrj-android/</developerConnection>
 	</scm>
+
+	<developers>
+		<developer>
+			<id>yuyang226</id>
+			<name>Toby Yu</name>
+			<email>yuyang226@gmail.com</email>
+		</developer>
+		<developer>
+			<id>charlesyq</id>
+			<name>Charles Zhang</name>
+			<email>charleszq@gmail.com</email>
+		</developer>
+		<developer>
+			<id>deepnighttwo</id>
+			<name>Mike Zhang</name>
+			<email>deepnighttwo@gmail.com</email>
+		</developer>
+		<developer>
+			<id>lvettoretto</id>
+			<email>lvettoretto@gmail.com</email>
+		</developer>
+		<developer>
+			<id>4rvs19</id>
+			<name>Roman Suvorov</name>
+			<email>4rvs19@gmail.com</email>
+		</developer>
+		<developer>
+			<id>pauldbourke</id>
+			<name>Paul Bourke</name>
+			<email>pauldbourke@gmail.com</email>
+		</developer>
+		<developer>
+			<id>sebastiangraf</id>
+			<name>Sebastian Graf</name>
+			<email>sebastian.graf@gmail.com</email>
+		</developer>
+	</developers>
+
 
 	<dependencies>
 		<dependency>
