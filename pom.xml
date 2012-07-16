@@ -28,6 +28,5 @@
 	
 	<modules>
 	    <module>flickrj-android</module>
-		<module>flickrj-android-test</module>
     </modules>
 </project>
