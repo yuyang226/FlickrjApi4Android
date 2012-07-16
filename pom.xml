@@ -21,11 +21,6 @@
 		</plugins>
 	</build>
 	
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<javadoc.dest.dir>javadoc</javadoc.dest.dir>
-	</properties>
-	
 	<modules>
 	    <module>flickrj-android</module>
     </modules>
