@@ -1,12 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.gmail.yuyang226</groupId>
+	<groupId>com.googlecode.flickrj-android</groupId>
 	<artifactId>flickrj-android</artifactId>
-	<version>1.0.3</version>
+	<version>2.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>Java Flickr API for Android</name>
 	<description>A Java Flickr API library built for POJO, Android and Google App Engine</description>
 	<url>https://code.google.com/p/flickrj-android/</url>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
 
 	<licenses>
 		<license>
@@ -17,9 +24,48 @@
 	</licenses>
 
 	<scm>
+		<url>https://code.google.com/p/flickrj-android/</url>
 		<connection>scm:git:https://code.google.com/p/flickrj-android/</connection>
 		<developerConnection>scm:git:https://code.google.com/p/flickrj-android/</developerConnection>
 	</scm>
+
+	<developers>
+		<developer>
+			<id>yuyang226</id>
+			<name>Toby Yu</name>
+			<email>yuyang226@gmail.com</email>
+		</developer>
+		<developer>
+			<id>charlesyq</id>
+			<name>Charles Zhang</name>
+			<email>charleszq@gmail.com</email>
+		</developer>
+		<developer>
+			<id>deepnighttwo</id>
+			<name>Mike Zhang</name>
+			<email>deepnighttwo@gmail.com</email>
+		</developer>
+		<developer>
+			<id>lvettoretto</id>
+			<email>lvettoretto@gmail.com</email>
+		</developer>
+		<developer>
+			<id>4rvs19</id>
+			<name>Roman Suvorov</name>
+			<email>4rvs19@gmail.com</email>
+		</developer>
+		<developer>
+			<id>pauldbourke</id>
+			<name>Paul Bourke</name>
+			<email>pauldbourke@gmail.com</email>
+		</developer>
+		<developer>
+			<id>sebastiangraf</id>
+			<name>Sebastian Graf</name>
+			<email>sebastian.graf@gmail.com</email>
+		</developer>
+	</developers>
+
 
 	<dependencies>
 		<dependency>
@@ -38,26 +84,95 @@
 			<artifactId>json</artifactId>
 			<version>20090211</version>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<javadoc.dest.dir>javadoc</javadoc.dest.dir>
-	</properties>
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4.3</version>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>sonatype-nexus-staging</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<uniqueVersion>false</uniqueVersion>
+		</repository>
+		<snapshotRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<profiles>
 		<profile>
@@ -173,4 +288,11 @@
 			</build>
 		</profile>
 	</profiles>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
+	</properties>
+
 </project>
