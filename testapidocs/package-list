@@ -1,0 +1,11 @@
+com.googlecode.flickrandroid.collections.test
+com.googlecode.flickrandroid.favorites.test
+com.googlecode.flickrandroid.galleries.test
+com.googlecode.flickrandroid.oauth.test
+com.googlecode.flickrandroid.people.test
+com.googlecode.flickrandroid.photos.test
+com.googlecode.flickrandroid.prefs.test
+com.googlecode.flickrandroid.stats.test
+com.googlecode.flickrandroid.tags.test
+com.googlecode.flickrandroid.test
+com.googlecode.flickrandroid.uploader.test
