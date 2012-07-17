@@ -192,16 +192,6 @@
 					</reportPlugins>
 				</configuration>
 			</plugin>
-			<!-- Update the site to the github-project site; To invoke with "mvn site:site 
-				ghSite:site" -->
-			<plugin>
-				<groupId>com.github.github</groupId>
-				<artifactId>site-maven-plugin</artifactId>
-				<version>0.4</version>
-				<configuration>
-					<message>Building site for ${project.version}</message>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
