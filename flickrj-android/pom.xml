@@ -7,7 +7,6 @@
 	<packaging>jar</packaging>
 	<name>Java Flickr API for Android</name>
 	<description>A Java Flickr API library built for POJO, Android and Google App Engine</description>
-	<url>https://code.google.com/p/flickrj-android/</url>
 
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
@@ -24,9 +23,9 @@
 	</licenses>
 
 	<scm>
-		<url>https://code.google.com/p/flickrj-android/</url>
-		<connection>scm:git:https://code.google.com/p/flickrj-android/</connection>
-		<developerConnection>scm:git:https://code.google.com/p/flickrj-android/</developerConnection>
+		<url>git@github.com:sebastiangraf/FlickrjApi4Android.git</url>
+		<connection>scm:git:git@github.com:sebastiangraf/FlickrjApi4Android.git</connection>
+		<developerConnection>scm:git:git@github.com:sebastiangraf/FlickrjApi4Android.git</developerConnection>
 	</scm>
 
 	<developers>
@@ -158,8 +157,55 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- <plugin> <groupId>com.googlecode.maven-gcu-plugin</groupId> <artifactId>maven-gcu-plugin</artifactId> 
+				<version>1.0</version> <configuration> <projectName>flickrj-android</projectName> 
+				<uploads> <upload> <file>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</file> 
+				<summary>${project.name} sources bundle ${project.version}</summary> <labels> 
+				<label>Featured</label> <label>Type-Archive</label> </labels> </upload> </uploads> 
+				</configuration> </plugin> -->
+
+			<!-- Adding an actual jar as download to github; To invoke with "mvn clean 
+				verify ghDownloads:upload" -->
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>downloads-maven-plugin</artifactId>
+				<version>0.4</version>
+				<configuration>
+					<description>Official ${project.name} build of the
+						${project.version} release</description>
+					<override>true</override>
+					<includeAttached>true</includeAttached>
+				</configuration>
+			</plugin>
+
+			<!--JAVADOC AND SITE STUFF -->
+			<!-- Generating the site especially javadoc -->
+			<plugin>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<reportPlugins>
+						<plugin>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<version>2.7</version>
+						</plugin>
+					</reportPlugins>
+				</configuration>
+			</plugin>
+			<!-- Update the site to the github-project site; To invoke with "mvn site:site 
+				ghSite:site" -->
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.4</version>
+				<configuration>
+					<message>Building site for ${project.version}</message>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
+
 
 	<distributionManagement>
 		<repository>
