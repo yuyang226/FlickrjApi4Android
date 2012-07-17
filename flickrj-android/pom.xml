@@ -7,6 +7,7 @@
 	<packaging>jar</packaging>
 	<name>Java Flickr API for Android</name>
 	<description>A Java Flickr API library built for POJO, Android and Google App Engine</description>
+	<url>https://code.google.com/p/flickrj-android/</url>
 
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
@@ -23,9 +24,9 @@
 	</licenses>
 
 	<scm>
-		<url>git@github.com:sebastiangraf/FlickrjApi4Android.git</url>
-		<connection>scm:git:git@github.com:sebastiangraf/FlickrjApi4Android.git</connection>
-		<developerConnection>scm:git:git@github.com:sebastiangraf/FlickrjApi4Android.git</developerConnection>
+		<url>https://code.google.com/p/flickrj-android/</url>
+		<connection>scm:git:https://code.google.com/p/flickrj-android/</connection>
+		<developerConnection>scm:git:https://code.google.com/p/flickrj-android/</developerConnection>
 	</scm>
 
 	<developers>
