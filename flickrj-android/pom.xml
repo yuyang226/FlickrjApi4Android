@@ -110,89 +110,7 @@
 					<encoding>${project.build.sourceEncoding}</encoding>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.4</version>
-				<executions>
-					<execution>
-						<phase>install</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- <plugin> <groupId>com.googlecode.maven-gcu-plugin</groupId> <artifactId>maven-gcu-plugin</artifactId> 
-				<version>1.0</version> <configuration> <projectName>flickrj-android</projectName> 
-				<uploads> <upload> <file>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</file> 
-				<summary>${project.name} sources bundle ${project.version}</summary> <labels> 
-				<label>Featured</label> <label>Type-Archive</label> </labels> </upload> </uploads> 
-				</configuration> </plugin> -->
 
-			<!-- Adding an actual jar as download to github; To invoke with "mvn clean 
-				verify ghDownloads:upload" -->
-			<plugin>
-				<groupId>com.github.github</groupId>
-				<artifactId>downloads-maven-plugin</artifactId>
-				<version>0.4</version>
-				<configuration>
-					<description>Official ${project.name} build of the
-						${project.version} release</description>
-					<override>true</override>
-					<includeAttached>true</includeAttached>
-				</configuration>
-			</plugin>
-
-			<!--JAVADOC AND SITE STUFF -->
-			<!-- Generating the site especially javadoc -->
-			<plugin>
-				<artifactId>maven-site-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<reportPlugins>
-						<plugin>
-							<artifactId>maven-javadoc-plugin</artifactId>
-							<version>2.7</version>
-						</plugin>
-					</reportPlugins>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
@@ -217,17 +135,6 @@
 			<build>
 				<plugins>
 					<plugin>
-						<artifactId>maven-clean-plugin</artifactId>
-						<configuration>
-							<filesets>
-								<fileset>
-									<directory>${javadoc.dest.dir}</directory>
-									<followSymlinks>false</followSymlinks>
-								</fileset>
-							</filesets>
-						</configuration>
-					</plugin>
-					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-shade-plugin</artifactId>
 						<version>1.4</version>
@@ -248,14 +155,14 @@
 						</executions>
 					</plugin>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-source-plugin</artifactId>
 						<executions>
 							<execution>
 								<id>attach-sources</id>
 								<phase>package</phase>
 								<goals>
-									<goal>jar-no-fork</goal>
+									<goal>test-jar</goal>
+									<goal>jar</goal>
 								</goals>
 							</execution>
 						</executions>
@@ -263,22 +170,57 @@
 							<includePom>true</includePom>
 						</configuration>
 					</plugin>
+					<!-- Adding an actual jar as download to github; To invoke with "mvn 
+						clean verify ghDownloads:upload" -->
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.4</version>
 						<executions>
 							<execution>
-								<phase>package</phase>
+								<phase>install</phase>
 								<goals>
-									<goal>javadoc</goal>
+									<goal>sign</goal>
 								</goals>
 							</execution>
 						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>2.2</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>test-jar</goal>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.8</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>test-jar</goal>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!--JAVADOC AND SITE STUFF -->
+					<!-- Generating the site especially javadoc -->
+					<plugin>
+						<artifactId>maven-site-plugin</artifactId>
+						<version>3.0</version>
 						<configuration>
-							<stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
-							<reportOutputDirectory>${basedir}</reportOutputDirectory>
-							<destDir>${javadoc.dest.dir}</destDir>
-							<locale>en_US</locale>
+							<reportPlugins>
+								<plugin>
+									<artifactId>maven-javadoc-plugin</artifactId>
+									<version>2.7</version>
+								</plugin>
+							</reportPlugins>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -289,37 +231,21 @@
 			<build>
 				<plugins>
 					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<phase>install</phase>
-								<configuration>
-									<tasks>
-										<property name="archive_name"
-											value="${project.artifactId}-${project.version}" />
-										<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask"
-											classpath="lib/ant-googlecode-0.0.3.jar" name="gcupload" />
-										<echo>Sending new build '${archive_name}.jar' to your project
-											site(${project.url}) for user ${env.gcode.user}</echo>
-										<gcupload username="${env.gcode.user}" password="${env.gcode.pwd}"
-											projectname="${project.artifactId}"
-											filename="${project.build.directory}/${archive_name}.${project.packaging}"
-											targetfilename="${archive_name}.${project.packaging}"
-											summary="Binary Bundle(excluding dependencies) Release ${project.version}"
-											labels="Featured, Type-Package, OpSys-All, Type-Archive" />
-										<gcupload username="${env.gcode.user}" password="${env.gcode.pwd}"
-											projectname="${project.artifactId}"
-											filename="${project.build.directory}/${archive_name}-sources.${project.packaging}"
-											targetfilename="${archive_name}-sources.${project.packaging}"
-											summary="Source Bundle Release ${project.version}"
-											labels="Featured, Type-Package, OpSys-All, Type-Archive, Type-Source" />
-									</tasks>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
+						<groupId>com.googlecode.maven-gcu-plugin</groupId>
+						<artifactId>maven-gcu-plugin</artifactId>
+						<version>1.0</version>
+						<configuration>
+							<uploads>
+								<upload>
+									<file>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</file>
+									<summary>${project.name} sources bundle ${project.version}</summary>
+									<labels>
+										<label>Featured</label>
+										<label>Type-Archive</label>
+									</labels>
+								</upload>
+							</uploads>
+						</configuration>
 					</plugin>
 				</plugins>
 			</build>
