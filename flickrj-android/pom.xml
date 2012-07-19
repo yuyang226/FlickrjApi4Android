@@ -226,30 +226,6 @@
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>upload</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.googlecode.maven-gcu-plugin</groupId>
-						<artifactId>maven-gcu-plugin</artifactId>
-						<version>1.0</version>
-						<configuration>
-							<uploads>
-								<upload>
-									<file>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</file>
-									<summary>${project.name} sources bundle ${project.version}</summary>
-									<labels>
-										<label>Featured</label>
-										<label>Type-Archive</label>
-									</labels>
-								</upload>
-							</uploads>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 	</profiles>
 
 	<properties>
