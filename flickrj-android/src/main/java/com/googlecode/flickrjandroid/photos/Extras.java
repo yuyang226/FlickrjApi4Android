@@ -3,6 +3,8 @@
  */
 package com.googlecode.flickrjandroid.photos;
 
+import java.io.Serializable;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +14,7 @@ import java.util.Set;
  * @author Anthony Eden
  * @version $Id: Extras.java,v 1.12 2009/07/23 20:41:03 x-mago Exp $
  */
-public class Extras {
+public class Extras implements Serializable {
 	public static final long serialVersionUID = 12L;
     public static final String KEY_EXTRAS = "extras";
 

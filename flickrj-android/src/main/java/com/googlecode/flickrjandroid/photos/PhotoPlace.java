@@ -1,5 +1,7 @@
 package com.googlecode.flickrjandroid.photos;
 
+import java.io.Serializable;
+
 /**
  * Represents either a photo pool or a photo set with it's id and title. Instances of this
  * class are distinguished as set or pool by their <em>kind</em> property.
@@ -11,7 +13,7 @@ package com.googlecode.flickrjandroid.photos;
  * @author till (Till Krech) flickr:extranoise
  * @version $Id: PhotoPlace.java,v 1.3 2009/07/12 22:43:07 x-mago Exp $
  */
-public class PhotoPlace {
+public class PhotoPlace implements Serializable {
 	public static final long serialVersionUID = 12L;
     public static final int SET = 1;
     public static final int POOL = 2;

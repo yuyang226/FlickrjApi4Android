@@ -1,10 +1,13 @@
 package com.googlecode.flickrjandroid.photos;
 
+import com.googlecode.flickrjandroid.util.StringUtilities;
+
+import java.io.Serializable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.regex.Matcher;
 
-import com.googlecode.flickrjandroid.util.StringUtilities;
+import java.util.regex.Matcher;
 
 /**
  * A geographic position.
@@ -12,7 +15,7 @@ import com.googlecode.flickrjandroid.util.StringUtilities;
  * @author mago
  * @version $Id: GeoData.java,v 1.4 2009/07/23 20:41:03 x-mago Exp $
  */
-public class GeoData {
+public class GeoData implements Serializable {
 	public static final long serialVersionUID = 12L;
     private float longitude;
     private float latitude;

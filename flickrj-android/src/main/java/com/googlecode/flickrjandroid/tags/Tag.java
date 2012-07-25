@@ -3,6 +3,7 @@
  */
 package com.googlecode.flickrjandroid.tags;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.regex.Matcher;
@@ -12,7 +13,7 @@ import com.googlecode.flickrjandroid.util.StringUtilities;
 /**
  * @author Anthony Eden
  */
-public class Tag {
+public class Tag implements Serializable {
 	private static final long serialVersionUID = 12L;
 
     private String id;

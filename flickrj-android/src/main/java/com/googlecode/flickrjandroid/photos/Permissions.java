@@ -3,16 +3,19 @@
  */
 package com.googlecode.flickrjandroid.photos;
 
+import com.googlecode.flickrjandroid.util.StringUtilities;
+
+import java.io.Serializable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.regex.Matcher;
 
-import com.googlecode.flickrjandroid.util.StringUtilities;
+import java.util.regex.Matcher;
 
 /**
  * @author Anthony Eden
  */
-public class Permissions {
+public class Permissions implements Serializable {
 	public static final long serialVersionUID = 12L;
 
     private String id;

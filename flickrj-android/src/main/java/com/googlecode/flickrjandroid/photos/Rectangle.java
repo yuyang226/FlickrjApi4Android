@@ -3,13 +3,15 @@
  */
 package com.googlecode.flickrjandroid.photos;
 
+import java.io.Serializable;
+
 /**
  * This is a simplified version of java.awt.Rectangle
  * 
  * @author Toby Yu(yuyang226@gmail.com)
  *
  */
-public class Rectangle {
+public class Rectangle implements Serializable {
 	
 	/**
      * The X coordinate of the upper-left corner of the <code>Rectangle</code>.
