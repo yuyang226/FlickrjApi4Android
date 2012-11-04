@@ -1,5 +1,7 @@
 package com.googlecode.flickrjandroid.activity;
 
+import java.io.Serializable;
+
 import java.util.Date;
 
 /**
@@ -10,7 +12,7 @@ import java.util.Date;
  * @author mago
  * @version $Id: Event.java,v 1.2 2007/07/22 16:18:20 x-mago Exp $
  */
-public class Event {
+public class Event implements Serializable {
     private String id;
     private String type;
     private String user;

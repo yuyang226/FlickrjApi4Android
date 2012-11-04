@@ -1,5 +1,7 @@
 package com.googlecode.flickrjandroid.activity;
 
+import java.io.Serializable;
+
 import java.util.Collection;
 
 /**
@@ -10,7 +12,7 @@ import java.util.Collection;
  * @author mago
  * @version $Id: Item.java,v 1.2 2007/07/22 16:18:20 x-mago Exp $
  */
-public class Item {
+public class Item implements Serializable {
     private String type;
     private String id;
     private String title;
