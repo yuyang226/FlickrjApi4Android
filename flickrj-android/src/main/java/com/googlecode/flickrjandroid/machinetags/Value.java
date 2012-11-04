@@ -8,7 +8,7 @@ import java.util.Date;
  * @version $Id: Value.java,v 1.3 2009/07/12 22:43:07 x-mago Exp $
  */
 public class Value implements ITag {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private String value;
     private int usage;
@@ -18,13 +18,13 @@ public class Value implements ITag {
     private Date lastAdded;
     
     /**
-	 * 
-	 */
-	public Value() {
-		super();
-	}
+     * 
+     */
+    public Value() {
+        super();
+    }
 
-	public String getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -52,7 +52,7 @@ public class Value implements ITag {
         this.predicate = predicate;
     }
 
-	public void setFirstAdded(Date date) {
+    public void setFirstAdded(Date date) {
         firstAdded = date;
     }
 
@@ -88,18 +88,18 @@ public class Value implements ITag {
         this.usage = usage;
     }
 
-	/**
-	 * @return the firstAdded
-	 */
-	public Date getFirstAdded() {
-		return firstAdded;
-	}
+    /**
+     * @return the firstAdded
+     */
+    public Date getFirstAdded() {
+        return firstAdded;
+    }
 
-	/**
-	 * @return the lastAdded
-	 */
-	public Date getLastAdded() {
-		return lastAdded;
-	}
+    /**
+     * @return the lastAdded
+     */
+    public Date getLastAdded() {
+        return lastAdded;
+    }
     
 }

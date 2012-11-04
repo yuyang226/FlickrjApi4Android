@@ -19,7 +19,7 @@ public class ProxyAuthenticator extends Authenticator {
         this.passWord = passWord;
     }
 
-	protected PasswordAuthentication getPasswordAuthentication() {
-		return new PasswordAuthentication(userName, passWord.toCharArray());
-	}
+    protected PasswordAuthentication getPasswordAuthentication() {
+        return new PasswordAuthentication(userName, passWord.toCharArray());
+    }
 }

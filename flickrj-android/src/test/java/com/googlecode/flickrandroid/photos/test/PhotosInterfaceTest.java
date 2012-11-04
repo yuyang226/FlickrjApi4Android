@@ -28,32 +28,32 @@ import com.googlecode.flickrjandroid.photos.PhotoList;
  *
  */
 public class PhotosInterfaceTest extends AbstractFlickrTest {
-	
-	@Test
-	public void testPhotos() throws FlickrException, IOException, JSONException {
-		Assert.assertFalse(f.getPhotosInterface().getAllContexts("5116571240").isEmpty());
-	}
-	
-	@Test
-	public void testLargeSquareSize() throws Exception {
-		InterestingnessInterface iff = f.getInterestingnessInterface();
-	    Set<String> extras = new HashSet<String>();
-	    extras.add(Extras.URL_Q);
-	    PhotoList pl = iff.getList((Date)null, extras, 10, 1);
-	    Assert.assertNotNull(pl);
-	    Assert.assertFalse(pl.isEmpty());
-	    Photo photo = pl.get(0);
-	    Assert.assertNotNull(photo);
-	    Assert.assertNotNull(photo.getLargeSquareUrl());
-	    LoggerFactory.getLogger("====" + PhotosInterfaceTest.class).info(photo.getLargeSquareUrl());
-		System.out.println(photo.getLargeSquareUrl());
-	}
-	
-	@Test
-	public void testGetInfo() throws Exception {
-		Photo photo = f.getPhotosInterface().getInfo("5457780455", null);
-		Assert.assertNotNull(photo);
-		Assert.assertNotNull(photo.getOwner());
-	}
+    
+    @Test
+    public void testPhotos() throws FlickrException, IOException, JSONException {
+        Assert.assertFalse(f.getPhotosInterface().getAllContexts("5116571240").isEmpty());
+    }
+    
+    @Test
+    public void testLargeSquareSize() throws Exception {
+        InterestingnessInterface iff = f.getInterestingnessInterface();
+        Set<String> extras = new HashSet<String>();
+        extras.add(Extras.URL_Q);
+        PhotoList pl = iff.getList((Date)null, extras, 10, 1);
+        Assert.assertNotNull(pl);
+        Assert.assertFalse(pl.isEmpty());
+        Photo photo = pl.get(0);
+        Assert.assertNotNull(photo);
+        Assert.assertNotNull(photo.getLargeSquareUrl());
+        LoggerFactory.getLogger("====" + PhotosInterfaceTest.class).info(photo.getLargeSquareUrl());
+        System.out.println(photo.getLargeSquareUrl());
+    }
+    
+    @Test
+    public void testGetInfo() throws Exception {
+        Photo photo = f.getPhotosInterface().getInfo("5457780455", null);
+        Assert.assertNotNull(photo);
+        Assert.assertNotNull(photo.getOwner());
+    }
 
 }

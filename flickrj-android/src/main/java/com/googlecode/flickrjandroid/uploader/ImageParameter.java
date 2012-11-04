@@ -10,44 +10,44 @@ import com.googlecode.flickrjandroid.Parameter;
  *
  */
 public class ImageParameter extends Parameter {
-	private String imageName;
-	private String imageType = "jpeg";
+    private String imageName;
+    private String imageType = "jpeg";
 
-	/**
-	 * @param name
-	 * @param value
-	 */
-	public ImageParameter(String imageName, Object value) {
-		super("photo", value);
-		this.imageName = imageName;
-	}
+    /**
+     * @param name
+     * @param value
+     */
+    public ImageParameter(String imageName, Object value) {
+        super("photo", value);
+        this.imageName = imageName;
+    }
 
-	/**
-	 * @return the imageName
-	 */
-	public String getImageName() {
-		return imageName;
-	}
+    /**
+     * @return the imageName
+     */
+    public String getImageName() {
+        return imageName;
+    }
 
-	/**
-	 * @param imageName the imageName to set
-	 */
-	public void setImageName(String imageName) {
-		this.imageName = imageName;
-	}
+    /**
+     * @param imageName the imageName to set
+     */
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
 
-	/**
-	 * @return the imageType
-	 */
-	public String getImageType() {
-		return imageType;
-	}
+    /**
+     * @return the imageType
+     */
+    public String getImageType() {
+        return imageType;
+    }
 
-	/**
-	 * @param imageType the imageType to set
-	 */
-	public void setImageType(String imageType) {
-		this.imageType = imageType;
-	}
+    /**
+     * @param imageType the imageType to set
+     */
+    public void setImageType(String imageType) {
+        this.imageType = imageType;
+    }
 
 }

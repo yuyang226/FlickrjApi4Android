@@ -106,7 +106,7 @@ public class PeopleInterface {
     }
     
     private User createUser(JSONObject rootObject) throws JSONException {
-    	JSONObject userElement = rootObject.getJSONObject("user");
+        JSONObject userElement = rootObject.getJSONObject("user");
         User user = new User();
         user.setId(userElement.getString("nsid"));
         user.setUsername(JSONUtils.getChildValue(userElement, "username"));
@@ -187,7 +187,7 @@ public class PeopleInterface {
         JSONObject groupsElement = response.getData().getJSONObject("groups");
         JSONArray groupNodes = groupsElement.getJSONArray("group");
         for (int i = 0; i < groupNodes.length(); i++) {
-        	JSONObject groupElement = groupNodes.getJSONObject(i);
+            JSONObject groupElement = groupNodes.getJSONObject(i);
             Group group = new Group();
             group.setId(groupElement.getString("nsid"));
             group.setName(groupElement.getString("name"));
@@ -289,45 +289,45 @@ public class PeopleInterface {
         return user;
     }
 
-	/**
-	 * Returns photos from the given user's photostream. Only photos visible the
-	 * calling user will be returned. this method must be authenticated.
-	 * 
-	 * @param userId
-	 * @param extras
-	 * @param perpage
-	 * @param page
-	 * @return
-	 * @throws IOException
-	 * @throws FlickrException
-	 * @throws JSONException 
-	 */
-	public PhotoList getPhotos(String userId, Set<String> extras, int perPage,
-			int page) throws IOException, FlickrException, JSONException {
-		List<Parameter> parameters = new ArrayList<Parameter>();
-		parameters.add(new Parameter("method", METHOD_GET_PHOTOS));
-		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
-		parameters.add(new Parameter("user_id", userId));
+    /**
+     * Returns photos from the given user's photostream. Only photos visible the
+     * calling user will be returned. this method must be authenticated.
+     * 
+     * @param userId
+     * @param extras
+     * @param perpage
+     * @param page
+     * @return
+     * @throws IOException
+     * @throws FlickrException
+     * @throws JSONException 
+     */
+    public PhotoList getPhotos(String userId, Set<String> extras, int perPage,
+            int page) throws IOException, FlickrException, JSONException {
+        List<Parameter> parameters = new ArrayList<Parameter>();
+        parameters.add(new Parameter("method", METHOD_GET_PHOTOS));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+        parameters.add(new Parameter("user_id", userId));
 
-		if (perPage > 0) {
-			parameters.add(new Parameter("per_page", "" + perPage));
-		}
-		if (page > 0) {
-			parameters.add(new Parameter("page", "" + page));
-		}
+        if (perPage > 0) {
+            parameters.add(new Parameter("per_page", "" + perPage));
+        }
+        if (page > 0) {
+            parameters.add(new Parameter("page", "" + page));
+        }
 
-		if (extras != null) {
-			parameters.add(new Parameter(Extras.KEY_EXTRAS, StringUtilities
-					.join(extras, ",")));
-		}
-		OAuthUtils.addOAuthToken(parameters);
+        if (extras != null) {
+            parameters.add(new Parameter(Extras.KEY_EXTRAS, StringUtilities
+                    .join(extras, ",")));
+        }
+        OAuthUtils.addOAuthToken(parameters);
 
-		Response response = transportAPI
-				.postJSON(sharedSecret, parameters);
-		if (response.isError()) {
-			throw new FlickrException(response.getErrorCode(), response
-					.getErrorMessage());
-		}
-		return PhotoUtils.createPhotoList(response.getData());
-	}
+        Response response = transportAPI
+                .postJSON(sharedSecret, parameters);
+        if (response.isError()) {
+            throw new FlickrException(response.getErrorCode(), response
+                    .getErrorMessage());
+        }
+        return PhotoUtils.createPhotoList(response.getData());
+    }
 }

@@ -13,7 +13,7 @@ import com.googlecode.flickrjandroid.util.UrlUtilities;
  * @version $Id: Contact.java,v 1.5 2009/07/12 22:43:07 x-mago Exp $
  */
 public class Contact implements BuddyIconable {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private String id;
     private String username;
@@ -115,42 +115,42 @@ public class Contact implements BuddyIconable {
         setIconServer(Integer.parseInt(iconServer));
     }
 
-	/**
-	 * @return the pathAlias
-	 */
-	public String getPathAlias() {
-		return pathAlias;
-	}
+    /**
+     * @return the pathAlias
+     */
+    public String getPathAlias() {
+        return pathAlias;
+    }
 
-	/**
-	 * @param pathAlias the pathAlias to set
-	 */
-	public void setPathAlias(String pathAlias) {
-		this.pathAlias = pathAlias;
-	}
+    /**
+     * @param pathAlias the pathAlias to set
+     */
+    public void setPathAlias(String pathAlias) {
+        this.pathAlias = pathAlias;
+    }
 
-	/**
-	 * @return the location
-	 */
-	public String getLocation() {
-		return location;
-	}
+    /**
+     * @return the location
+     */
+    public String getLocation() {
+        return location;
+    }
 
-	/**
-	 * @param location the location to set
-	 */
-	public void setLocation(String location) {
-		this.location = location;
-	}
+    /**
+     * @param location the location to set
+     */
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Contact [id=" + id + ", username=" + username + ", realName="
-				+ realName + "]";
-	}
-	
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Contact [id=" + id + ", username=" + username + ", realName="
+                + realName + "]";
+    }
+    
     
 }

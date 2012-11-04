@@ -11,7 +11,7 @@ import java.math.BigDecimal;
  * @author Anthony Eden
  */
 public class Blog {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private BigDecimal id;
     private String name;

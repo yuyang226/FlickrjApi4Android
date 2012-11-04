@@ -25,7 +25,7 @@ import com.googlecode.flickrjandroid.util.JSONUtils;
  *
  */
 public class CollectionsInterface {
-	private static final String METHOD_GET_INFO = "flickr.collections.getInfo";
+    private static final String METHOD_GET_INFO = "flickr.collections.getInfo";
     private static final String METHOD_GET_TREE = "flickr.collections.getTree";
 
     private String apiKey;
@@ -47,43 +47,43 @@ public class CollectionsInterface {
      * @throws IOException 
      */
     public Collection getInfo(String collectionId) throws IOException, JSONException, FlickrException {
-    	List<Parameter> parameters = new ArrayList<Parameter>();
-		parameters.add(new Parameter("method", METHOD_GET_INFO));
-		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
-		parameters.add(new Parameter("collection_id", collectionId));
+        List<Parameter> parameters = new ArrayList<Parameter>();
+        parameters.add(new Parameter("method", METHOD_GET_INFO));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+        parameters.add(new Parameter("collection_id", collectionId));
         OAuthUtils.addOAuthToken(parameters);
         
-		Response response = this.transportAPI.postJSON(this.sharedSecret, parameters);
-		if (response.isError()) {
-			throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
-		}
-		JSONObject collectionElement = response.getData().getJSONObject("collection");
-		Collection collection = new Collection();
-		collection.setId(collectionElement.getString("id"));
-		collection.setTitle(JSONUtils.getChildValue(collectionElement, "title"));
-		collection.setDescription(JSONUtils.getChildValue(collectionElement, "description"));
-		collection.setChildCount(collectionElement.optInt("child_count"));
-		collection.setIconLarge(collectionElement.optString("iconlarge"));
-		collection.setIconSmall(collectionElement.optString("iconsmall"));
-		collection.setServer(collectionElement.optString("server"));
-		collection.setSecret(collectionElement.optString("secret"));
-		//TODO process iconphotos
-		/*"iconphotos": { 
-		      "photo": [
-		        { "id": "503410350", "owner": "8308954@N06", "secret": "4375e55284", "server": "200", "farm": 1, "title": "Taking Pictures", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
-		        { "id": "1576385789", "owner": "8308954@N06", "secret": "296cc2c17b", "server": "2142", "farm": 3, "title": "Fireworks", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
-		        { "id": "1576456481", "owner": "8308954@N06", "secret": "22690d008c", "server": "2081", "farm": 3, "title": "Fireworks", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
-		        { "id": "1576408333", "owner": "8308954@N06", "secret": "5fdfc4e936", "server": "2037", "farm": 3, "title": "Fireworks", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
-		        { "id": "498073478", "deleted": 1 },
-		        { "id": "498094539", "deleted": 1 },
-		        { "id": "498065404", "deleted": 1 },
-		        { "id": "1345799589", "deleted": 1 },
-		        { "id": "498079026", "owner": "8308954@N06", "secret": "f1d1e4ecea", "server": "224", "farm": 1, "title": "auto_sh_2007_cars006", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
-		        { "id": "498118829", "owner": "8308954@N06", "secret": "66855d6ece", "server": "202", "farm": 1, "title": "小猫熊", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
-		        { "id": "498120563", "owner": "8308954@N06", "secret": "cea33cd7de", "server": "194", "farm": 1, "title": "Ostrich", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
-		        { "id": "1295631338", "owner": "8308954@N06", "secret": "db5d984122", "server": "1091", "farm": 2, "title": "Entering a Shop", "ispublic": 1, "isfriend": 0, "isfamily": 0 }
-		      ] }*/
-		return collection;
+        Response response = this.transportAPI.postJSON(this.sharedSecret, parameters);
+        if (response.isError()) {
+            throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
+        }
+        JSONObject collectionElement = response.getData().getJSONObject("collection");
+        Collection collection = new Collection();
+        collection.setId(collectionElement.getString("id"));
+        collection.setTitle(JSONUtils.getChildValue(collectionElement, "title"));
+        collection.setDescription(JSONUtils.getChildValue(collectionElement, "description"));
+        collection.setChildCount(collectionElement.optInt("child_count"));
+        collection.setIconLarge(collectionElement.optString("iconlarge"));
+        collection.setIconSmall(collectionElement.optString("iconsmall"));
+        collection.setServer(collectionElement.optString("server"));
+        collection.setSecret(collectionElement.optString("secret"));
+        //TODO process iconphotos
+        /*"iconphotos": { 
+              "photo": [
+                { "id": "503410350", "owner": "8308954@N06", "secret": "4375e55284", "server": "200", "farm": 1, "title": "Taking Pictures", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
+                { "id": "1576385789", "owner": "8308954@N06", "secret": "296cc2c17b", "server": "2142", "farm": 3, "title": "Fireworks", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
+                { "id": "1576456481", "owner": "8308954@N06", "secret": "22690d008c", "server": "2081", "farm": 3, "title": "Fireworks", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
+                { "id": "1576408333", "owner": "8308954@N06", "secret": "5fdfc4e936", "server": "2037", "farm": 3, "title": "Fireworks", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
+                { "id": "498073478", "deleted": 1 },
+                { "id": "498094539", "deleted": 1 },
+                { "id": "498065404", "deleted": 1 },
+                { "id": "1345799589", "deleted": 1 },
+                { "id": "498079026", "owner": "8308954@N06", "secret": "f1d1e4ecea", "server": "224", "farm": 1, "title": "auto_sh_2007_cars006", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
+                { "id": "498118829", "owner": "8308954@N06", "secret": "66855d6ece", "server": "202", "farm": 1, "title": "小猫熊", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
+                { "id": "498120563", "owner": "8308954@N06", "secret": "cea33cd7de", "server": "194", "farm": 1, "title": "Ostrich", "ispublic": 1, "isfriend": 0, "isfamily": 0 },
+                { "id": "1295631338", "owner": "8308954@N06", "secret": "db5d984122", "server": "1091", "farm": 2, "title": "Entering a Shop", "ispublic": 1, "isfriend": 0, "isfamily": 0 }
+              ] }*/
+        return collection;
     }
     
     /**
@@ -96,23 +96,23 @@ public class CollectionsInterface {
      * @throws FlickrException 
      */
     public List<Collection> getTree(String collectionId, String userId) throws IOException, JSONException, FlickrException {
-    	List<Parameter> parameters = new ArrayList<Parameter>();
+        List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_TREE));
         boolean signed = OAuthUtils.hasSigned();
         if (signed) {
-        	parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+            parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         } else {
-        	parameters.add(new Parameter("api_key", apiKey));
+            parameters.add(new Parameter("api_key", apiKey));
         }
         if (collectionId != null) {
-        	parameters.add(new Parameter("collection_id", collectionId));
+            parameters.add(new Parameter("collection_id", collectionId));
         }
         if (userId != null) {
-        	parameters.add(new Parameter("user_id", userId));
+            parameters.add(new Parameter("user_id", userId));
         }
         
         if (signed) {
-        	OAuthUtils.addOAuthToken(parameters);
+            OAuthUtils.addOAuthToken(parameters);
         }
 
         Response response = signed ? transportAPI.postJSON(sharedSecret, parameters) : transportAPI.get(transportAPI.getPath(), parameters);
@@ -130,27 +130,27 @@ public class CollectionsInterface {
     }
     
     private Collection createCollection(JSONObject jObject) throws JSONException {
-    	Collection col = new Collection();
+        Collection col = new Collection();
         col.setId(jObject.getString("id"));
         col.setTitle(jObject.getString("title"));
         col.setDescription(jObject.getString("description"));
         
         JSONArray setElements = jObject.optJSONArray("set");
         for (int i = 0; setElements != null && i < setElements.length(); i++) {
-        	JSONObject setElement = setElements.getJSONObject(i);
-        	Photoset set = new Photoset();
-        	set.setId(setElement.getString("id"));
-        	set.setTitle(setElement.getString("title"));
-        	set.setDescription(setElement.getString("description"));
-        	col.getPhotoSets().add(set);
+            JSONObject setElement = setElements.getJSONObject(i);
+            Photoset set = new Photoset();
+            set.setId(setElement.getString("id"));
+            set.setTitle(setElement.getString("title"));
+            set.setDescription(setElement.getString("description"));
+            col.getPhotoSets().add(set);
         }
         
         JSONArray colElements = jObject.optJSONArray("collection");
         for (int i = 0; colElements != null && i < colElements.length(); i++) {
-        	JSONObject colElement = colElements.getJSONObject(i);
-        	col.getCollections().add(createCollection(colElement));
+            JSONObject colElement = colElements.getJSONObject(i);
+            col.getCollections().add(createCollection(colElement));
         }
-    	return col;
+        return col;
     }
 
 }

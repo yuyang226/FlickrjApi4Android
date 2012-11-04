@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
  * @author Anthony Eden
  */
 public class Editability implements Serializable {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private boolean comment;
     private boolean addmeta;
@@ -41,12 +41,12 @@ public class Editability implements Serializable {
         this.addmeta = addmeta;
     }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if ((obj == null) || (obj.getClass() != this.getClass())) {
             return false;
         }
-		// object must be Editability at this point
+        // object must be Editability at this point
         Editability test = (Editability) obj;
         Class<?> cl = this.getClass();
         Method[] method = cl.getMethods();

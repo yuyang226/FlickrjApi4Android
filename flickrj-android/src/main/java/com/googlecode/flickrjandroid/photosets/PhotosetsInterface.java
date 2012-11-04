@@ -230,30 +230,30 @@ public class PhotosetsInterface {
         Iterator<?> keys = payload.keys();
         PhotoContext photoContext = new PhotoContext();
         while (keys.hasNext()) {
-        	String key = String.valueOf(keys.next());
+            String key = String.valueOf(keys.next());
             JSONObject element = payload.optJSONObject(key);
             if (key.equals("prevphoto")) {
-            	String id = element.getString("id");
-            	if ("0".equals(id) == false) {
-            		//this is the first photo
-            		Photo photo = new Photo();
+                String id = element.getString("id");
+                if ("0".equals(id) == false) {
+                    //this is the first photo
+                    Photo photo = new Photo();
                     photo.setId(id);
                     photo.setTitle(element.optString("title"));
                     photo.setUrl(element.optString("url"));
                     photoContext.setPreviousPhoto(photo);
-            	}
+                }
             } else if (key.equals("nextphoto")) {
-            	String id = element.getString("id");
-            	if ("0".equals(id) == false) {
-            		//this is the last photo
-            		Photo photo = new Photo();
+                String id = element.getString("id");
+                if ("0".equals(id) == false) {
+                    //this is the last photo
+                    Photo photo = new Photo();
                     photo.setId(id);
                     photo.setTitle(element.optString("title"));
                     photo.setUrl(element.optString("url"));
                     photoContext.setNextPhoto(photo);
-            	}
+                }
             } else if (key.equals("count")) {
-            	// TODO: process this information
+                // TODO: process this information
             } else {
                 System.err.println("unsupported element name: " + key);
             }
@@ -331,9 +331,9 @@ public class PhotosetsInterface {
         
         boolean signed = OAuthUtils.hasSigned();
         if (signed) {
-        	parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+            parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         } else {
-        	parameters.add(new Parameter("api_key", apiKey));
+            parameters.add(new Parameter("api_key", apiKey));
         }
 
         if (userId != null) {
@@ -341,7 +341,7 @@ public class PhotosetsInterface {
         }
         
         if (signed) {
-        	OAuthUtils.addOAuthToken(parameters);
+            OAuthUtils.addOAuthToken(parameters);
         }
 
         Response response = signed ? transportAPI.postJSON(sharedSecret, parameters) : transportAPI.get(transportAPI.getPath(), parameters);
@@ -353,14 +353,14 @@ public class PhotosetsInterface {
         List<Photoset> photosets = new ArrayList<Photoset>();
         JSONArray photosetElements = photosetsElement.optJSONArray("photoset");
         for (int i = 0; photosetElements != null && i < photosetElements.length(); i++) {
-        	JSONObject photosetElement = photosetElements.getJSONObject(i);
+            JSONObject photosetElement = photosetElements.getJSONObject(i);
             Photoset photoset = new Photoset();
             photoset.setId(photosetElement.getString("id"));
 
             if (photosetElement.has("owner")) {
-            	User owner = new User();
-            	owner.setId(photosetElement.getString("owner"));
-            	photoset.setOwner(owner);
+                User owner = new User();
+                owner.setId(photosetElement.getString("owner"));
+                photoset.setOwner(owner);
             }
 
             Photo primaryPhoto = new Photo();
@@ -415,9 +415,9 @@ public class PhotosetsInterface {
         parameters.add(new Parameter("method", METHOD_GET_PHOTOS));
         boolean signed = OAuthUtils.hasSigned();
         if (signed) {
-        	parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+            parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
         } else {
-        	parameters.add(new Parameter("api_key", apiKey));
+            parameters.add(new Parameter("api_key", apiKey));
         }
 
         parameters.add(new Parameter("photoset_id", photosetId));
@@ -438,7 +438,7 @@ public class PhotosetsInterface {
             parameters.add(new Parameter(Extras.KEY_EXTRAS, StringUtilities.join(extras, ",")));
         }
         if (signed) {
-        	OAuthUtils.addOAuthToken(parameters);
+            OAuthUtils.addOAuthToken(parameters);
         }
 
         Response response = signed ? transportAPI.postJSON(sharedSecret, parameters) : transportAPI.get(transportAPI.getPath(), parameters);
@@ -454,7 +454,7 @@ public class PhotosetsInterface {
         photos.setTotal(photoset.getString("total"));
 
         for (int i = 0; photoElements != null && i < photoElements.length(); i++) {
-        	JSONObject photoElement = photoElements.getJSONObject(i);
+            JSONObject photoElement = photoElements.getJSONObject(i);
             photos.add(PhotoUtils.createPhoto(photoElement));
         }
 

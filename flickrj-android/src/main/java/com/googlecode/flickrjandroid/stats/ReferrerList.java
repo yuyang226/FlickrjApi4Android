@@ -10,33 +10,33 @@ import com.googlecode.flickrjandroid.SearchResultList;
  *
  */
 public class ReferrerList extends SearchResultList<Referrer> {
-	private String name;
+    private String name;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	public ReferrerList() {
-		super();
-	}
+    /**
+     * 
+     */
+    public ReferrerList() {
+        super();
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
 
 }

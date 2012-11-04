@@ -15,7 +15,7 @@ import java.util.Set;
  * @version $Id: Extras.java,v 1.12 2009/07/23 20:41:03 x-mago Exp $
  */
 public class Extras implements Serializable {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
     public static final String KEY_EXTRAS = "extras";
 
     public static final String LICENSE = "license";
@@ -38,8 +38,8 @@ public class Extras implements Serializable {
     public static final String URL_M = "url_m";
     public static final String URL_L = "url_l";
     public static final String URL_O = "url_o";
-	
-	 /**
+    
+     /**
      * The extras constants for large square url of a photo, which is 150*150.
      */
     public static final String URL_Q = "url_q";
@@ -101,7 +101,7 @@ public class Extras implements Serializable {
         ALL_EXTRAS.add(URL_M);
         ALL_EXTRAS.add(URL_O);
         ALL_EXTRAS.add(URL_L);
-		ALL_EXTRAS.add(URL_Q);
+        ALL_EXTRAS.add(URL_Q);
     }
 
     static {

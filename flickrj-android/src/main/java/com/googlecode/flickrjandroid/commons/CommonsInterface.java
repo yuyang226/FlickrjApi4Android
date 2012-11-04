@@ -58,7 +58,7 @@ public class CommonsInterface {
         JSONObject mElement = response.getData().getJSONObject("institutions");
         JSONArray mNodes = mElement.getJSONArray("institution");
         for (int i = 0; i < mNodes.length(); i++) {
-        	JSONObject element = mNodes.getJSONObject(i);
+            JSONObject element = mNodes.getJSONObject(i);
             institutions.add(parseInstitution(element));
         }
         return institutions;

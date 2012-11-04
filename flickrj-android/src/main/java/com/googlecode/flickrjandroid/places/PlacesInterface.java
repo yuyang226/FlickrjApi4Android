@@ -669,15 +669,15 @@ public class PlacesInterface {
     }
     
     private PlacesList parsePlacesList(JSONObject data) throws JSONException {
-    	PlacesList placesList = new PlacesList();
-    	JSONObject placesElement = data.getJSONObject("places");
+        PlacesList placesList = new PlacesList();
+        JSONObject placesElement = data.getJSONObject("places");
         JSONArray placesNodes = placesElement.optJSONArray("place");
         placesList.setPage("1");
         placesList.setPages("1");
         placesList.setPerPage(placesNodes != null ? placesNodes.length() : 0);
         placesList.setTotal(placesList.getPerPage());
         for (int i = 0; placesNodes != null && i < placesNodes.length(); i++) {
-        	JSONObject placeElement = placesNodes.getJSONObject(i);
+            JSONObject placeElement = placesNodes.getJSONObject(i);
             placesList.add(parsePlace(placeElement));
         }
         return placesList;

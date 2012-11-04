@@ -8,9 +8,9 @@ package com.googlecode.flickrjandroid.groups.members;
  */
 
 public class Member {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
-	private String id;
+    private String id;
     private String userName;
     private int iconFarm = -1;
     private int iconServer = -1;

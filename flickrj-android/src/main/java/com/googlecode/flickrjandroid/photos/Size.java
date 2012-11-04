@@ -19,9 +19,9 @@ import java.util.regex.Matcher;
  * @version $Id: Size.java,v 1.7 2009/07/23 20:41:03 x-mago Exp $
  */
 public class Size implements Serializable {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
-	/**
+    /**
      * Thumbnail, 100 on longest side.
      *
      * @see com.googlecode.flickrjandroid.photos.Size#getLabel()
@@ -75,11 +75,11 @@ public class Size implements Serializable {
      * @see com.googlecode.flickrjandroid.photos.PhotosInterface#getImageAsStream(Photo, int)
      */
     public static final int ORIGINAL = 5;
-	
-	/**
-	 * Large square image, 150 * 150
-	 */
-	public static final int LARGE_SQUARE = 6;
+    
+    /**
+     * Large square image, 150 * 150
+     */
+    public static final int LARGE_SQUARE = 6;
 
     private int label;
     private int width;
@@ -126,8 +126,8 @@ public class Size implements Serializable {
         } else if (label.equals("Original")) {
             setLabel(ORIGINAL);
         } else if( label.equals("Large Square")) {
-			setLabel(LARGE_SQUARE);
-		}
+            setLabel(LARGE_SQUARE);
+        }
     }
 
     /**
@@ -199,12 +199,12 @@ public class Size implements Serializable {
         this.url = url;
     }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if ((obj == null) || (obj.getClass() != this.getClass())) {
             return false;
         }
-		// object must be GeoData at this point
+        // object must be GeoData at this point
         Size test = (Size) obj;
         Class<?> cl = this.getClass();
         Method[] method = cl.getMethods();

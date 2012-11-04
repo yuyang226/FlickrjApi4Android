@@ -6,7 +6,7 @@ package com.googlecode.flickrjandroid.photos;
  * @author Anthony Eden
  */
 public class PhotoUrl {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private String url;
     private String type;

@@ -10,58 +10,58 @@ import java.net.URL;
  *
  */
 public class Referrer {
-	private URL url;
-	private int views;
-	private String searchterm;
+    private URL url;
+    private int views;
+    private String searchterm;
 
-	/**
-	 * 
-	 */
-	public Referrer() {
-		super();
-	}
+    /**
+     * 
+     */
+    public Referrer() {
+        super();
+    }
 
-	/**
-	 * @return the url
-	 */
-	public URL getUrl() {
-		return url;
-	}
+    /**
+     * @return the url
+     */
+    public URL getUrl() {
+        return url;
+    }
 
-	/**
-	 * @param url the url to set
-	 */
-	public void setUrl(URL url) {
-		this.url = url;
-	}
+    /**
+     * @param url the url to set
+     */
+    public void setUrl(URL url) {
+        this.url = url;
+    }
 
-	/**
-	 * @return the views
-	 */
-	public int getViews() {
-		return views;
-	}
+    /**
+     * @return the views
+     */
+    public int getViews() {
+        return views;
+    }
 
-	/**
-	 * @param views the views to set
-	 */
-	public void setViews(int views) {
-		this.views = views;
-	}
+    /**
+     * @param views the views to set
+     */
+    public void setViews(int views) {
+        this.views = views;
+    }
 
-	/**
-	 * @return the searchterm
-	 */
-	public String getSearchterm() {
-		return searchterm;
-	}
+    /**
+     * @return the searchterm
+     */
+    public String getSearchterm() {
+        return searchterm;
+    }
 
-	/**
-	 * @param searchterm the searchterm to set
-	 */
-	public void setSearchterm(String searchterm) {
-		this.searchterm = searchterm;
-	}
+    /**
+     * @param searchterm the searchterm to set
+     */
+    public void setSearchterm(String searchterm) {
+        this.searchterm = searchterm;
+    }
 
-	
+    
 }

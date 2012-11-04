@@ -146,7 +146,7 @@ public class BlogsInterface {
         JSONObject blogsElement = response.getData().getJSONObject("blogs");
         JSONArray blogNodes = blogsElement.getJSONArray("blog");
         for (int i = 0; i < blogNodes.length(); i++) {
-        	JSONObject blogElement = blogNodes.getJSONObject(i);
+            JSONObject blogElement = blogNodes.getJSONObject(i);
             Blog blog = new Blog();
             blog.setId(blogElement.getString("id"));
             blog.setName(blogElement.getString("name"));

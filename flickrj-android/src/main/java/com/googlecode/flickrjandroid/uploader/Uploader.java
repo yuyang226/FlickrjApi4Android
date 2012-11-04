@@ -42,10 +42,10 @@ import com.googlecode.flickrjandroid.util.StringUtilities;
  * @version $Id: Uploader.java,v 1.12 2009/12/15 20:57:49 x-mago Exp $
  */
 public class Uploader {
-	public static final String UPLOAD_PATH = "/services/upload/";
-	public static final String URL_UPLOAD = "http://" + Flickr.DEFAULT_API_HOST + UPLOAD_PATH;
-	public static final String REPLACE_PATH = "/services/replace/";
-	public static final String URL_REPLACE = "http://" + Flickr.DEFAULT_API_HOST + REPLACE_PATH;
+    public static final String UPLOAD_PATH = "/services/upload/";
+    public static final String URL_UPLOAD = "http://" + Flickr.DEFAULT_API_HOST + UPLOAD_PATH;
+    public static final String REPLACE_PATH = "/services/replace/";
+    public static final String URL_REPLACE = "http://" + Flickr.DEFAULT_API_HOST + REPLACE_PATH;
     private String apiKey;
     private String sharedSecret;
     private Transport transport;
@@ -157,10 +157,10 @@ public class Uploader {
         parameters.add(new Parameter("is_friend", metaData.isFriendFlag() ? "1" : "0"));
         parameters.add(new Parameter("async", metaData.isAsync() ? "1" : "0"));
         if (metaData.getSafetyLevel() != null) {
-        	parameters.add(new Parameter("safety_level", metaData.getSafetyLevel()));
+            parameters.add(new Parameter("safety_level", metaData.getSafetyLevel()));
         }
         if (metaData.getContentType() != null) {
-        	parameters.add(new Parameter("content_type", metaData.getContentType()));
+            parameters.add(new Parameter("content_type", metaData.getContentType()));
         }
 
         parameters.add(new ImageParameter(imageName, in));

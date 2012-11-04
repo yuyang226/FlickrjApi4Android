@@ -67,7 +67,7 @@ public class LicensesInterface {
         JSONObject licensesElement = response.getData().getJSONObject("licenses");
         JSONArray licenseElements = licensesElement.optJSONArray("license");
         for (int i = 0; licenseElements != null && i < licenseElements.length(); i++) {
-        	JSONObject licenseElement = licenseElements.getJSONObject(i);
+            JSONObject licenseElement = licenseElements.getJSONObject(i);
             License license = new License();
             license.setId(licenseElement.getString("id"));
             license.setName(licenseElement.getString("name"));

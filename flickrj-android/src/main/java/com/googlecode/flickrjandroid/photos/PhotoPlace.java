@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @version $Id: PhotoPlace.java,v 1.3 2009/07/12 22:43:07 x-mago Exp $
  */
 public class PhotoPlace implements Serializable {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
     public static final int SET = 1;
     public static final int POOL = 2;
 

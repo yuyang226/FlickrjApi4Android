@@ -142,7 +142,7 @@ public class PoolsInterface {
         JSONObject groupsElement = response.getData().getJSONObject("groups");
         JSONArray groupNodes = groupsElement.optJSONArray("group");
         for (int i = 0; groupNodes != null && i < groupNodes.length(); i++) {
-        	JSONObject groupElement = groupNodes.getJSONObject(i);
+            JSONObject groupElement = groupNodes.getJSONObject(i);
             Group group = new Group();
             group.setId(groupElement.getString("id"));
             group.setName(groupElement.getString("name"));

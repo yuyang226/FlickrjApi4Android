@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @author Anthony Eden
  */
 public class Group implements BuddyIconable, Serializable {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private String id;
     private String name;
@@ -97,14 +97,14 @@ public class Group implements BuddyIconable, Serializable {
      * @param online
      */
     public void setOnline(String online) {
-    	try {
-    		if (online != null) setOnline(Integer.parseInt(online));
-    	} catch (NumberFormatException nfe) {
-    		setOnline(0);
-    		if (Flickr.tracing) 
-    			System.out.println("trace: Group.setOnline(String) encountered a number format " + 
-    			"exception.  online set to 0");
-    	}
+        try {
+            if (online != null) setOnline(Integer.parseInt(online));
+        } catch (NumberFormatException nfe) {
+            setOnline(0);
+            if (Flickr.tracing) 
+                System.out.println("trace: Group.setOnline(String) encountered a number format " + 
+                "exception.  online set to 0");
+        }
     }
 
     /**
@@ -216,20 +216,20 @@ public class Group implements BuddyIconable, Serializable {
     }
     
     /**
-	 * @return the invitationOnly
-	 */
-	public boolean isInvitationOnly() {
-		return invitationOnly;
-	}
+     * @return the invitationOnly
+     */
+    public boolean isInvitationOnly() {
+        return invitationOnly;
+    }
 
-	/**
-	 * @param invitationOnly the invitationOnly to set
-	 */
-	public void setInvitationOnly(boolean invitationOnly) {
-		this.invitationOnly = invitationOnly;
-	}
+    /**
+     * @param invitationOnly the invitationOnly to set
+     */
+    public void setInvitationOnly(boolean invitationOnly) {
+        this.invitationOnly = invitationOnly;
+    }
 
-	public String getDescription() {
+    public String getDescription() {
         return description;
     }
 

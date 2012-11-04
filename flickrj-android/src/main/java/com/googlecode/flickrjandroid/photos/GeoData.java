@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
  * @version $Id: GeoData.java,v 1.4 2009/07/23 20:41:03 x-mago Exp $
  */
 public class GeoData implements Serializable {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
     private float longitude;
     private float latitude;
     private int accuracy;
@@ -72,12 +72,12 @@ public class GeoData implements Serializable {
         " latitude=" + latitude + " accuracy=" + accuracy + "]";
     }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if ((obj == null) || (obj.getClass() != this.getClass())) {
             return false;
         }
-		// object must be GeoData at this point
+        // object must be GeoData at this point
         GeoData test = (GeoData) obj;
         Class<?> cl = this.getClass();
         Method[] method = cl.getMethods();

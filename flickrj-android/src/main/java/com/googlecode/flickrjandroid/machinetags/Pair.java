@@ -6,20 +6,20 @@ package com.googlecode.flickrjandroid.machinetags;
  * @version $Id: Pair.java,v 1.2 2009/07/12 22:43:07 x-mago Exp $
  */
 public class Pair implements ITag {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private String namespace;
     private String predicate;
     private int usage;
     
     /**
-	 * 
-	 */
-	public Pair() {
-		super();
-	}
+     * 
+     */
+    public Pair() {
+        super();
+    }
 
-	public String getNamespace() {
+    public String getNamespace() {
         return namespace;
     }
 
@@ -45,11 +45,11 @@ public class Pair implements ITag {
         } catch (NumberFormatException e) {}
     }
 
-	public void setUsage(int usage) {
-		this.usage = usage;
-	}
+    public void setUsage(int usage) {
+        this.usage = usage;
+    }
 
     public String getValue() {
-    	return namespace + ":" + predicate;
+        return namespace + ":" + predicate;
     }
 }

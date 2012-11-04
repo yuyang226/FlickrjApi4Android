@@ -34,109 +34,109 @@ public class Item {
     private int more = 0;
     private Collection<Event> events;
 
-	public Item() {
-	}
+    public Item() {
+    }
 
-	public String getFarm() {
-		return farm;
-	}
+    public String getFarm() {
+        return farm;
+    }
 
-	public void setFarm(String farm) {
-		this.farm = farm;
-	}
+    public void setFarm(String farm) {
+        this.farm = farm;
+    }
 
-	public int getFaves() {
-		return faves;
-	}
+    public int getFaves() {
+        return faves;
+    }
 
-	public void setFaves(int faves) {
-		this.faves = faves;
-	}
+    public void setFaves(int faves) {
+        this.faves = faves;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public int getMore() {
-		return more;
-	}
+    public int getMore() {
+        return more;
+    }
 
-	public void setMore(int more) {
-		this.more = more;
-	}
+    public void setMore(int more) {
+        this.more = more;
+    }
 
-	public String getOwner() {
-		return owner;
-	}
+    public String getOwner() {
+        return owner;
+    }
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
 
-	public String getSecret() {
-		return secret;
-	}
+    public String getSecret() {
+        return secret;
+    }
 
-	public void setSecret(String secret) {
-		this.secret = secret;
-	}
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
 
-	public String getServer() {
-		return server;
-	}
+    public String getServer() {
+        return server;
+    }
 
-	public void setServer(String server) {
-		this.server = server;
-	}
+    public void setServer(String server) {
+        this.server = server;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public int getViews() {
-		return views;
-	}
+    public int getViews() {
+        return views;
+    }
 
-	public void setViews(int views) {
-		this.views = views;
-	}
+    public void setViews(int views) {
+        this.views = views;
+    }
 
-	public Collection<Event> getEvents() {
-		return events;
-	}
+    public Collection<Event> getEvents() {
+        return events;
+    }
 
-	public void setEvents(Collection<Event> events) {
-		this.events = events;
-	}
+    public void setEvents(Collection<Event> events) {
+        this.events = events;
+    }
 
-	/**
-	 * Available if delivered by ActivityInterface.userComments()
-	 *
-	 * @return number of comments
-	 */
-	public int getComments() {
-		return comments;
-	}
+    /**
+     * Available if delivered by ActivityInterface.userComments()
+     *
+     * @return number of comments
+     */
+    public int getComments() {
+        return comments;
+    }
 
-	public void setComments(int comments) {
-		this.comments = comments;
-	}
+    public void setComments(int comments) {
+        this.comments = comments;
+    }
 
     /**
      * Available if delivered by ActivityInterface.userComments()

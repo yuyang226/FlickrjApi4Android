@@ -11,12 +11,12 @@ import com.googlecode.flickrjandroid.Parameter;
  */
 public class OAuthTokenParameter extends Parameter {
 
-	/**
-	 * @param name
-	 * @param value
-	 */
-	public OAuthTokenParameter(Object value) {
-		super(OAuthInterface.KEY_OAUTH_TOKEN, value);
-	}
+    /**
+     * @param name
+     * @param value
+     */
+    public OAuthTokenParameter(Object value) {
+        super(OAuthInterface.KEY_OAUTH_TOKEN, value);
+    }
 
 }

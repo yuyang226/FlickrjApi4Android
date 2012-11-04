@@ -24,7 +24,7 @@ import com.googlecode.flickrjandroid.photos.comments.Comment;
  * @version $Id: PhotosetsCommentsInterface.java,v 1.3 2009/07/11 20:30:27 x-mago Exp $
  */
 public class PhotosetsCommentsInterface {
-	public static final String METHOD_ADD_COMMENT = "flickr.photosets.comments.addComment";
+    public static final String METHOD_ADD_COMMENT = "flickr.photosets.comments.addComment";
     public static final String METHOD_DELETE_COMMENT = "flickr.photosets.comments.deleteComment";
     public static final String METHOD_EDIT_COMMENT = "flickr.photosets.comments.editComment";
     public static final String METHOD_GET_LIST = "flickr.photosets.comments.getList";
@@ -142,32 +142,32 @@ public class PhotosetsCommentsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
         // response:
-		//      <comments photoset_id="72157594152539675">
-		//      <comment 
-		//       id="2534725-72157594152539675-72157594172966066" 
-		//       author="99589152@N00" 
-		//       authorname="ortrun" 
-		//       datecreate="1150905040" 
-		//       permalink="http://www.flickr.com/photos/extranoise/sets/72157594152539675/comments#comment72157594172966066">
-		//         really unreal!
-		//      </comment>
-		//      <comment 
-		//       id="2534725-72157594152539675-72157594176993150" 
-		//       author="47093120@N00" 
-		//       authorname="nis.jensen" 
-		//       datecreate="1151259227" 
-		//       permalink="http://www.flickr.com/photos/extranoise/sets/72157594152539675/comments#comment72157594176993150">
-		//         Wow - you're better than most - this was a great view - i'll just take it again!
-		//      </comment>
-		//      <comment 
-		//       id="2534725-72157594152539675-72157594176996639" 
-		//       author="47093120@N00" 
-		//       authorname="nis.jensen" 
-		//       datecreate="1151259453" 
-		//       permalink="http://www.flickr.com/photos/extranoise/sets/72157594152539675/comments#comment72157594176996639">
-		//        Second it's even better!!!!
-		//      </comment>
-		//     </comments>
+        //      <comments photoset_id="72157594152539675">
+        //      <comment 
+        //       id="2534725-72157594152539675-72157594172966066" 
+        //       author="99589152@N00" 
+        //       authorname="ortrun" 
+        //       datecreate="1150905040" 
+        //       permalink="http://www.flickr.com/photos/extranoise/sets/72157594152539675/comments#comment72157594172966066">
+        //         really unreal!
+        //      </comment>
+        //      <comment 
+        //       id="2534725-72157594152539675-72157594176993150" 
+        //       author="47093120@N00" 
+        //       authorname="nis.jensen" 
+        //       datecreate="1151259227" 
+        //       permalink="http://www.flickr.com/photos/extranoise/sets/72157594152539675/comments#comment72157594176993150">
+        //         Wow - you're better than most - this was a great view - i'll just take it again!
+        //      </comment>
+        //      <comment 
+        //       id="2534725-72157594152539675-72157594176996639" 
+        //       author="47093120@N00" 
+        //       authorname="nis.jensen" 
+        //       datecreate="1151259453" 
+        //       permalink="http://www.flickr.com/photos/extranoise/sets/72157594152539675/comments#comment72157594176996639">
+        //        Second it's even better!!!!
+        //      </comment>
+        //     </comments>
         List<Comment> comments = new ArrayList<Comment>();
         JSONObject commentsElement = response.getData().getJSONObject("comments");
         JSONArray commentNodes = commentsElement.optJSONArray("comment");

@@ -14,7 +14,7 @@ import com.googlecode.flickrjandroid.util.StringUtilities;
  * @author Anthony Eden
  */
 public class Tag implements Serializable {
-	private static final long serialVersionUID = 12L;
+    private static final long serialVersionUID = 12L;
 
     private String id;
     private String author;
@@ -79,12 +79,12 @@ public class Tag implements Serializable {
         setCount(Integer.parseInt(count));
     }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if ((obj == null) || (obj.getClass() != this.getClass())) {
             return false;
         }
-		// object must be GeoData at this point
+        // object must be GeoData at this point
         Tag test = (Tag) obj;
         Class<? extends Tag> cl = this.getClass();
         Method[] method = cl.getMethods();

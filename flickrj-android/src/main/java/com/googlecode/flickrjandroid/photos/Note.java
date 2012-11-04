@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
  * @author Anthony Eden
  */
 public class Note implements Serializable {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
     private String id;
     private String author;
     private String authorName;
@@ -75,12 +75,12 @@ public class Note implements Serializable {
         this.text = text;
     }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if ((obj == null) || (obj.getClass() != this.getClass())) {
             return false;
         }
-		// object must be Note at this point
+        // object must be Note at this point
         Note test = (Note) obj;
         Class<?> cl = this.getClass();
         Method[] method = cl.getMethods();

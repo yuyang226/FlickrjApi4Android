@@ -157,7 +157,7 @@ public class TagsInterface {
         List<HotlistTag> tags = new ArrayList<HotlistTag>();
         JSONArray tagElements = tagsElement.optJSONArray("tag");
         for (int i = 0; tagElements != null && i < tagElements.length(); i++) {
-        	JSONObject tagElement = tagElements.getJSONObject(i);
+            JSONObject tagElement = tagElements.getJSONObject(i);
             HotlistTag tag = new HotlistTag();
             tag.setScore(tagElement.getString("score"));
             tag.setValue(tagElement.getString("_content"));
@@ -195,7 +195,7 @@ public class TagsInterface {
         JSONObject tagsElement = photoElement.getJSONObject("tags");
         JSONArray tagElements = tagsElement.optJSONArray("tag");
         for (int i = 0; tagElements != null && i < tagElements.length(); i++) {
-        	JSONObject tagElement = tagElements.getJSONObject(i);
+            JSONObject tagElement = tagElements.getJSONObject(i);
             Tag tag = new Tag();
             tag.setId(tagElement.getString("id"));
             tag.setAuthor(tagElement.getString("author"));
@@ -237,7 +237,7 @@ public class TagsInterface {
         JSONObject tagsElement = whoElement.getJSONObject("tags");
         JSONArray tagElements = tagsElement.optJSONArray("tag");
         for (int i = 0; tagElements != null && i < tagElements.length(); i++) {
-        	JSONObject tagElement = tagElements.getJSONObject(i);
+            JSONObject tagElement = tagElements.getJSONObject(i);
             Tag tag = new Tag();
             tag.setCount(tagElement.optInt("count"));
             tag.setValue(tagElement.getString("_content"));
@@ -275,7 +275,7 @@ public class TagsInterface {
         JSONObject tagsElement = whoElement.getJSONObject("tags");
         JSONArray tagElements = tagsElement.optJSONArray("tag");
         for (int i = 0; tagElements != null && i < tagElements.length(); i++) {
-        	JSONObject tagElement = tagElements.getJSONObject(i);
+            JSONObject tagElement = tagElements.getJSONObject(i);
             Tag tag = new Tag();
             tag.setCount(tagElement.getString("count"));
             tag.setValue(tagElement.getString("_content"));
@@ -316,12 +316,12 @@ public class TagsInterface {
         JSONObject tagsElement = whoElement.getJSONObject("tags");
         JSONArray tagElements = tagsElement.optJSONArray("tag");
         for (int i = 0; tagElements != null && i < tagElements.length(); i++) {
-        	JSONObject tagElement = tagElements.getJSONObject(i);
+            JSONObject tagElement = tagElements.getJSONObject(i);
             TagRaw tag = new TagRaw();
             tag.setClean(tagElement.getString("clean"));
             JSONArray rawElements = tagElement.optJSONArray("raw");
             for (int j = 0; rawElements != null && j < rawElements.length(); j++) {
-            	JSONObject rawElement = rawElements.getJSONObject(j);
+                JSONObject rawElement = rawElements.getJSONObject(j);
                 tag.addRaw(rawElement.getString("_content"));
             }
             tags.add(tag);
@@ -357,7 +357,7 @@ public class TagsInterface {
         tags.setSource(tagsElement.getString("source"));
         JSONArray tagElements = tagsElement.optJSONArray("tag");
         for (int i = 0; tagElements != null && i < tagElements.length(); i++) {
-        	JSONObject tagElement = tagElements.getJSONObject(i);
+            JSONObject tagElement = tagElements.getJSONObject(i);
             Tag t = new Tag();
             t.setValue(tagElement.getString("_content"));
             tags.add(t);
