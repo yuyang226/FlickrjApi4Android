@@ -183,11 +183,12 @@ public class ActivityInterface {
                 event.setUser(eventElement.getString("user"));
                 event.setUsername(eventElement.getString("username"));
                 event.setDateadded(eventElement.getString("dateadded"));
-                event.setValue(eventElement.getString("_content"));
+                event.setValue(eventElement.optString("_content"));
                 events.add(event);
             }
             item.setEvents(events);
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             // nop
         }
         return item;
