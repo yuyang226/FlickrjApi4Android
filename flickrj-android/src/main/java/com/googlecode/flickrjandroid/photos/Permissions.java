@@ -3,17 +3,20 @@
  */
 package com.googlecode.flickrjandroid.photos;
 
+import com.googlecode.flickrjandroid.util.StringUtilities;
+
+import java.io.Serializable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.regex.Matcher;
 
-import com.googlecode.flickrjandroid.util.StringUtilities;
+import java.util.regex.Matcher;
 
 /**
  * @author Anthony Eden
  */
-public class Permissions {
-	public static final long serialVersionUID = 12L;
+public class Permissions implements Serializable {
+    public static final long serialVersionUID = 12L;
 
     private String id;
     private boolean publicFlag;
@@ -82,12 +85,12 @@ public class Permissions {
         if (addmeta != null) setAddmeta(Integer.parseInt(addmeta));
     }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if ((obj == null) || (obj.getClass() != this.getClass())) {
             return false;
         }
-		// object must be Permissions at this point
+        // object must be Permissions at this point
         Permissions test = (Permissions) obj;
         Class<?> cl = this.getClass();
         Method[] method = cl.getMethods();

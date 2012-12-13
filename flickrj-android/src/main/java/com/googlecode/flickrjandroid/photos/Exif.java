@@ -8,7 +8,7 @@ package com.googlecode.flickrjandroid.photos;
  * @author Anthony Eden
  */
 public class Exif {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private String tagspace;
     private String tagspaceId;

@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @version $Id: Photoset.java,v 1.7 2009/07/12 22:43:07 x-mago Exp $
  */
 public class Photoset implements Serializable {
-	private static final long serialVersionUID = 12L;
+    private static final long serialVersionUID = 12L;
 
     private String id;
     private String url;
@@ -41,7 +41,7 @@ public class Photoset implements Serializable {
     }
 
     public String getUrl() {
-    	if(url == null) {
+        if(url == null) {
             StringBuffer sb = new StringBuffer();
             sb.append("http://www.flickr.com/photos/");
             sb.append(getOwner().getId());

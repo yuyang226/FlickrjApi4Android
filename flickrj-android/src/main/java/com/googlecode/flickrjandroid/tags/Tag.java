@@ -3,6 +3,7 @@
  */
 package com.googlecode.flickrjandroid.tags;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.regex.Matcher;
@@ -12,8 +13,8 @@ import com.googlecode.flickrjandroid.util.StringUtilities;
 /**
  * @author Anthony Eden
  */
-public class Tag {
-	private static final long serialVersionUID = 12L;
+public class Tag implements Serializable {
+    private static final long serialVersionUID = 12L;
 
     private String id;
     private String author;
@@ -78,12 +79,12 @@ public class Tag {
         setCount(Integer.parseInt(count));
     }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if ((obj == null) || (obj.getClass() != this.getClass())) {
             return false;
         }
-		// object must be GeoData at this point
+        // object must be GeoData at this point
         Tag test = (Tag) obj;
         Class<? extends Tag> cl = this.getClass();
         Method[] method = cl.getMethods();

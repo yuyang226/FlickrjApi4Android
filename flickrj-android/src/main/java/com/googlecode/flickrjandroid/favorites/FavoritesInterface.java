@@ -82,26 +82,26 @@ public class FavoritesInterface {
      * @throws FlickrException
      */
     public PhotoContext getContext(String photoId, String userId) throws IOException, JSONException, FlickrException {
-    	List<Parameter> parameters = new ArrayList<Parameter>();
-		parameters.add(new Parameter("method", METHOD_GET_CONTEXT));
-		boolean signed = OAuthUtils.hasSigned();
-		if (signed) {
-			parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY,
-				apiKey));
-		} else {
-			parameters.add(new Parameter("api_key", apiKey));
-		}
-		parameters.add(new Parameter("photo_id", photoId));
-		parameters.add(new Parameter("user_id", userId));
-		
-		if (signed) {
-			OAuthUtils.addOAuthToken(parameters);
-		}
-		Response response = transportAPI.postJSON(sharedSecret, parameters);
-		if (response.isError()) {
-			throw new FlickrException(response.getErrorCode(), response
-					.getErrorMessage());
-		}
+        List<Parameter> parameters = new ArrayList<Parameter>();
+        parameters.add(new Parameter("method", METHOD_GET_CONTEXT));
+        boolean signed = OAuthUtils.hasSigned();
+        if (signed) {
+            parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY,
+                apiKey));
+        } else {
+            parameters.add(new Parameter("api_key", apiKey));
+        }
+        parameters.add(new Parameter("photo_id", photoId));
+        parameters.add(new Parameter("user_id", userId));
+        
+        if (signed) {
+            OAuthUtils.addOAuthToken(parameters);
+        }
+        Response response = transportAPI.postJSON(sharedSecret, parameters);
+        if (response.isError()) {
+            throw new FlickrException(response.getErrorCode(), response
+                    .getErrorMessage());
+        }
         return PhotoUtils.createPhotoContext(response.getData());
     }
 
@@ -128,10 +128,10 @@ public class FavoritesInterface {
             parameters.add(new Parameter("user_id", userId));
         }
         if (minFaveDate != null) {
-        	parameters.add(new Parameter("min_fave_date", String.valueOf(minFaveDate.getTime() / 1000L)));
+            parameters.add(new Parameter("min_fave_date", String.valueOf(minFaveDate.getTime() / 1000L)));
         }
         if (maxFaveDate != null) {
-        	parameters.add(new Parameter("max_fave_date", String.valueOf(maxFaveDate.getTime() / 1000L)));
+            parameters.add(new Parameter("max_fave_date", String.valueOf(maxFaveDate.getTime() / 1000L)));
         }
         if (extras != null) {
             parameters.add(new Parameter("extras", StringUtilities.join(extras, ",")));
@@ -176,10 +176,10 @@ public class FavoritesInterface {
 
         parameters.add(new Parameter("user_id", userId));
         if (minFaveDate != null) {
-        	parameters.add(new Parameter("min_fave_date", String.valueOf(minFaveDate.getTime() / 1000L)));
+            parameters.add(new Parameter("min_fave_date", String.valueOf(minFaveDate.getTime() / 1000L)));
         }
         if (maxFaveDate != null) {
-        	parameters.add(new Parameter("max_fave_date", String.valueOf(maxFaveDate.getTime() / 1000L)));
+            parameters.add(new Parameter("max_fave_date", String.valueOf(maxFaveDate.getTime() / 1000L)));
         }
         if (extras != null) {
             parameters.add(new Parameter("extras", StringUtilities.join(extras, ",")));

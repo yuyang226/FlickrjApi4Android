@@ -11,17 +11,17 @@ import com.googlecode.flickrjandroid.SearchResultList;
  */
 public class DomainList extends SearchResultList<Domain> {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	public DomainList() {
-		super();
-	}
-	
+    /**
+     * 
+     */
+    public DomainList() {
+        super();
+    }
+    
 
 }

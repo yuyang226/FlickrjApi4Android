@@ -40,7 +40,7 @@ import com.googlecode.flickrjandroid.util.StringUtilities;
  * @version $Id: PhotosInterface.java,v 1.51 2010/07/20 20:11:16 x-mago Exp $
  */
 public class PhotosInterface {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     public static final String METHOD_ADD_TAGS = "flickr.photos.addTags";
     public static final String METHOD_DELETE = "flickr.photos.delete";
@@ -170,14 +170,14 @@ public class PhotosInterface {
         boolean signed = OAuthUtils.hasSigned();
         parameters.add(new Parameter("photo_id", photoId));
         if (signed) {
-        	parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
-        	OAuthUtils.addOAuthToken(parameters);
+            parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+            OAuthUtils.addOAuthToken(parameters);
         } else {
-        	parameters.add(new Parameter("api_key", apiKey));
+            parameters.add(new Parameter("api_key", apiKey));
         }
 
         Response response = signed ? transport.postJSON(sharedSecret, parameters) : 
-        	transport.get(transport.getPath(), parameters);
+            transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -379,7 +379,7 @@ public class PhotosInterface {
         JSONObject photocountsElement = response.getData().getJSONObject("photocounts");
         JSONArray photocountNodes = photocountsElement.optJSONArray("photocount");
         for (int i = 0; photocountNodes != null && i < photocountNodes.length(); i++) {
-        	JSONObject photocountElement = photocountNodes.getJSONObject(i);
+            JSONObject photocountElement = photocountNodes.getJSONObject(i);
             Photocount photocount = new Photocount();
             photocount.setCount(photocountElement.getInt("count"));
             photocount.setFromDate(photocountElement.getString("fromdate"));
@@ -422,7 +422,7 @@ public class PhotosInterface {
         JSONObject photoElement = response.getData().getJSONObject("photo");
         JSONArray exifElements = photoElement.optJSONArray("exif");
         for (int i = 0; exifElements != null && i < exifElements.length(); i++) {
-        	JSONObject exifElement = exifElements.getJSONObject(i);
+            JSONObject exifElement = exifElements.getJSONObject(i);
             Exif exif = new Exif();
             exif.setTagspace(exifElement.getString("tagspace"));
             exif.setTagspaceId(exifElement.getString("tagspaceid"));
@@ -472,7 +472,7 @@ public class PhotosInterface {
         JSONObject photoRoot = response.getData().getJSONObject("photo");
         JSONArray userNodes = photoRoot.optJSONArray("person");
         for (int i = 0; userNodes != null && i < userNodes.length(); i++) {
-        	JSONObject userElement = userNodes.getJSONObject(i);
+            JSONObject userElement = userNodes.getJSONObject(i);
             User user = new User();
             user.setId(userElement.getString("nsid"));
             user.setUsername(userElement.getString("username"));
@@ -505,14 +505,14 @@ public class PhotosInterface {
             parameters.add(new Parameter("secret", secret));
         }
         if (signed) {
-        	parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
-        	OAuthUtils.addOAuthToken(parameters);
+            parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+            OAuthUtils.addOAuthToken(parameters);
         } else {
-        	parameters.add(new Parameter("api_key", apiKey));
+            parameters.add(new Parameter("api_key", apiKey));
         }
 
         Response response = signed ? transport.postJSON(sharedSecret, parameters) : 
-        	transport.get(transport.getPath(), parameters);
+            transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -671,17 +671,17 @@ public class PhotosInterface {
         if (sign) {
             OAuthUtils.addOAuthToken(parameters);
         } else {
-        	parameters.add(new Parameter("api_key", apiKey));
+            parameters.add(new Parameter("api_key", apiKey));
         }
         Response response = sign ? transport.postJSON(sharedSecret, parameters) : 
-        	transport.get(transport.getPath(), parameters);
+            transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
         JSONObject sizesElement = response.getData().getJSONObject("sizes");
         JSONArray sizeNodes = sizesElement.optJSONArray("size");
         for (int i = 0; sizeNodes != null && i < sizeNodes.length(); i++) {
-        	JSONObject sizeElement = sizeNodes.getJSONObject(i);
+            JSONObject sizeElement = sizeNodes.getJSONObject(i);
             Size size = new Size();
             size.setLabel(sizeElement.getString("label"));
             size.setWidth(sizeElement.getString("width"));
@@ -955,10 +955,10 @@ public class PhotosInterface {
         parameters.add(new Parameter("method", METHOD_SEARCH));
         boolean sign = OAuthUtils.hasSigned();
         if (sign) {
-        	parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
-        	OAuthUtils.addOAuthToken(parameters);
+            parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+            OAuthUtils.addOAuthToken(parameters);
         } else { 
-        	parameters.add(new Parameter("api_key", apiKey));
+            parameters.add(new Parameter("api_key", apiKey));
         }
 
         parameters.addAll(params.getAsParameters());
@@ -971,7 +971,7 @@ public class PhotosInterface {
         }
 
         Response response = sign ? transport.postJSON(sharedSecret, parameters) 
-        		: transport.get(transport.getPath(), parameters);
+                : transport.get(transport.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -1020,7 +1020,7 @@ public class PhotosInterface {
 
         JSONArray photoNodes = photosElement.optJSONArray("photo");
         for (int i = 0; photoNodes != null && i < photoNodes.length(); i++) {
-        	JSONObject photoElement = photoNodes.getJSONObject(i);
+            JSONObject photoElement = photoNodes.getJSONObject(i);
             Photo photo = new Photo();
             photo.setId(photoElement.getString("id"));
 

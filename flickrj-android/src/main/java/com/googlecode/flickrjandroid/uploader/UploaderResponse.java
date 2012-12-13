@@ -95,31 +95,31 @@ public class UploaderResponse implements Response {
      * @see com.googlecode.flickrjandroid.Response#getPayloadCollection()
      */
     public Collection<Object> getPayloadCollection() {
-    	throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException();
     }
 
-	/* (non-Javadoc)
-	 * @see com.googlecode.flickrjandroid.Response#parse(java.lang.String)
-	 */
-	@Override
-	public void parse(String rawMessage) throws JSONException {
-		throw new UnsupportedOperationException();
-	}
+    /* (non-Javadoc)
+     * @see com.googlecode.flickrjandroid.Response#parse(java.lang.String)
+     */
+    @Override
+    public void parse(String rawMessage) throws JSONException {
+        throw new UnsupportedOperationException();
+    }
 
-	/* (non-Javadoc)
-	 * @see com.googlecode.flickrjandroid.Response#getData()
-	 */
-	@Override
-	public JSONObject getData() {
-		throw new UnsupportedOperationException();
-	}
+    /* (non-Javadoc)
+     * @see com.googlecode.flickrjandroid.Response#getData()
+     */
+    @Override
+    public JSONObject getData() {
+        throw new UnsupportedOperationException();
+    }
 
-	/* (non-Javadoc)
-	 * @see com.googlecode.flickrjandroid.Response#getRawResponse()
-	 */
-	@Override
-	public String getRawResponse() {
-		throw new UnsupportedOperationException();
-	}
+    /* (non-Javadoc)
+     * @see com.googlecode.flickrjandroid.Response#getRawResponse()
+     */
+    @Override
+    public String getRawResponse() {
+        throw new UnsupportedOperationException();
+    }
 
 }

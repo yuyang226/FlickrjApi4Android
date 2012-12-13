@@ -157,21 +157,21 @@ public class Flickr {
      * @see com.googlecode.flickrjandroid.photos.PhotosInterface#setSafetyLevel(String, String, Boolean)
      * @see com.googlecode.flickrjandroid.prefs.PrefsInterface#getSafetyLevel()
      * @see com.googlecode.flickrjandroid.uploader.UploadMetaData#setSafetyLevel(String)
-	 * @see com.googlecode.flickrjandroid.photos.SearchParameters#setSafeSearch(String)
+     * @see com.googlecode.flickrjandroid.photos.SearchParameters#setSafeSearch(String)
      */
     public static final String SAFETYLEVEL_SAFE = "1";
     /**
      * @see com.googlecode.flickrjandroid.photos.PhotosInterface#setSafetyLevel(String, String, Boolean)
      * @see com.googlecode.flickrjandroid.prefs.PrefsInterface#getSafetyLevel()
      * @see com.googlecode.flickrjandroid.uploader.UploadMetaData#setSafetyLevel(String)
-	 * @see com.googlecode.flickrjandroid.photos.SearchParameters#setSafeSearch(String)
+     * @see com.googlecode.flickrjandroid.photos.SearchParameters#setSafeSearch(String)
      */
     public static final String SAFETYLEVEL_MODERATE = "2";
     /**
      * @see com.googlecode.flickrjandroid.photos.PhotosInterface#setSafetyLevel(String, String, Boolean)
      * @see com.googlecode.flickrjandroid.prefs.PrefsInterface#getSafetyLevel()
      * @see com.googlecode.flickrjandroid.uploader.UploadMetaData#setSafetyLevel(String)
-	 * @see com.googlecode.flickrjandroid.photos.SearchParameters#setSafeSearch(String)
+     * @see com.googlecode.flickrjandroid.photos.SearchParameters#setSafeSearch(String)
      */
     public static final String SAFETYLEVEL_RESTRICTED = "3";
 
@@ -325,9 +325,9 @@ public class Flickr {
     }
     
     public OAuthInterface getOAuthInterface() {
-    	if (oAuthInterface == null) {
-    		oAuthInterface = new OAuthInterface(apiKey, sharedSecret, 
-    				transport);
+        if (oAuthInterface == null) {
+            oAuthInterface = new OAuthInterface(apiKey, sharedSecret, 
+                    transport);
         }
         return oAuthInterface;
     }
@@ -352,8 +352,8 @@ public class Flickr {
     }
     
     public CollectionsInterface getCollectionsInterface() {
-    	if (collectionsInterface == null) {
-    		collectionsInterface = new CollectionsInterface(apiKey, sharedSecret, transport);
+        if (collectionsInterface == null) {
+            collectionsInterface = new CollectionsInterface(apiKey, sharedSecret, transport);
         }
         return collectionsInterface;
     }
@@ -419,14 +419,14 @@ public class Flickr {
 
     public MachinetagsInterface getMachinetagsInterface() {
         if (machinetagsInterface == null) {
-        	machinetagsInterface = new MachinetagsInterface(apiKey, sharedSecret, transport);
+            machinetagsInterface = new MachinetagsInterface(apiKey, sharedSecret, transport);
         }
         return machinetagsInterface;
     }
 
     public MembersInterface getMembersInterface() {
         if (membersInterface == null) {
-        	membersInterface = new MembersInterface(apiKey, sharedSecret, transport);
+            membersInterface = new MembersInterface(apiKey, sharedSecret, transport);
         }
         return membersInterface;
     }
@@ -481,10 +481,10 @@ public class Flickr {
     }
     
     public GalleriesInterface getGalleriesInterface() {
-    	if (galleriesInterface == null) {
-    		galleriesInterface = new GalleriesInterface(apiKey, sharedSecret, transport);
-    	}
-    	return galleriesInterface;
+        if (galleriesInterface == null) {
+            galleriesInterface = new GalleriesInterface(apiKey, sharedSecret, transport);
+        }
+        return galleriesInterface;
     }
 
     public PlacesInterface getPlacesInterface() {
@@ -510,7 +510,7 @@ public class Flickr {
     
     public StatsInterface getStatsInterface() {
         if (statsInterface == null) {
-        	statsInterface = new StatsInterface(apiKey, sharedSecret, transport);
+            statsInterface = new StatsInterface(apiKey, sharedSecret, transport);
         }
         return statsInterface;
     }

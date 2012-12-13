@@ -26,13 +26,13 @@ public class UploadMetaData {
     private String contentType;
     
     /**
-	 * 
-	 */
-	public UploadMetaData() {
-		super();
-	}
+     * 
+     */
+    public UploadMetaData() {
+        super();
+    }
 
-	public String getTitle() {
+    public String getTitle() {
         return title;
     }
 

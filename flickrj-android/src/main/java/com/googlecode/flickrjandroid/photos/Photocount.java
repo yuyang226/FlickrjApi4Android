@@ -9,7 +9,7 @@ import java.util.Date;
  * @author Anthony Eden
  */
 public class Photocount {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private int count;
     private Date fromDate;

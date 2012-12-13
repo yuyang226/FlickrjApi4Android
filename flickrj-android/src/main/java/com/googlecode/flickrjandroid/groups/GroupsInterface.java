@@ -78,7 +78,7 @@ public class GroupsInterface {
 
         JSONArray subcatNodes = categoryElement.optJSONArray("subcat");
         for (int i = 0; subcatNodes != null && i < subcatNodes.length(); i++) {
-        	JSONObject node = subcatNodes.getJSONObject(i);
+            JSONObject node = subcatNodes.getJSONObject(i);
             Subcategory subcategory = new Subcategory();
             subcategory.setId(node.getInt("id"));
             subcategory.setName(node.getString("name"));
@@ -88,7 +88,7 @@ public class GroupsInterface {
 
         JSONArray groupNodes = categoryElement.optJSONArray("group");
         for (int i = 0; groupNodes != null && i < groupNodes.length(); i++) {
-        	JSONObject node = groupNodes.getJSONObject(i);
+            JSONObject node = groupNodes.getJSONObject(i);
             Group group = new Group();
             group.setId(node.getString("nsid"));
             group.setName(node.getString("name"));
@@ -138,7 +138,7 @@ public class GroupsInterface {
         JSONArray throttleNodes = groupElement.optJSONArray("throttle");
         int n = throttleNodes == null ? 0 : throttleNodes.length();
         if (n == 1) {
-        	JSONObject throttleElement = throttleNodes.getJSONObject(n);
+            JSONObject throttleElement = throttleNodes.getJSONObject(n);
             Throttle throttle = new Throttle();
             group.setThrottle(throttle);
             throttle.setMode(throttleElement.getString("mode"));
@@ -187,7 +187,7 @@ public class GroupsInterface {
         groupList.setPerPage(groupsElement.getInt("perpage"));
         groupList.setTotal(groupsElement.getInt("total"));
         for (int i = 0; groupNodes != null && i < groupNodes.length(); i++) {
-        	JSONObject groupElement = groupNodes.getJSONObject(i);
+            JSONObject groupElement = groupNodes.getJSONObject(i);
             Group group = new Group();
             group.setId(groupElement.getString("nsid"));
             group.setName(groupElement.getString("name"));

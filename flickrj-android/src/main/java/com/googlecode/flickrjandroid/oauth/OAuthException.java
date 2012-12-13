@@ -11,31 +11,31 @@ import com.googlecode.flickrjandroid.FlickrException;
  */
 public class OAuthException extends FlickrException {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @param message
-	 */
-	public OAuthException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public OAuthException(String message) {
+        super(message);
+    }
 
-	/**
-	 * @param cause
-	 */
-	public OAuthException(Throwable cause) {
-		super(cause);
-	}
+    /**
+     * @param cause
+     */
+    public OAuthException(Throwable cause) {
+        super(cause);
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public OAuthException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public OAuthException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

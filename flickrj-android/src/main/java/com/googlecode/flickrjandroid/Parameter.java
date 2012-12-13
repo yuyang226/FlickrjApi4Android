@@ -25,11 +25,11 @@ public class Parameter {
     }
 
     public Parameter(String name, long value) {
-		this.name = name;
-		this.value = new Long(value);
-	}
+        this.name = name;
+        this.value = new Long(value);
+    }
 
-	public String getName() {
+    public String getName() {
         return name;
     }
 
@@ -37,12 +37,12 @@ public class Parameter {
         return value;
     }
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "Parameter [name=" + name + ", value=" + value + "]";
-	}
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Parameter [name=" + name + ", value=" + value + "]";
+    }
 
 }

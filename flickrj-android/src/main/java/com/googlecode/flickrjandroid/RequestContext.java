@@ -20,7 +20,7 @@ import com.googlecode.flickrjandroid.oauth.OAuth;
  * @author Anthony Eden
  */
 public class RequestContext {
-	private static final Logger logger = LoggerFactory.getLogger(RequestContext.class);
+    private static final Logger logger = LoggerFactory.getLogger(RequestContext.class);
 
     private static RequestContextThreadLocal threadLocal =
             new RequestContextThreadLocal();
@@ -39,7 +39,7 @@ public class RequestContext {
     
     public static void resetThreadLocals() {
         if( threadLocal.get() != null) {
-        	threadLocal.remove();
+            threadLocal.remove();
         }
     }
 
@@ -48,7 +48,7 @@ public class RequestContext {
     }
 
     public void setOAuth(OAuth auth) {
-    	logger.info("Set new OAuth {} to the current RequestContext instance {}", auth, this);
+        logger.info("Set new OAuth {} to the current RequestContext instance {}", auth, this);
         this.auth = auth;
     }
 

@@ -21,17 +21,17 @@ import com.googlecode.flickrjandroid.tags.HotlistTag;
  */
 public class TagsInterfaceTest extends AbstractFlickrTest {
 
-	/**
-	 * Test method for {@link com.googlecode.flickrjandroid.tags.TagsInterface#getHotList(java.lang.String, int)}.
-	 * @throws JSONException 
-	 * @throws FlickrException 
-	 * @throws IOException 
-	 */
-	@Test
-	public void testGetHotList() throws IOException, FlickrException, JSONException {
-		Collection<HotlistTag> tags = f.getTagsInterface().getHotList(null, 0);
-		Assert.assertNotNull(tags);
-		Assert.assertFalse(tags.isEmpty());
-	}
+    /**
+     * Test method for {@link com.googlecode.flickrjandroid.tags.TagsInterface#getHotList(java.lang.String, int)}.
+     * @throws JSONException 
+     * @throws FlickrException 
+     * @throws IOException 
+     */
+    @Test
+    public void testGetHotList() throws IOException, FlickrException, JSONException {
+        Collection<HotlistTag> tags = f.getTagsInterface().getHotList(null, 0);
+        Assert.assertNotNull(tags);
+        Assert.assertFalse(tags.isEmpty());
+    }
 
 }

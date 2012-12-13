@@ -20,7 +20,7 @@ import com.googlecode.flickrjandroid.util.StringUtilities;
  * @version $Id: SearchParameters.java,v 1.20 2009/07/23 20:41:03 x-mago Exp $
  */
 public class SearchParameters {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private String userId;
     private String groupId;
@@ -489,7 +489,7 @@ public class SearchParameters {
 
         String[] mtags = getMachineTags();
         if (mtags != null) {
-        	parameters.add(new Parameter("machine_tags", StringUtilities.join(mtags, ",")));
+            parameters.add(new Parameter("machine_tags", StringUtilities.join(mtags, ",")));
         }
 
         String mtagMode = getMachineTagMode();

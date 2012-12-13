@@ -9,7 +9,7 @@ package com.googlecode.flickrjandroid.groups;
  * @author Anthony Eden
  */
 public class Subcategory {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private int id;
     private String name;

@@ -88,9 +88,9 @@ public class UploadInterface {
             Ticket info = new Ticket();
             info.setTicketId(id);
             if (ticketElement.has("invalid")) {
-            	//if the ticket wasn't found, the invalid attribute is set.
+                //if the ticket wasn't found, the invalid attribute is set.
                 boolean invalid = "1".equals(ticketElement.getString("invalid"));
-            	info.setInvalid(invalid);
+                info.setInvalid(invalid);
             }
             info.setStatus(Integer.parseInt(complete));
             info.setPhotoId(photoId);

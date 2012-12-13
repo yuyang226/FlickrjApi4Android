@@ -56,15 +56,15 @@ public class ActivityInterface {
       throws IOException, FlickrException, JSONException {
         ItemList items = new ItemList();
         List<Parameter> parameters = new ArrayList<Parameter>();
-		parameters.add(new Parameter("method", METHOD_USER_COMMENTS));
-		parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
-		parameters.add(new Parameter("per_page", String.valueOf(perPage)));
+        parameters.add(new Parameter("method", METHOD_USER_COMMENTS));
+        parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+        parameters.add(new Parameter("per_page", String.valueOf(perPage)));
         OAuthUtils.addOAuthToken(parameters);
         
-		Response response = this.transportAPI.postJSON(this.sharedSecret, parameters);
-		if (response.isError()) {
-			throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
-		}
+        Response response = this.transportAPI.postJSON(this.sharedSecret, parameters);
+        if (response.isError()) {
+            throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
+        }
 
         JSONObject jObj = response.getData();
         JSONObject itemElements = jObj.getJSONObject("items");
@@ -76,7 +76,7 @@ public class ActivityInterface {
         JSONArray children = itemElements.getJSONArray("item");
         
         for (int i = 0; i < children.length(); i++) {
-        	JSONObject itemElement = children.getJSONObject(i);
+            JSONObject itemElement = children.getJSONObject(i);
             items.add(createItem(itemElement));
         }
 
@@ -113,7 +113,7 @@ public class ActivityInterface {
             if (checkTimeframeArg(timeframe)) {
                 parameters.add(new Parameter("timeframe", timeframe));
             } else {
-            	throw new FlickrException("0","Timeframe-argument to getUserPhotos() not valid");
+                throw new FlickrException("0","Timeframe-argument to getUserPhotos() not valid");
             }
         }
         OAuthUtils.addOAuthToken(parameters);
@@ -133,7 +133,7 @@ public class ActivityInterface {
         JSONArray children = itemElements.getJSONArray("item");
         
         for (int i = 0; i < children.length(); i++) {
-        	JSONObject itemElement = children.getJSONObject(i);
+            JSONObject itemElement = children.getJSONObject(i);
             items.add(createItem(itemElement));
         }
 
@@ -141,56 +141,57 @@ public class ActivityInterface {
     }
 
     private Item createItem(JSONObject itemElement) throws JSONException {
-    	Item item = new Item();
-		item.setId(itemElement.getString("id"));
-		item.setSecret(itemElement.getString("secret"));
-		item.setType(itemElement.getString("type"));
-		JSONObject title = itemElement.optJSONObject("title");
-		if (title != null) {
-			item.setTitle(title.getString("_content"));
-		}
-		item.setFarm(itemElement.getString("farm"));
-		item.setServer(itemElement.getString("server"));
-		// userComments
-		item.setComments(itemElement.optInt("comments"));
-		item.setComments(itemElement.optInt("notes"));
-		// userPhotos
-		item.setComments(itemElement.optInt("commentsold"));
-		item.setComments(itemElement.optInt("commentsnew"));
-		item.setComments(itemElement.optInt("notesold"));
-		item.setComments(itemElement.optInt("notesnew"));
+        Item item = new Item();
+        item.setId(itemElement.getString("id"));
+        item.setSecret(itemElement.getString("secret"));
+        item.setType(itemElement.getString("type"));
+        JSONObject title = itemElement.optJSONObject("title");
+        if (title != null) {
+            item.setTitle(title.getString("_content"));
+        }
+        item.setFarm(itemElement.getString("farm"));
+        item.setServer(itemElement.getString("server"));
+        // userComments
+        item.setComments(itemElement.optInt("comments"));
+        item.setComments(itemElement.optInt("notes"));
+        // userPhotos
+        item.setComments(itemElement.optInt("commentsold"));
+        item.setComments(itemElement.optInt("commentsnew"));
+        item.setComments(itemElement.optInt("notesold"));
+        item.setComments(itemElement.optInt("notesnew"));
 
-		item.setViews(itemElement.getInt("views"));
-		item.setFaves(itemElement.getInt("faves"));
-		item.setMore(itemElement.optInt("more"));
+        item.setViews(itemElement.getInt("views"));
+        item.setFaves(itemElement.getInt("faves"));
+        item.setMore(itemElement.optInt("more"));
 
-		try {
-			JSONObject activityElement = itemElement.getJSONObject("activity");
-			List<Event> events = new ArrayList<Event>();
+        try {
+            JSONObject activityElement = itemElement.getJSONObject("activity");
+            List<Event> events = new ArrayList<Event>();
 
-			JSONArray eventNodes = activityElement.getJSONArray("event");
-			for (int i = 0; i < eventNodes.length(); i++) {
-				JSONObject eventElement = eventNodes.getJSONObject(i);
-				Event event = new Event();
-				event.setType(eventElement.getString("type"));
-				if (event.getType().equals("comment")) {
-					event.setId(eventElement.getString("commentid"));
-				} else if (event.getType().equals("note")) {
-					event.setId(eventElement.getString("noteid"));
-				} else if (event.getType().equals("fave")) {
-					// has no id
-				}
-				event.setUser(eventElement.getString("user"));
-				event.setUsername(eventElement.getString("username"));
-				event.setDateadded(eventElement.getString("dateadded"));
-				event.setValue(eventElement.getString("_content"));
-				events.add(event);
-			}
-			item.setEvents(events);
-		} catch (NullPointerException e) {
-			// nop
-		}
-		return item;
+            JSONArray eventNodes = activityElement.getJSONArray("event");
+            for (int i = 0; i < eventNodes.length(); i++) {
+                JSONObject eventElement = eventNodes.getJSONObject(i);
+                Event event = new Event();
+                event.setType(eventElement.getString("type"));
+                if (event.getType().equals("comment")) {
+                    event.setId(eventElement.getString("commentid"));
+                } else if (event.getType().equals("note")) {
+                    event.setId(eventElement.getString("noteid"));
+                } else if (event.getType().equals("fave")) {
+                    // has no id
+                }
+                event.setUser(eventElement.getString("user"));
+                event.setUsername(eventElement.getString("username"));
+                event.setDateadded(eventElement.getString("dateadded"));
+                event.setValue(eventElement.optString("_content"));
+                events.add(event);
+            }
+            item.setEvents(events);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // nop
+        }
+        return item;
     }
 
     /**

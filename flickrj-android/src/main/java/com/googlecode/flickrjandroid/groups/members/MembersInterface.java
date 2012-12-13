@@ -92,7 +92,7 @@ public class MembersInterface {
 
         JSONArray mNodes = mElement.optJSONArray("member");
         for (int i = 0; mNodes != null && i < mNodes.length(); i++) {
-        	JSONObject element = mNodes.getJSONObject(i);
+            JSONObject element = mNodes.getJSONObject(i);
             members.add(parseMember(element));
         }
         return members;

@@ -9,7 +9,7 @@ import java.util.Date;
  * @version $Id: Institution.java,v 1.2 2009/07/12 22:43:07 x-mago Exp $
  */
 public class Institution {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
     private String id;
     private String name;
     private Date dateLaunch;

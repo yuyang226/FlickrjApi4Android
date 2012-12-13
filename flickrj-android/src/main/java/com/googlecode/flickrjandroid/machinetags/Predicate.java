@@ -6,20 +6,20 @@ package com.googlecode.flickrjandroid.machinetags;
  * @version $Id: Predicate.java,v 1.2 2009/07/12 22:43:07 x-mago Exp $
  */
 public class Predicate implements ITag {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private int usage;
     private int namespaces;
     private String value;
     
     /**
-	 * 
-	 */
-	public Predicate() {
-		super();
-	}
+     * 
+     */
+    public Predicate() {
+        super();
+    }
 
-	public String getValue() {
+    public String getValue() {
         return value;
     }
 
@@ -31,7 +31,7 @@ public class Predicate implements ITag {
         return usage;
     }
 
-	public void setUsage(String predicates) {
+    public void setUsage(String predicates) {
         try {
             setUsage(Integer.parseInt(predicates));
         } catch (NumberFormatException e) {}
@@ -45,13 +45,13 @@ public class Predicate implements ITag {
         return namespaces;
     }
 
-	public void setNamespaces(String namespaces) {
+    public void setNamespaces(String namespaces) {
         try {
             setNamespaces(Integer.parseInt(namespaces));
         } catch (NumberFormatException e) {}
     }
 
-	public void setNamespaces(int namespaces) {
+    public void setNamespaces(int namespaces) {
         this.namespaces = namespaces;
     }
 

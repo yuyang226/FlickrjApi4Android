@@ -1,11 +1,13 @@
 package com.googlecode.flickrjandroid.photos.geo;
 
+import java.io.Serializable;
+
 /**
  * Simple encapsulation of viewing permissions for geo data.
  * @author till (Till Krech - flickr:extranoise)
  *
  */
-public class GeoPermissions {
+public class GeoPermissions implements Serializable {
     private static final long serialVersionUID = 12L;
 
     private boolean pub;

@@ -8,7 +8,7 @@ package com.googlecode.flickrjandroid.panda;
  * @see com.googlecode.flickrjandroid.panda.PandaInterface#getPhotos(Panda, java.util.Set, int, int)
  */
 public class Panda {
-	public static final long serialVersionUID = 12L;
+    public static final long serialVersionUID = 12L;
 
     private String name;
 

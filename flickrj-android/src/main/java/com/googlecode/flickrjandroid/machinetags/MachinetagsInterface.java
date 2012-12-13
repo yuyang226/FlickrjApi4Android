@@ -268,7 +268,7 @@ public class MachinetagsInterface {
         nsList.setPerPage(nsNodes.length());
         nsList.setTotal(nsNodes.length());
         for (int i = 0; i < nsNodes.length(); i++) {
-        	JSONObject element = nsNodes.getJSONObject(i);
+            JSONObject element = nsNodes.getJSONObject(i);
             nsList.add(parseNamespace(element));
         }
         return nsList;
@@ -320,8 +320,8 @@ public class MachinetagsInterface {
         nsList.setPerPage(nsElement.getInt("perPage"));
         nsList.setTotal(nsNodes.length());
         for (int i = 0; i < nsNodes.length(); i++) {
-        	JSONObject element = nsNodes.getJSONObject(i);
-        	nsList.add(parsePair(element));
+            JSONObject element = nsNodes.getJSONObject(i);
+            nsList.add(parsePair(element));
         }
         return nsList;
     }
@@ -368,8 +368,8 @@ public class MachinetagsInterface {
         nsList.setPerPage(nsElement.getInt("perPage"));
         nsList.setTotal(nsNodes.length());
         for (int i = 0; i < nsNodes.length(); i++) {
-        	JSONObject element = nsNodes.getJSONObject(i);
-        	nsList.add(parsePredicate(element));
+            JSONObject element = nsNodes.getJSONObject(i);
+            nsList.add(parsePredicate(element));
         }
         return nsList;
     }
@@ -419,7 +419,7 @@ public class MachinetagsInterface {
         valuesList.setPerPage(nsElement.getInt("perPage"));
         valuesList.setTotal(nsNodes.length());
         for (int i = 0; i < nsNodes.length(); i++) {
-        	JSONObject element = nsNodes.getJSONObject(i);
+            JSONObject element = nsNodes.getJSONObject(i);
             valuesList.add(parseValue(element));
         }
         return valuesList;
@@ -469,7 +469,7 @@ public class MachinetagsInterface {
         valuesList.setPerPage(nsElement.getInt("perPage"));
         valuesList.setTotal(nsNodes.length());
         for (int i = 0; i < nsNodes.length(); i++) {
-        	JSONObject element = nsNodes.getJSONObject(i);
+            JSONObject element = nsNodes.getJSONObject(i);
             valuesList.add(parseValue(element));
         }
         return valuesList;

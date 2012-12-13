@@ -15,19 +15,19 @@ import java.util.Map;
  */
 public class Permission implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5384461370301078353L;
-	/**
-	 * Type value for no permissions
-	 * If no permissions are requested, the application will only display public photos.
-	 */
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5384461370301078353L;
+    /**
+     * Type value for no permissions
+     * If no permissions are requested, the application will only display public photos.
+     */
     public static final int NONE_TYPE = 0;
     /**
      * Type value for Read Permission.
-	 * You will be able to see all your photos via the application. 
-	 * (This includes your private photos.)
+     * You will be able to see all your photos via the application. 
+     * (This includes your private photos.)
      */
     public static final int READ_TYPE = 1;
     /**
@@ -42,15 +42,15 @@ public class Permission implements Serializable {
      */
     public static final int DELETE_TYPE = 3;
 
-	/**
-	 * No permissions.
-	 * If no permissions are requested, the application will only display public photos.
-	 */
+    /**
+     * No permissions.
+     * If no permissions are requested, the application will only display public photos.
+     */
     public static final Permission NONE = new Permission(NONE_TYPE);
     /**
      * Read Permission.
-	 * You will be able to see all your photos via the application. 
-	 * (This includes your private photos.)
+     * You will be able to see all your photos via the application. 
+     * (This includes your private photos.)
      */
     public static final Permission READ = new Permission(READ_TYPE);
     /**

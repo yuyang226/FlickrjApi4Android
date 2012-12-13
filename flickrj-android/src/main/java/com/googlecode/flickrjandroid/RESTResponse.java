@@ -21,30 +21,30 @@ public class RESTResponse implements Response {
     private String errorMessage;
     
     /**
-	 * @param rawResponse
+     * @param rawResponse
      * @throws JSONException 
-	 */
-	public RESTResponse(String rawResponse) throws JSONException {
-		super();
-		this.rawResponse = rawResponse;
-		parse(this.rawResponse);
-	}
+     */
+    public RESTResponse(String rawResponse) throws JSONException {
+        super();
+        this.rawResponse = rawResponse;
+        parse(this.rawResponse);
+    }
 
-	/* (non-Javadoc)
-	 * @see com.googlecode.flickrjandroid.Response#parse(java.lang.String)
-	 */
-	@Override
-	public void parse(String rawMessage) throws JSONException {
-		this.rawResponse = rawMessage;
-		this.jsonObj = new JSONObject(rawMessage);
-		stat = this.jsonObj.getString("stat");
-		if ("ok".equals(stat)) {
+    /* (non-Javadoc)
+     * @see com.googlecode.flickrjandroid.Response#parse(java.lang.String)
+     */
+    @Override
+    public void parse(String rawMessage) throws JSONException {
+        this.rawResponse = rawMessage;
+        this.jsonObj = new JSONObject(rawMessage);
+        stat = this.jsonObj.getString("stat");
+        if ("ok".equals(stat)) {
             
         } else if ("fail".equals(stat)) {
-        	this.errorCode = this.jsonObj.getString("code");
-        	this.errorMessage = this.jsonObj.getString("message");
+            this.errorCode = this.jsonObj.getString("code");
+            this.errorMessage = this.jsonObj.getString("message");
         }
-	}
+    }
 
     public String getStat() {
         return stat;
@@ -67,12 +67,12 @@ public class RESTResponse implements Response {
         return errorMessage;
     }
 
-	/* (non-Javadoc)
-	 * @see com.googlecode.flickrjandroid.Response#getRawResponse()
-	 */
-	@Override
-	public String getRawResponse() {
-		return rawResponse;
-	}
+    /* (non-Javadoc)
+     * @see com.googlecode.flickrjandroid.Response#getRawResponse()
+     */
+    @Override
+    public String getRawResponse() {
+        return rawResponse;
+    }
 
 }
