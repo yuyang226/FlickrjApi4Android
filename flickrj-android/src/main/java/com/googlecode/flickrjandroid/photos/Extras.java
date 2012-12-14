@@ -38,6 +38,7 @@ public class Extras implements Serializable {
     public static final String URL_M = "url_m";
     public static final String URL_L = "url_l";
     public static final String URL_O = "url_o";
+    public static final String DESCRIPTION = "description";
     
      /**
      * The extras constants for large square url of a photo, which is 150*150.
@@ -102,6 +103,7 @@ public class Extras implements Serializable {
         ALL_EXTRAS.add(URL_O);
         ALL_EXTRAS.add(URL_L);
         ALL_EXTRAS.add(URL_Q);
+        ALL_EXTRAS.add(DESCRIPTION);
     }
 
     static {
@@ -113,6 +115,7 @@ public class Extras implements Serializable {
      * No-op constructor.
      */
     private Extras() {
+    	super();
     }
 
 }

@@ -18,7 +18,6 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.SAXException;
 
 import com.googlecode.flickrjandroid.FlickrException;
 import com.googlecode.flickrjandroid.Parameter;
@@ -446,8 +445,8 @@ public class PhotosInterface {
      * @return List of {@link com.googlecode.flickrjandroid.people.User}
      * @throws JSONException 
      */
-    public Collection<User> getFavorites(String photoId, int perPage, int page)
-        throws IOException, SAXException, FlickrException, JSONException {
+    public PhotoFavouriteUserList getFavorites(String photoId, int perPage, int page)
+        throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
 
         parameters.add(new Parameter("method", METHOD_GET_FAVORITES));
@@ -467,9 +466,15 @@ public class PhotosInterface {
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
-        List<User> users = new ArrayList<User>();
-
+        PhotoFavouriteUserList favUsers = new PhotoFavouriteUserList();
         JSONObject photoRoot = response.getData().getJSONObject("photo");
+        favUsers.setPage(photoRoot.getInt("page"));
+        favUsers.setPerPage(photoRoot.getInt("perpage"));
+        favUsers.setPages(photoRoot.getInt("pages"));
+        favUsers.setTotal(photoRoot.getInt("total"));
+        favUsers.setSecret(photoRoot.optString("secret"));
+        favUsers.setServer(photoRoot.optString("server"));
+        favUsers.setFarm(photoRoot.optInt("farm"));
         JSONArray userNodes = photoRoot.optJSONArray("person");
         for (int i = 0; userNodes != null && i < userNodes.length(); i++) {
             JSONObject userElement = userNodes.getJSONObject(i);
@@ -477,9 +482,9 @@ public class PhotosInterface {
             user.setId(userElement.getString("nsid"));
             user.setUsername(userElement.getString("username"));
             user.setFaveDate(userElement.getString("favedate"));
-            users.add(user);
+            favUsers.add(user);
         }
-        return users;
+        return favUsers;
     }
 
     /**

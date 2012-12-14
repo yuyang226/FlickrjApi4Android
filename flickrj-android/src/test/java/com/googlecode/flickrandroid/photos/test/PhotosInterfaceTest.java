@@ -19,6 +19,7 @@ import com.googlecode.flickrjandroid.FlickrException;
 import com.googlecode.flickrjandroid.interestingness.InterestingnessInterface;
 import com.googlecode.flickrjandroid.photos.Extras;
 import com.googlecode.flickrjandroid.photos.Photo;
+import com.googlecode.flickrjandroid.photos.PhotoFavouriteUserList;
 import com.googlecode.flickrjandroid.photos.PhotoList;
 
 
@@ -54,6 +55,20 @@ public class PhotosInterfaceTest extends AbstractFlickrTest {
         Photo photo = f.getPhotosInterface().getInfo("5457780455", null);
         Assert.assertNotNull(photo);
         Assert.assertNotNull(photo.getOwner());
+    }
+    
+    @Test
+    public void testGetFavourites() throws IOException, FlickrException, JSONException {
+    	PhotoFavouriteUserList favUsers = f.getPhotosInterface().getFavorites("820005888", -1, -1);
+    	Assert.assertNotNull(favUsers);
+    	Assert.assertTrue(favUsers.getPages() > 0);
+    	Assert.assertFalse(favUsers.isEmpty());
+    }
+    
+    @Test(expected=FlickrException.class)
+    public void testGetFavouritesNotFound() throws IOException, FlickrException, JSONException {
+    	PhotoFavouriteUserList favUsers = f.getPhotosInterface().getFavorites("820005888111", -1, -1);
+    	Assert.assertNotNull(favUsers);
     }
 
 }
