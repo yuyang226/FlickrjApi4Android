@@ -284,26 +284,33 @@ public class PhotosetsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
         JSONObject photosetElement = response.getData().getJSONObject("photoset");
-        Photoset photoset = new Photoset();
+        return parsePhotoset(photosetElement);
+    }
+    
+    private Photoset parsePhotoset(JSONObject photosetElement) throws JSONException {
+    	Photoset photoset = new Photoset();
         photoset.setId(photosetElement.getString("id"));
 
-        User owner = new User();
-        owner.setId(photosetElement.getString("owner"));
-        photoset.setOwner(owner);
+        if (photosetElement.has("owner")) {
+        	User owner = new User();
+            owner.setId(photosetElement.getString("owner"));
+            owner.setUsername(photosetElement.optString("ownername", null));
+            photoset.setOwner(owner);
+        }
 
         Photo primaryPhoto = new Photo();
         primaryPhoto.setId(photosetElement.getString("primary"));
-        primaryPhoto.setSecret(photosetElement.getString("secret")); // TODO verify that this is the secret for the photo
-        primaryPhoto.setServer(photosetElement.getString("server")); // TODO verify that this is the server for the photo
-        primaryPhoto.setFarm(photosetElement.getString("farm"));
+        primaryPhoto.setSecret(photosetElement.optString("secret", null)); // TODO verify that this is the secret for the photo
+        primaryPhoto.setServer(photosetElement.optString("server", null)); // TODO verify that this is the server for the photo
+        primaryPhoto.setFarm(photosetElement.optString("farm", null));
         photoset.setPrimaryPhoto(primaryPhoto);
 
         // TODO remove secret/server/farm from photoset?
         // It's rather related to the primaryPhoto, then to the photoset itself.
-        photoset.setSecret(photosetElement.getString("secret"));
-        photoset.setServer(photosetElement.getString("server"));
-        photoset.setFarm(photosetElement.getString("farm"));
-        photoset.setPhotoCount(photosetElement.getString("photos"));
+        photoset.setSecret(photosetElement.optString("secret", null));
+        photoset.setServer(photosetElement.optString("server", null));
+        photoset.setFarm(photosetElement.optString("farm", null));
+        photoset.setPhotoCount(photosetElement.optString("photos", null));
 
         photoset.setTitle(JSONUtils.getChildValue(photosetElement, "title"));
         photoset.setDescription(JSONUtils.getChildValue(photosetElement, "description"));
@@ -354,30 +361,7 @@ public class PhotosetsInterface {
         JSONArray photosetElements = photosetsElement.optJSONArray("photoset");
         for (int i = 0; photosetElements != null && i < photosetElements.length(); i++) {
             JSONObject photosetElement = photosetElements.getJSONObject(i);
-            Photoset photoset = new Photoset();
-            photoset.setId(photosetElement.getString("id"));
-
-            if (photosetElement.has("owner")) {
-                User owner = new User();
-                owner.setId(photosetElement.getString("owner"));
-                photoset.setOwner(owner);
-            }
-
-            Photo primaryPhoto = new Photo();
-            primaryPhoto.setId(photosetElement.getString("primary"));
-            primaryPhoto.setSecret(photosetElement.getString("secret")); // TODO verify that this is the secret for the photo
-            primaryPhoto.setServer(photosetElement.getString("server")); // TODO verify that this is the server for the photo
-            primaryPhoto.setFarm(photosetElement.getString("farm"));
-            photoset.setPrimaryPhoto(primaryPhoto);
-
-            photoset.setSecret(photosetElement.getString("secret"));
-            photoset.setServer(photosetElement.getString("server"));
-            photoset.setFarm(photosetElement.getString("farm"));
-            photoset.setPhotoCount(photosetElement.getString("photos"));
-
-            photoset.setTitle(JSONUtils.getChildValue(photosetElement, "title"));
-            photoset.setDescription(JSONUtils.getChildValue(photosetElement, "description"));
-
+            Photoset photoset = parsePhotoset(photosetElement);
             photosets.add(photoset);
         }
 
@@ -399,7 +383,7 @@ public class PhotosetsInterface {
      * @see com.googlecode.flickrjandroid.Flickr#PRIVACY_LEVEL_FRIENDS
      * @param photosetId The photoset ID
      * @param extras Set of extra-fields
-     * @param privacy_filter filter value for authenticated calls
+     * @param privacyFilter filter value for authenticated calls
      * @param perPage The number of photos per page
      * @param page The page offset
      * @return PhotoList The Collection of Photo objects
@@ -407,8 +391,8 @@ public class PhotosetsInterface {
      * @throws FlickrException
      * @throws JSONException 
      */
-    public PhotoList getPhotos(String photosetId, Set<String> extras,
-      int privacy_filter, int perPage, int page)
+    public Photoset getPhotos(String photosetId, Set<String> extras,
+      int privacyFilter, int perPage, int page)
       throws IOException, FlickrException, JSONException {
         PhotoList photos = new PhotoList();
         List<Parameter> parameters = new ArrayList<Parameter>();
@@ -430,8 +414,8 @@ public class PhotosetsInterface {
             parameters.add(new Parameter("page", new Integer(page)));
         }
 
-        if (privacy_filter > 0) {
-            parameters.add(new Parameter("privacy_filter", "" + privacy_filter));
+        if (privacyFilter > 0) {
+            parameters.add(new Parameter("privacy_filter", "" + privacyFilter));
         }
 
         if (extras != null && !extras.isEmpty()) {
@@ -446,19 +430,26 @@ public class PhotosetsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
-        JSONObject photoset = response.getData().getJSONObject("photoset");
-        JSONArray photoElements = photoset.optJSONArray("photo");
-        photos.setPage(photoset.getString("page"));
-        photos.setPages(photoset.getString("pages"));
-        photos.setPerPage(photoset.getString("per_page"));
-        photos.setTotal(photoset.getString("total"));
+        JSONObject photosetElement = response.getData().getJSONObject("photoset");
+        Photoset photoset = parsePhotoset(photosetElement);
+        photoset.setPhotoList(photos);
+        JSONArray photoElements = photosetElement.optJSONArray("photo");
+        photos.setPage(photosetElement.getString("page"));
+        photos.setPages(photosetElement.getString("pages"));
+        photos.setPerPage(photosetElement.getString("per_page"));
+        photos.setTotal(photosetElement.getString("total"));
 
         for (int i = 0; photoElements != null && i < photoElements.length(); i++) {
             JSONObject photoElement = photoElements.getJSONObject(i);
-            photos.add(PhotoUtils.createPhoto(photoElement));
+            Photo photo = PhotoUtils.createPhoto(photoElement);
+            if (photo.isPrimary()) {
+            	photoset.setPrimaryPhoto(photo);
+            }
+            photos.add(photo);
         }
+        photoset.setPhotoCount(photos.getTotal());
 
-        return photos;
+        return photoset;
     }
 
     /**
@@ -483,7 +474,7 @@ public class PhotosetsInterface {
      * @throws FlickrException
      * @throws JSONException 
      */
-    public PhotoList getPhotos(String photosetId, int perPage, int page) 
+    public Photoset getPhotos(String photosetId, int perPage, int page) 
       throws IOException, FlickrException, JSONException {
         return getPhotos(photosetId, Extras.MIN_EXTRAS, Flickr.PRIVACY_LEVEL_NO_FILTER, perPage, page);
     }

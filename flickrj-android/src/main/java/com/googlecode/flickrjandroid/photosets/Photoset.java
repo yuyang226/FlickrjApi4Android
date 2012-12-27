@@ -3,10 +3,11 @@
  */
 package com.googlecode.flickrjandroid.photosets;
 
+import java.io.Serializable;
+
 import com.googlecode.flickrjandroid.people.User;
 import com.googlecode.flickrjandroid.photos.Photo;
-
-import java.io.Serializable;
+import com.googlecode.flickrjandroid.photos.PhotoList;
 
 /**
  * Meta information about a photoset.  To retrieve the photos in the photoset use PhotosetsInterface.getPhotos().
@@ -27,9 +28,10 @@ public class Photoset implements Serializable {
     private int photoCount;
     private String title;
     private String description;
+    private PhotoList photoList;
 
     public Photoset() {
-
+    	super();
     }
 
     public String getId() {
@@ -128,4 +130,49 @@ public class Photoset implements Serializable {
         this.description = description;
     }
 
+	/**
+	 * @return the photoList
+	 */
+	public PhotoList getPhotoList() {
+		return photoList;
+	}
+
+	/**
+	 * @param photoList the photoList to set
+	 */
+	public void setPhotoList(PhotoList photoList) {
+		this.photoList = photoList;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Photoset other = (Photoset) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
 }

@@ -81,6 +81,7 @@ public final class PhotoUtils {
         photo.setFarm(photoElement.getString("farm"));
         photo.setRotation(photoElement.optString("rotation", null));
         photo.setFavorite("1".equals(photoElement.optString("isfavorite")));
+        photo.setPrimary(photoElement.optString("isprimary", null));
         photo.setLicense(photoElement.optString("license"));
         photo.setOriginalFormat(photoElement.optString("originalformat"));
         photo.setOriginalSecret(photoElement.optString("originalsecret"));
