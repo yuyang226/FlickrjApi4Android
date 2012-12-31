@@ -216,16 +216,33 @@ public class PhotosInterface {
      */
     public PhotoList getContactsPhotos(int count, boolean justFriends, boolean singlePhoto, boolean includeSelf)
             throws IOException, FlickrException, JSONException {
-        return getContactsPhotos(count, Extras.MIN_EXTRAS, justFriends, singlePhoto, includeSelf);
+        return getContactsPhotos(count, Extras.MIN_EXTRAS, justFriends, singlePhoto, includeSelf, 0, 0);
     }
 
+    /*
+     * NOTE(bourke): Regarding pagination for flickr.photos.getContactsPhotos:
+     *
+     * The api docs don't mention that pagination for this method is supported.
+     * However, looking at the json response from the api explorer it quite
+     * clearly is.  I have tested and it works fine.
+     *
+     * It's likely Flickr just need to update their docs, though this may
+     * change in the future.
+     */
     public PhotoList getContactsPhotos(int count, Set<String> extras,
-            boolean justFriends, boolean singlePhoto, boolean includeSelf)
-            throws IOException, FlickrException, JSONException {
+            boolean justFriends, boolean singlePhoto, boolean includeSelf,
+            int page, int perPage)
+                throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_CONTACTS_PHOTOS));
         parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
 
+        if (perPage > 0) {
+            parameters.add(new Parameter("per_page", new Integer(perPage)));
+        }
+        if (page > 0) {
+            parameters.add(new Parameter("page", new Integer(page)));
+        }
         if (count > 0) {
             parameters.add(new Parameter("count", count));
         }
