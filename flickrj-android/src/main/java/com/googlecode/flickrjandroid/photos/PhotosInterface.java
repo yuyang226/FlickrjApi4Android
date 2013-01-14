@@ -609,6 +609,7 @@ public class PhotosInterface {
         Permissions permissions = new Permissions();
         permissions.setId(permsElement.getString("id"));
         permissions.setPublicFlag("1".equals(permsElement.getString("ispublic")));
+        permissions.setFriendFlag("1".equals(permsElement.getString("isfriend")));
         permissions.setFamilyFlag("1".equals(permsElement.getString("isfamily")));
         permissions.setComment(permsElement.getString("permcomment"));
         permissions.setAddmeta(permsElement.getString("permaddmeta"));
