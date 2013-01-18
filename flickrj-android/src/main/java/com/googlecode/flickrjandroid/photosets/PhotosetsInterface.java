@@ -275,10 +275,19 @@ public class PhotosetsInterface {
     public Photoset getInfo(String photosetId) throws FlickrException, IOException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_INFO));
-        parameters.add(new Parameter("api_key", apiKey));
+		
+		boolean signed = OAuthUtils.hasSigned();
+		if (signed) {
+            parameters.add(new Parameter(OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+        } else {
+            parameters.add(new Parameter("api_key", apiKey));
+        }
 
         parameters.add(new Parameter("photoset_id", photosetId));
 
+		if (signed) {
+            OAuthUtils.addOAuthToken(parameters);
+        }
         Response response = transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());

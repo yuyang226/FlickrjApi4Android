@@ -5,6 +5,7 @@ package com.googlecode.flickrjandroid.photosets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
@@ -22,6 +23,7 @@ import com.googlecode.flickrjandroid.FlickrException;
  */
 public class PhotosetsInterfaceTest extends AbstractFlickrTest {
 	private static final String PHOTOSET_ID = "72157602790288345";
+	private static final String CHARLES_PHOTO_SET_ID = "72157626046645016"; 
 
 	/**
 	 * Test method for {@link com.googlecode.flickrjandroid.photosets.PhotosetsInterface#getInfo(java.lang.String)}.
@@ -34,6 +36,14 @@ public class PhotosetsInterfaceTest extends AbstractFlickrTest {
 		Photoset photoset = f.getPhotosetsInterface().getInfo(PHOTOSET_ID);
 		assertNotNull(photoset);
 		assertEquals(PHOTOSET_ID, photoset.getId());
+	}
+	
+	@Test
+	public void testGetInfoAuth() throws FlickrException, IOException, JSONException {
+		Photoset photoset = f.getPhotosetsInterface().getInfo(CHARLES_PHOTO_SET_ID);
+		assertNotNull(photoset);
+		assertEquals(CHARLES_PHOTO_SET_ID, photoset.getId());
+		assertTrue( photoset.getPhotoCount() > 60 );
 	}
 	
 	@Test
