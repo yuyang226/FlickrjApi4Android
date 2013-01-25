@@ -439,7 +439,9 @@ public class SearchParameters {
     public Collection<Parameter> getAsParameters() {
         List<Parameter> parameters = new ArrayList<Parameter>();
         
-        parameters.add(new Parameter("is_commons", inCommons));
+        if( inCommons ) {
+        	parameters.add(new Parameter("is_commons", "true"));
+        }
 
         String lat = getLatitude();
         if (lat != null) {
