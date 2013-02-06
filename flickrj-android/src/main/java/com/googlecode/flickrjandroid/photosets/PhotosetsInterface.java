@@ -400,46 +400,7 @@ public class PhotosetsInterface {
 	 */
 	public Photosets getList(String userId) throws IOException,
 			FlickrException, JSONException {
-		List<Parameter> parameters = new ArrayList<Parameter>();
-		parameters.add(new Parameter("method", METHOD_GET_LIST));
-
-		boolean signed = OAuthUtils.hasSigned();
-		if (signed) {
-			parameters.add(new Parameter(
-					OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
-		} else {
-			parameters.add(new Parameter("api_key", apiKey));
-		}
-
-		if (userId != null) {
-			parameters.add(new Parameter("user_id", userId));
-		}
-
-		if (signed) {
-			OAuthUtils.addOAuthToken(parameters);
-		}
-
-		Response response = signed ? transportAPI.postJSON(sharedSecret,
-				parameters) : transportAPI.get(transportAPI.getPath(),
-				parameters);
-		if (response.isError()) {
-			throw new FlickrException(response.getErrorCode(),
-					response.getErrorMessage());
-		}
-		Photosets photosetsObject = new Photosets();
-		JSONObject photosetsElement = response.getData().getJSONObject(
-				"photosets");
-		List<Photoset> photosets = new ArrayList<Photoset>();
-		JSONArray photosetElements = photosetsElement.optJSONArray("photoset");
-		for (int i = 0; photosetElements != null
-				&& i < photosetElements.length(); i++) {
-			JSONObject photosetElement = photosetElements.getJSONObject(i);
-			Photoset photoset = parsePhotoset(photosetElement);
-			photosets.add(photoset);
-		}
-
-		photosetsObject.setPhotosets(photosets);
-		return photosetsObject;
+		return getList(userId,-1,-1);
 	}
 
 	public Photosets getList(String userId, int perPage, int page)
