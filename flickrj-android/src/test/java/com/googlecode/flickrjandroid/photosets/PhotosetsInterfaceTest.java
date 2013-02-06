@@ -52,6 +52,14 @@ public class PhotosetsInterfaceTest extends AbstractFlickrTest {
 		assertNotNull(photosets);
 		assertFalse(photosets.getPhotosets().isEmpty());
 	}
+	
+	@Test
+	public void  testGetList2() throws IOException, FlickrException, JSONException {
+		Photosets photosets = f.getPhotosetsInterface().getList(TestConstants.USER_ID, 2, 1);
+		assertNotNull(photosets);
+		assertFalse(photosets.getPhotosets().isEmpty());
+		assertTrue( photosets.getPhotosets().size() <= 2);
+	}
 
 	/**
 	 * Test method for {@link com.googlecode.flickrjandroid.photosets.PhotosetsInterface#getPhotos(java.lang.String, java.util.Set, int, int, int)}.

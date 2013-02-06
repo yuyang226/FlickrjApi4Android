@@ -35,13 +35,5 @@ public class TagsInterfaceTest extends AbstractFlickrTest {
         Assert.assertFalse(tags.isEmpty());
     }
     
-    @Test
-    public void testGetMostFrequentlyUsed() throws IOException, JSONException, FlickrException {
-    	Collection<Tag> tags = f.getTagsInterface().getMostFrequentlyUsed();
-    	Assert.assertNotNull(tags);
-    	Assert.assertFalse(tags.isEmpty());
-    	Tag tag = (Tag) tags.toArray()[0];
-    	Assert.assertTrue(tag.getCount() > 0);
-    }
-
+   
 }
