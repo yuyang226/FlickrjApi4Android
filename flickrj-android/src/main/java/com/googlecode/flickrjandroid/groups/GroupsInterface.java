@@ -115,10 +115,21 @@ public class GroupsInterface {
     public Group getInfo(String groupId) throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_GET_INFO));
-        parameters.add(new Parameter("api_key", apiKey));
         parameters.add(new Parameter("group_id", groupId));
 
-        Response response = transportAPI.get(transportAPI.getPath(), parameters);
+        /* Although not explicitly stated in the API docs, fetching throttle
+         * info requires authentication */
+        boolean signed = OAuthUtils.hasSigned();
+        if (signed) {
+            parameters.add(new Parameter(
+                    OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+            OAuthUtils.addOAuthToken(parameters);
+        } else {
+            parameters.add(new Parameter("api_key", apiKey));
+        }
+
+        Response response = signed ? transportAPI.postJSON(sharedSecret,
+                parameters) : transportAPI.get(transportAPI.getPath(), parameters);
         if (response.isError()) {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
@@ -135,17 +146,13 @@ public class GroupsInterface {
         group.setMembers(JSONUtils.getChildValue(groupElement, "members"));
         group.setPrivacy(JSONUtils.getChildValue(groupElement, "privacy"));
 
-        JSONArray throttleNodes = groupElement.optJSONArray("throttle");
-        int n = throttleNodes == null ? 0 : throttleNodes.length();
-        if (n == 1) {
-            JSONObject throttleElement = throttleNodes.getJSONObject(n);
+        JSONObject throttleElement = groupElement.optJSONObject("throttle");
+        if (throttleElement != null) {
             Throttle throttle = new Throttle();
-            group.setThrottle(throttle);
             throttle.setMode(throttleElement.getString("mode"));
             throttle.setCount(throttleElement.optInt("count"));
             throttle.setRemaining(throttleElement.optInt("remaining"));
-        } else if (n > 1) {
-            System.err.println("WARNING: more than one throttle element in group");
+            group.setThrottle(throttle);
         }
 
         return group;
