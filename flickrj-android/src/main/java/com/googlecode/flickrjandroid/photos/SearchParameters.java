@@ -48,6 +48,7 @@ public class SearchParameters {
     private int radius = -1;
     private String radiusUnits;
     private boolean hasGeo = false;
+    private boolean inCommons = false;
 
     public static final ThreadLocal<DateFormat> DATE_FORMATS = new ThreadLocal<DateFormat>() {
         protected synchronized DateFormat initialValue() {
@@ -437,6 +438,10 @@ public class SearchParameters {
 
     public Collection<Parameter> getAsParameters() {
         List<Parameter> parameters = new ArrayList<Parameter>();
+        
+        if( inCommons ) {
+        	parameters.add(new Parameter("is_commons", "true"));
+        }
 
         String lat = getLatitude();
         if (lat != null) {
@@ -612,5 +617,13 @@ public class SearchParameters {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
+	public boolean isInCommons() {
+		return inCommons;
+	}
+
+	public void setInCommons(boolean inCommons) {
+		this.inCommons = inCommons;
+	}
 
 }

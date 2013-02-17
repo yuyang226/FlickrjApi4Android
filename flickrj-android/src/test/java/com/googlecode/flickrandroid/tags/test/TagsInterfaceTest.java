@@ -14,6 +14,7 @@ import org.junit.Test;
 import com.googlecode.flickrandroid.test.AbstractFlickrTest;
 import com.googlecode.flickrjandroid.FlickrException;
 import com.googlecode.flickrjandroid.tags.HotlistTag;
+import com.googlecode.flickrjandroid.tags.Tag;
 
 /**
  * @author Toby Yu(yuyang226@gmail.com)
@@ -33,5 +34,6 @@ public class TagsInterfaceTest extends AbstractFlickrTest {
         Assert.assertNotNull(tags);
         Assert.assertFalse(tags.isEmpty());
     }
-
+    
+   
 }
