@@ -674,6 +674,8 @@ public class PlacesInterface {
         JSONArray placesNodes = placesElement.optJSONArray("place");
         placesList.setPage("1");
         placesList.setPages("1");
+        placesList.setLatitude(placesElement.optDouble("latitude", -999.0));
+        placesList.setLongitude(placesElement.optDouble("longitude", -999.0));
         placesList.setPerPage(placesNodes != null ? placesNodes.length() : 0);
         placesList.setTotal(placesList.getPerPage());
         for (int i = 0; placesNodes != null && i < placesNodes.length(); i++) {
@@ -778,7 +780,11 @@ public class PlacesInterface {
 
     private Place parseLocationPlace(JSONObject element, int type) throws JSONException {
         Place place = new Place();
-        place.setName(element.getString("_content"));
+        if (element.has("name")) {
+        	place.setName(element.getString("name"));
+        } else {
+        	place.setName(element.getString("_content"));
+        }
         place.setPlaceId(element.getString("place_id"));
         place.setPlaceUrl(element.getString("place_url"));
         place.setWoeId(element.getString("woeid"));
@@ -796,11 +802,24 @@ public class PlacesInterface {
         place.setLatitude(placeElement.getString("latitude"));
         place.setLongitude(placeElement.getString("longitude"));
         place.setPhotoCount(placeElement.optString("photo_count"));
-        String typeString = placeElement.optString("place_type");
-        // Now the place-Id is directly available
-        place.setPlaceType(placeElement.optString("place_type_id"));
-        //place.setPlaceType(stringPlaceTypeToInt(typeString));
-        place.setName(placeElement.getString("_content"));
+        if (placeElement.has("place_type")) {
+        	place.setPlaceType(placeElement.getString("place_type"));
+        } else {
+        	// Now the place-Id is directly available
+        	String placeId = placeElement.optString("place_type_id");
+            try {
+				place.setPlaceType(intPlaceTypeToString(Integer.parseInt(placeId)));
+			} catch (Exception e) {
+				//Ignore
+			}
+        }
+        
+        if (placeElement.has("name")) {
+        	place.setName(placeElement.getString("name"));
+        } else {
+        	place.setName(placeElement.getString("_content"));
+        }
+        
         return place;
     }
 
