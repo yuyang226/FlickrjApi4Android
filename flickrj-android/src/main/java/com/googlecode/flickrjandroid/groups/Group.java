@@ -24,6 +24,7 @@ public class Group implements BuddyIconable, Serializable {
     private int iconFarm;
     private int iconServer;
     private String description;
+    private String rules;
     private Throttle throttle;
     private String lang;
     private boolean poolModerated;
@@ -301,5 +302,15 @@ public class Group implements BuddyIconable, Serializable {
     public void setThrottle(Throttle throttle) {
         this.throttle = throttle;
     }
+
+	public String getRules() {
+		return rules;
+	}
+
+	public void setRules(String rules) {
+		this.rules = rules;
+	}
+    
+    
 
 }

@@ -132,6 +132,7 @@ public class GroupsInterface {
 
         group.setName(JSONUtils.getChildValue(groupElement, "name"));
         group.setDescription(JSONUtils.getChildValue(groupElement, "description"));
+        group.setRules(JSONUtils.getChildValue(groupElement, "rules"));
         group.setMembers(JSONUtils.getChildValue(groupElement, "members"));
         group.setPrivacy(JSONUtils.getChildValue(groupElement, "privacy"));
 
@@ -191,6 +192,8 @@ public class GroupsInterface {
             Group group = new Group();
             group.setId(groupElement.getString("nsid"));
             group.setName(groupElement.getString("name"));
+            group.setPhotoCount(groupElement.getString("pool_count"));
+            group.setMembers(groupElement.getString("members"));
             groupList.add(group);
         }
         return groupList;
