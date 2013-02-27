@@ -5,7 +5,6 @@ package com.googlecode.flickrjandroid.groups;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -16,6 +15,7 @@ import com.googlecode.flickrjandroid.FlickrException;
 import com.googlecode.flickrjandroid.Parameter;
 import com.googlecode.flickrjandroid.Response;
 import com.googlecode.flickrjandroid.Transport;
+import com.googlecode.flickrjandroid.oauth.OAuthException;
 import com.googlecode.flickrjandroid.oauth.OAuthInterface;
 import com.googlecode.flickrjandroid.oauth.OAuthUtils;
 import com.googlecode.flickrjandroid.util.JSONUtils;
@@ -32,6 +32,10 @@ public class GroupsInterface {
     public static final String METHOD_GET_ACTIVE_LIST = "flickr.groups.getActiveList";
     public static final String METHOD_GET_INFO = "flickr.groups.getInfo";
     public static final String METHOD_SEARCH = "flickr.groups.search";
+    public static final String METHOD_JOIN = "flickr.groups.join";
+    public static final String METHOD_JOIN_REQUEST = "flickr.groups.joinRequest";
+    public static final String METHOD_LEAVE = "flickr.groups.leave";
+    
 
     private String apiKey;
     private String sharedSecret;
@@ -169,7 +173,7 @@ public class GroupsInterface {
      * @throws FlickrException
      * @throws JSONException 
      */
-    public Collection<Group> search(String text, int perPage, int page) throws FlickrException, IOException, JSONException {
+    public GroupList search(String text, int perPage, int page) throws FlickrException, IOException, JSONException {
         GroupList groupList = new GroupList();
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_SEARCH));
@@ -201,5 +205,119 @@ public class GroupsInterface {
             groupList.add(group);
         }
         return groupList;
+    }
+    
+    /**
+     * Equivalent to joinPublicGroup(groupId, true)
+     * 
+     * @param groupId
+     * @throws FlickrException
+     * @throws IOException
+     * @throws JSONException
+     */
+    public void joinPublicGroup(String groupId) throws FlickrException, IOException, JSONException {
+    	joinPublicGroup(groupId, Boolean.TRUE);
+    }
+    
+    /**
+     * @param groupId The NSID of the Group in question
+     * @param acceptRules Optional parameter. If the group has rules, they must be displayed to the user prior to joining. 
+     * Passing a true value for this argument specifies that the application has displayed the group rules to the user, 
+     * and that the user has agreed to them. (See flickr.groups.getInfo).
+     * @throws FlickrException 
+     * @throws JSONException 
+     * @throws IOException 
+     */
+    public void joinPublicGroup(String groupId, Boolean acceptRules) throws FlickrException, IOException, JSONException {
+    	List<Parameter> parameters = new ArrayList<Parameter>();
+        parameters.add(new Parameter("method", METHOD_JOIN));
+        boolean signed = OAuthUtils.hasSigned();
+        if (!signed) {
+        	throw new OAuthException("OAuth required");
+        }
+        parameters.add(new Parameter(
+        		OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+        OAuthUtils.addOAuthToken(parameters);
+        parameters.add(new Parameter("group_id", groupId));
+        if (acceptRules != null) {
+        	parameters.add(new Parameter("accept_rules", acceptRules.booleanValue()));
+        }
+
+        Response response = transportAPI.postJSON(sharedSecret, parameters);
+        if (response.isError()) {
+            throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
+        }
+    }
+    
+    /**
+     * @param groupId The NSID of the group to request joining.
+     * @param message Message to the administrators.
+     * @param acceptRules If the group has rules, they must be displayed to the user prior to joining. 
+     * Passing a true value for this argument specifies that the application has displayed the group rules to the user, 
+     * and that the user has agreed to them. (See flickr.groups.getInfo).
+     * @throws FlickrException 
+     * @throws JSONException 
+     * @throws IOException 
+     */
+    public void joinPrivateGroup(String groupId, String message, boolean acceptRules) throws FlickrException, IOException, JSONException {
+    	List<Parameter> parameters = new ArrayList<Parameter>();
+        parameters.add(new Parameter("method", METHOD_JOIN_REQUEST));
+        boolean signed = OAuthUtils.hasSigned();
+        if (!signed) {
+        	throw new OAuthException("OAuth required");
+        }
+        parameters.add(new Parameter(
+        		OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+        OAuthUtils.addOAuthToken(parameters);
+        parameters.add(new Parameter("group_id", groupId));
+        parameters.add(new Parameter("message", message));
+        parameters.add(new Parameter("accept_rules", acceptRules));
+
+        Response response = transportAPI.postJSON(sharedSecret, parameters);
+        if (response.isError()) {
+            throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
+        }
+    }
+    
+    /**
+     * Equivalent to leave(groupId, null)
+     * 
+     * @param groupId The NSID of the Group to leave
+     * @throws JSONException 
+     * @throws IOException 
+     * @throws FlickrException 
+     */
+    public void leave(String groupId) throws FlickrException, IOException, JSONException {
+    	leave(groupId, null);
+    }
+    
+    /**
+     * This method requires authentication with <strong>'delete'</strong> permission.
+     * 
+     * @param groupId The NSID of the Group to leave
+     * @param deletePhotos Delete all photos by this user from the group
+     * @throws FlickrException 
+     * @throws JSONException 
+     * @throws IOException 
+     */
+    public void leave(String groupId, Boolean deletePhotos) throws FlickrException, IOException, JSONException {
+    	List<Parameter> parameters = new ArrayList<Parameter>();
+        parameters.add(new Parameter("method", METHOD_LEAVE));
+        boolean signed = OAuthUtils.hasSigned();
+        if (!signed) {
+        	throw new OAuthException("OAuth required");
+        }
+        parameters.add(new Parameter(
+        		OAuthInterface.PARAM_OAUTH_CONSUMER_KEY, apiKey));
+        OAuthUtils.addOAuthToken(parameters);
+        parameters.add(new Parameter("group_id", groupId));
+        if (deletePhotos != null) {
+        	parameters.add(new Parameter("delete_photos", deletePhotos.booleanValue()));
+        }
+
+        Response response = transportAPI.postJSON(sharedSecret, parameters);
+        if (response.isError()) {
+            throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
+        }
     }
 }
