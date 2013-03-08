@@ -2,7 +2,7 @@
  * 
  */
 
-package com.gmail.yuyang226.flickrj.sample.android.tasks;
+package com.googlecode.flickrjandroidj.sample.android.tasks;
 
 import java.lang.ref.WeakReference;
 
@@ -11,9 +11,9 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
-import com.gmail.yuyang226.flickrj.sample.android.images.ImageCache;
-import com.gmail.yuyang226.flickrj.sample.android.images.ImageUtils;
-import com.gmail.yuyang226.flickrj.sample.android.images.ImageUtils.DownloadedDrawable;
+import com.googlecode.flickrjandroidj.sample.android.images.ImageCache;
+import com.googlecode.flickrjandroidj.sample.android.images.ImageUtils;
+import com.googlecode.flickrjandroidj.sample.android.images.ImageUtils.DownloadedDrawable;
 
 /**
  * Represents the image download task which takes an image url as the parameter,

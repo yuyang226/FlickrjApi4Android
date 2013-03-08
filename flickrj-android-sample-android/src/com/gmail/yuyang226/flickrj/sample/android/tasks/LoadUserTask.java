@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gmail.yuyang226.flickrj.sample.android.tasks;
+package com.googlecode.flickrjandroidj.sample.android.tasks;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,13 +14,13 @@ import android.os.AsyncTask;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.gmail.yuyang226.flickr.Flickr;
-import com.gmail.yuyang226.flickr.oauth.OAuth;
-import com.gmail.yuyang226.flickr.oauth.OAuthToken;
-import com.gmail.yuyang226.flickr.people.User;
-import com.gmail.yuyang226.flickrj.sample.android.FlickrHelper;
-import com.gmail.yuyang226.flickrj.sample.android.FlickrjAndroidSampleActivity;
-import com.gmail.yuyang226.flickrj.sample.android.images.ImageUtils.DownloadedDrawable;
+import com.googlecode.flickrjandroid.Flickr;
+import com.googlecode.flickrjandroid.oauth.OAuth;
+import com.googlecode.flickrjandroid.oauth.OAuthToken;
+import com.googlecode.flickrjandroid.people.User;
+import com.googlecode.flickrjandroidj.sample.android.FlickrHelper;
+import com.googlecode.flickrjandroidj.sample.android.FlickrjAndroidSampleActivity;
+import com.googlecode.flickrjandroidj.sample.android.images.ImageUtils.DownloadedDrawable;
 
 public class LoadUserTask extends AsyncTask<OAuth, Void, User> {
 	/**

@@ -1,4 +1,4 @@
-package com.gmail.yuyang226.flickrj.sample.android.images;
+package com.googlecode.flickrjandroidj.sample.android.images;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +21,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 
-import com.gmail.yuyang226.flickrj.sample.android.tasks.ImageDownloadTask;
+import com.googlecode.flickrjandroidj.sample.android.tasks.ImageDownloadTask;
 
 
 public final class ImageUtils {

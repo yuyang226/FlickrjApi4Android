@@ -1,4 +1,4 @@
-package com.gmail.yuyang226.flickrj.sample.android;
+package com.googlecode.flickrjandroidj.sample.android;
 
 import java.util.Locale;
 
@@ -20,13 +20,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gmail.yuyang226.flickr.oauth.OAuth;
-import com.gmail.yuyang226.flickr.oauth.OAuthToken;
-import com.gmail.yuyang226.flickr.people.User;
-import com.gmail.yuyang226.flickrj.sample.android.tasks.GetOAuthTokenTask;
-import com.gmail.yuyang226.flickrj.sample.android.tasks.LoadPhotostreamTask;
-import com.gmail.yuyang226.flickrj.sample.android.tasks.LoadUserTask;
-import com.gmail.yuyang226.flickrj.sample.android.tasks.OAuthTask;
+import com.googlecode.flickrjandroid.oauth.OAuth;
+import com.googlecode.flickrjandroid.oauth.OAuthToken;
+import com.googlecode.flickrjandroid.people.User;
+import com.googlecode.flickrjandroidj.sample.android.tasks.GetOAuthTokenTask;
+import com.googlecode.flickrjandroidj.sample.android.tasks.LoadPhotostreamTask;
+import com.googlecode.flickrjandroidj.sample.android.tasks.LoadUserTask;
+import com.googlecode.flickrjandroidj.sample.android.tasks.OAuthTask;
 
 public class FlickrjAndroidSampleActivity extends Activity {
 	public static final String CALLBACK_SCHEME = "flickrj-android-sample-oauth"; //$NON-NLS-1$

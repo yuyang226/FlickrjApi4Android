@@ -1,4 +1,4 @@
-package com.gmail.yuyang226.flickrj.sample.android.images;
+package com.googlecode.flickrjandroidj.sample.android.images;
 
 import java.lang.ref.SoftReference;
 import java.util.LinkedHashMap;

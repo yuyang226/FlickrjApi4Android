@@ -1,14 +1,14 @@
-package com.gmail.yuyang226.flickrj.sample.android;
+package com.googlecode.flickrjandroidj.sample.android;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.gmail.yuyang226.flickr.Flickr;
-import com.gmail.yuyang226.flickr.REST;
-import com.gmail.yuyang226.flickr.RequestContext;
-import com.gmail.yuyang226.flickr.interestingness.InterestingnessInterface;
-import com.gmail.yuyang226.flickr.oauth.OAuth;
-import com.gmail.yuyang226.flickr.oauth.OAuthToken;
-import com.gmail.yuyang226.flickr.photos.PhotosInterface;
+import com.googlecode.flickrjandroid.Flickr;
+import com.googlecode.flickrjandroid.REST;
+import com.googlecode.flickrjandroid.RequestContext;
+import com.googlecode.flickrjandroid.interestingness.InterestingnessInterface;
+import com.googlecode.flickrjandroid.oauth.OAuth;
+import com.googlecode.flickrjandroid.oauth.OAuthToken;
+import com.googlecode.flickrjandroid.photos.PhotosInterface;
 
 public final class FlickrHelper {
 

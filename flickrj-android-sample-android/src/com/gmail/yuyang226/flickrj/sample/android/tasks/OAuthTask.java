@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gmail.yuyang226.flickrj.sample.android.tasks;
+package com.googlecode.flickrjandroidj.sample.android.tasks;
 
 import java.net.URL;
 
@@ -17,11 +17,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.gmail.yuyang226.flickr.Flickr;
-import com.gmail.yuyang226.flickr.auth.Permission;
-import com.gmail.yuyang226.flickr.oauth.OAuthToken;
-import com.gmail.yuyang226.flickrj.sample.android.FlickrHelper;
-import com.gmail.yuyang226.flickrj.sample.android.FlickrjAndroidSampleActivity;
+import com.googlecode.flickrjandroid.Flickr;
+import com.googlecode.flickrjandroid.auth.Permission;
+import com.googlecode.flickrjandroid.oauth.OAuthToken;
+import com.googlecode.flickrjandroidj.sample.android.FlickrHelper;
+import com.googlecode.flickrjandroidj.sample.android.FlickrjAndroidSampleActivity;
 
 /**
  * Represents the task to start the oauth process.

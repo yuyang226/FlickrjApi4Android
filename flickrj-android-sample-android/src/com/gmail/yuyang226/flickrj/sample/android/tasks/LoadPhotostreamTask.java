@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gmail.yuyang226.flickrj.sample.android.tasks;
+package com.googlecode.flickrjandroidj.sample.android.tasks;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,13 +10,13 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.widget.ListView;
 
-import com.gmail.yuyang226.flickr.Flickr;
-import com.gmail.yuyang226.flickr.oauth.OAuth;
-import com.gmail.yuyang226.flickr.oauth.OAuthToken;
-import com.gmail.yuyang226.flickr.people.User;
-import com.gmail.yuyang226.flickr.photos.PhotoList;
-import com.gmail.yuyang226.flickrj.sample.android.FlickrHelper;
-import com.gmail.yuyang226.flickrj.sample.android.images.LazyAdapter;
+import com.googlecode.flickrjandroid.Flickr;
+import com.googlecode.flickrjandroid.oauth.OAuth;
+import com.googlecode.flickrjandroid.oauth.OAuthToken;
+import com.googlecode.flickrjandroid.people.User;
+import com.googlecode.flickrjandroid.photos.PhotoList;
+import com.googlecode.flickrjandroidj.sample.android.FlickrHelper;
+import com.googlecode.flickrjandroidj.sample.android.images.LazyAdapter;
 
 public class LoadPhotostreamTask extends AsyncTask<OAuth, Void, PhotoList> {
 

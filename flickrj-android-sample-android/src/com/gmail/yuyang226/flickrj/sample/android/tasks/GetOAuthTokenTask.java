@@ -1,18 +1,18 @@
 /**
  * 
  */
-package com.gmail.yuyang226.flickrj.sample.android.tasks;
+package com.googlecode.flickrjandroidj.sample.android.tasks;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import android.os.AsyncTask;
 
-import com.gmail.yuyang226.flickr.Flickr;
-import com.gmail.yuyang226.flickr.oauth.OAuth;
-import com.gmail.yuyang226.flickr.oauth.OAuthInterface;
-import com.gmail.yuyang226.flickrj.sample.android.FlickrHelper;
-import com.gmail.yuyang226.flickrj.sample.android.FlickrjAndroidSampleActivity;
+import com.googlecode.flickrjandroid.Flickr;
+import com.googlecode.flickrjandroid.oauth.OAuth;
+import com.googlecode.flickrjandroid.oauth.OAuthInterface;
+import com.googlecode.flickrjandroidj.sample.android.FlickrHelper;
+import com.googlecode.flickrjandroidj.sample.android.FlickrjAndroidSampleActivity;
 
 /**
  * @author Toby Yu(yuyang226@gmail.com)
