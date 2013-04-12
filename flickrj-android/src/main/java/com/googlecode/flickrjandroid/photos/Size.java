@@ -18,7 +18,7 @@ import java.util.regex.Matcher;
  * @author Anthony Eden
  * @version $Id: Size.java,v 1.7 2009/07/23 20:41:03 x-mago Exp $
  */
-public class Size implements Serializable {
+public class Size implements Serializable, Comparable<Size> {
     public static final long serialVersionUID = 12L;
 
     /**
@@ -216,6 +216,34 @@ public class Size implements Serializable {
         }
     }
 
+    public int getLongestDimension() {
+        if (label == SQUARE) {
+            return 75;
+        } else if (label == THUMB) {
+        	return 100;
+        } else if(label == LARGE_SQUARE) {
+            return 150;
+        } else if (label == SMALL) {
+            return 240;
+        } else if (label == SMALL_320) {
+            return 320;
+        } else if (label == MEDIUM) {
+            return 500;
+        } else if (label == MEDIUM_640) {
+            return 640;
+        } else if (label == MEDIUM_800) {
+            return 800;
+        } else if (label == LARGE) {
+            return 1024;
+        } else if (label == LARGE_1600) {
+            return 1600;
+        } else if (label == LARGE_2048) {
+            return 2048;
+        } else {
+            return Math.max(getWidth(), getHeight());
+        }
+    }
+    
     /**
      * Size of the Photo.
      *
@@ -331,6 +359,11 @@ public class Size implements Serializable {
         return true;
     }
 
+    @Override
+    public int compareTo(Size other) {
+    	return (this.getLongestDimension() - other.getLongestDimension());
+    }
+    
     @Override
     public int hashCode() {
         int hash = 1;
