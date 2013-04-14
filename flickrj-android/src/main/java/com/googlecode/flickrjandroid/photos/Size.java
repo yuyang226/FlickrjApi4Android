@@ -81,6 +81,21 @@ public class Size implements Serializable {
      */
     public static final int LARGE_SQUARE = 6;
 
+    /**
+     * Link to an embeddable Flash player to play the video
+     */
+    public static final int VIDEO_PLAYER = 7;
+
+    /**
+     * Streamable MP4 url in the resolution as offered by flickr.com
+     */
+    public static final int SITE_MP4 = 8;
+
+    /**
+     * Streamable MP4 url in 480*360
+     */
+    public static final int MOBILE_MP4 = 9;
+
     private int label;
     private int width;
     private int height;
@@ -127,6 +142,12 @@ public class Size implements Serializable {
             setLabel(ORIGINAL);
         } else if( label.equals("Large Square")) {
             setLabel(LARGE_SQUARE);
+        } else if( label.equals("Video Player")) {
+            setLabel(VIDEO_PLAYER);
+        } else if( label.equals("Site MP4")) {
+            setLabel(SITE_MP4);
+        } else if( label.equals("Mobile MP4")) {
+            setLabel(MOBILE_MP4);
         }
     }
 
