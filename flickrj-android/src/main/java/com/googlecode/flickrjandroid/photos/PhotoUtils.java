@@ -109,56 +109,18 @@ public final class PhotoUtils {
         // Size-objects created from them, which are used to override
         // the Url-generation.
         List<Size> sizes = new ArrayList<Size>();
-        String urlTmp = photoElement.optString("url_t");
-        if (urlTmp.startsWith("http")) {
-            Size sizeT = new Size();
-            sizeT.setLabel(Size.THUMB);
-            sizeT.setSource(urlTmp);
-            sizes.add(sizeT);
-        }
-        urlTmp = photoElement.optString("url_s");
-        if (urlTmp.startsWith("http")) {
-            Size sizeT = new Size();
-            sizeT.setLabel(Size.SMALL);
-            sizeT.setSource(urlTmp);
-            sizes.add(sizeT);
-        }
-        urlTmp = photoElement.optString("url_sq");
-        if (urlTmp.startsWith("http")) {
-            Size sizeT = new Size();
-            sizeT.setLabel(Size.SQUARE);
-            sizeT.setSource(urlTmp);
-            sizes.add(sizeT);
-        }
-        urlTmp = photoElement.optString("url_m");
-        if (urlTmp.startsWith("http")) {
-            Size sizeT = new Size();
-            sizeT.setLabel(Size.MEDIUM);
-            sizeT.setSource(urlTmp);
-            sizes.add(sizeT);
-        }
-        urlTmp = photoElement.optString("url_l");
-        if (urlTmp.startsWith("http")) {
-            Size sizeT = new Size();
-            sizeT.setLabel(Size.LARGE);
-            sizeT.setSource(urlTmp);
-            sizes.add(sizeT);
-        }
-        urlTmp = photoElement.optString("url_o");
-        if (urlTmp.startsWith("http")) {
-            Size sizeT = new Size();
-            sizeT.setLabel(Size.ORIGINAL);
-            sizeT.setSource(urlTmp);
-            sizes.add(sizeT);
-        }
-        
-        urlTmp = photoElement.optString("url_q");
-        if (urlTmp.startsWith("http")) {
-            Size sizeT = new Size();
-            sizeT.setLabel(Size.LARGE_SQUARE);
-            sizeT.setSource(urlTmp);
-            sizes.add(sizeT);
-        }
+        addSize(sizes, photoElement, "url_sq", Size.SQUARE);
+        addSize(sizes, photoElement, "url_q", Size.LARGE_SQUARE);
+        addSize(sizes, photoElement, "url_t", Size.THUMB);
+        addSize(sizes, photoElement, "url_s", Size.SMALL);
+        addSize(sizes, photoElement, "url_n", Size.SMALL_320);
+        addSize(sizes, photoElement, "url_m", Size.MEDIUM);
+        addSize(sizes, photoElement, "url_z", Size.MEDIUM_640);
+        addSize(sizes, photoElement, "url_c", Size.MEDIUM_800);
+        addSize(sizes, photoElement, "url_l", Size.LARGE);
+        addSize(sizes, photoElement, "url_h", Size.LARGE_1600);
+        addSize(sizes, photoElement, "url_k", Size.LARGE_2048);
+        addSize(sizes, photoElement, "url_o", Size.ORIGINAL);
         
         if (sizes.size() > 0) {
             photo.setSizes(sizes);
@@ -336,6 +298,17 @@ public final class PhotoUtils {
         return photo;
     }
 
+    private static void addSize(final List<Size> sizes, final JSONObject photoElement, final String optString, final int sizeLabel) {
+        String urlTmp = photoElement.optString(optString);
+        if (urlTmp.startsWith("http")) {
+            Size sizeT = new Size();
+            sizeT.setLabel(sizeLabel);
+            sizeT.setSource(urlTmp);
+            sizes.add(sizeT);
+        }
+    }
+
+    
     /**
      * Parse a list of Photos from given Element.
      * 

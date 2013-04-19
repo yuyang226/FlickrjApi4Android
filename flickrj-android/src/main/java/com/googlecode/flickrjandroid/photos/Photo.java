@@ -37,21 +37,31 @@ public class Photo implements Serializable {
         }
     };
 
-    private static final String DEFAULT_ORIGINAL_IMAGE_SUFFIX = "_o.jpg";
     private static final String SMALL_SQUARE_IMAGE_SUFFIX = "_s.jpg";
-    private static final String SMALL_IMAGE_SUFFIX = "_m.jpg";
-    private static final String THUMBNAIL_IMAGE_SUFFIX = "_t.jpg";
-    private static final String MEDIUM_IMAGE_SUFFIX = ".jpg";
-    private static final String LARGE_IMAGE_SUFFIX = "_b.jpg";
     private static final String LARGE_SQUARE_IMAGE_SUFFIX = "_q.jpg";
+    private static final String THUMBNAIL_IMAGE_SUFFIX = "_t.jpg";
+    private static final String SMALL_IMAGE_SUFFIX = "_m.jpg";
+    private static final String SMALL_320_IMAGE_SUFFIX = "_n.jpg";
+    private static final String MEDIUM_IMAGE_SUFFIX = ".jpg";
+    private static final String MEDIUM_640_IMAGE_SUFFIX = "_z.jpg";
+    private static final String MEDIUM_800_IMAGE_SUFFIX = "_c.jpg";
+    private static final String LARGE_IMAGE_SUFFIX = "_b.jpg";
+    private static final String LARGE_1600_IMAGE_SUFFIX = "_h.jpg";
+    private static final String LARGE_2048_IMAGE_SUFFIX = "_k.jpg";
+    private static final String DEFAULT_ORIGINAL_IMAGE_SUFFIX = "_o.jpg";
 
     private Size squareSize;
-    private Size smallSize;
-    private Size thumbnailSize;
-    private Size mediumSize;
-    private Size largeSize;
-    private Size originalSize;
     private Size largeSquareSize;
+    private Size thumbnailSize;
+    private Size smallSize;
+    private Size small320Size;
+    private Size mediumSize;
+    private Size medium640Size;
+    private Size medium800Size;
+    private Size largeSize;
+    private Size large1600Size;
+    private Size large2048Size;
+    private Size originalSize;
 
     private String id;
     private User owner;
@@ -556,6 +566,13 @@ public class Photo implements Serializable {
         }
     }
 
+    public String getSmall320Url() {
+        if (small320Size == null) {
+            return getBaseImageUrl() + SMALL_320_IMAGE_SUFFIX;
+        } else {
+            return small320Size.getSource();
+        }
+    }
 
     /**
      * @deprecated
@@ -575,7 +592,22 @@ public class Photo implements Serializable {
         }
     }
 
-
+    public String getMedium640Url() {
+        if (medium640Size == null) {
+            return getBaseImageUrl() + MEDIUM_640_IMAGE_SUFFIX;
+        } else {
+            return medium640Size.getSource();
+        }
+    }
+    
+    public String getMedium800Url() {
+        if (medium800Size == null) {
+            return getBaseImageUrl() + MEDIUM_800_IMAGE_SUFFIX;
+        } else {
+            return medium800Size.getSource();
+        }
+    }
+    
     /**
      * @deprecated
      * @see PhotosInterface#getImageAsStream(Photo, int)
@@ -594,6 +626,21 @@ public class Photo implements Serializable {
         }
     }
 
+    public String getLarge1600Url() {
+        if (large1600Size == null) {
+            return getBaseImageUrl() + LARGE_1600_IMAGE_SUFFIX;
+        } else {
+            return large1600Size.getSource();
+        }
+    }
+    
+    public String getLarge2048Url() {
+        if (large2048Size== null) {
+            return getBaseImageUrl() + LARGE_2048_IMAGE_SUFFIX;
+        } else {
+            return large2048Size.getSource();
+        }
+    }
 
 
 
@@ -732,20 +779,30 @@ public class Photo implements Serializable {
         Iterator<Size> it = sizes.iterator();
         while (it.hasNext()) {
             Size size = (Size) it.next();
-            if (size.getLabel() == Size.SMALL) {
-                smallSize = size;
-            } else if (size.getLabel() == Size.SQUARE) {
+            if (size.getLabel() == Size.SQUARE) {
                 squareSize = size;
-            } else if (size.getLabel() == Size.THUMB) {
-                thumbnailSize = size;
-            } else if (size.getLabel() == Size.MEDIUM) {
-                mediumSize = size;
-            } else if (size.getLabel() == Size.LARGE) {
-                largeSize = size;
-            } else if (size.getLabel() == Size.ORIGINAL) {
-                originalSize = size;
             } else if( size.getLabel() == Size.LARGE_SQUARE) {
                 largeSquareSize = size;
+            } else if (size.getLabel() == Size.THUMB) {
+                thumbnailSize = size;
+            } else if (size.getLabel() == Size.SMALL) {
+                smallSize = size;
+            } else if (size.getLabel() == Size.SMALL_320) {
+                small320Size = size;
+            } else if (size.getLabel() == Size.MEDIUM) {
+                mediumSize = size;
+            } else if (size.getLabel() == Size.MEDIUM_640) {
+                medium640Size = size;
+            } else if (size.getLabel() == Size.MEDIUM_800) {
+                medium800Size = size;
+            } else if (size.getLabel() == Size.LARGE) {
+                largeSize = size;
+            } else if (size.getLabel() == Size.LARGE_1600) {
+                large1600Size = size;
+            } else if (size.getLabel() == Size.LARGE_2048) {
+                large2048Size = size;
+            } else if (size.getLabel() == Size.ORIGINAL) {
+                originalSize = size;
             }
         }
     }
