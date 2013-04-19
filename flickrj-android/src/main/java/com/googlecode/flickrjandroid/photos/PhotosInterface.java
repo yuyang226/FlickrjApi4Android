@@ -1310,14 +1310,26 @@ public class PhotosInterface {
         String urlStr = "";
         if (size == Size.SQUARE) {
             urlStr = photo.getSmallSquareUrl();
+        } if (size == Size.LARGE_SQUARE) {
+            urlStr = photo.getLargeSquareUrl();
         } else if (size == Size.THUMB) {
             urlStr = photo.getThumbnailUrl();
         } else if (size == Size.SMALL) {
             urlStr = photo.getSmallUrl();
+        } if (size == Size.SMALL_320) {
+            urlStr = photo.getSmall320Url();
         } else if (size == Size.MEDIUM) {
             urlStr = photo.getMediumUrl();
+        } else if (size == Size.MEDIUM_640) {
+            urlStr = photo.getMedium640Url();
+        } else if (size == Size.MEDIUM_800) {
+            urlStr = photo.getMedium800Url();
         } else if (size == Size.LARGE) {
             urlStr = photo.getLargeUrl();
+        } else if (size == Size.LARGE_1600) {
+            urlStr = photo.getLarge1600Url();
+        } else if (size == Size.LARGE_2048) {
+            urlStr = photo.getLarge2048Url();
         } else if (size == Size.ORIGINAL) {
             urlStr = photo.getOriginalUrl();
         } else {
