@@ -15,6 +15,7 @@ import com.googlecode.flickrjandroid.Parameter;
 import com.googlecode.flickrjandroid.Response;
 import com.googlecode.flickrjandroid.Transport;
 import com.googlecode.flickrjandroid.groups.Group;
+import com.googlecode.flickrjandroid.people.User;
 
 /**
  * Interface for testing Flickr connectivity.
@@ -154,15 +155,15 @@ public class UrlsInterface {
     }
 
     /**
-     * Lookup the username for the specified User URL.
+     * Lookup the user for the specified User URL.
      *
      * @param url The user profile URL
-     * @return The username
+     * @return The user
      * @throws IOException
      * @throws FlickrException
      * @throws JSONException 
      */
-    public String lookupUser(String url)
+    public User lookupUser(String url)
       throws IOException, FlickrException, JSONException {
         List<Parameter> parameters = new ArrayList<Parameter>();
         parameters.add(new Parameter("method", METHOD_LOOKUP_USER));
@@ -175,9 +176,12 @@ public class UrlsInterface {
             throw new FlickrException(response.getErrorCode(), response.getErrorMessage());
         }
 
+        User user = new User();
         JSONObject payload = response.getData().getJSONObject("user");
-        JSONObject groupnameElement = payload.getJSONObject("username");
-        return groupnameElement.getString("_content");
+        JSONObject usernameElement = payload.getJSONObject("username");
+        user.setId(payload.getString("id"));
+        user.setUsername(usernameElement.getString("_content"));
+        return user;
     }
 
 }
