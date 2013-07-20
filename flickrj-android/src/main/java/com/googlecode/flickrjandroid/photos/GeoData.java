@@ -31,6 +31,12 @@ public class GeoData implements Serializable {
         accuracy = Integer.parseInt(accuracyStr);
     }
 
+    public GeoData(float longitude, float latitude, int accuracy) {
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.accuracy = accuracy;
+    }
+
     public int getAccuracy() {
         return accuracy;
     }
