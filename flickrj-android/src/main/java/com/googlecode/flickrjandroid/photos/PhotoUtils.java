@@ -21,6 +21,19 @@ import com.googlecode.flickrjandroid.util.JSONUtils;
 public final class PhotoUtils {
     public static final long serialVersionUID = 12L;
 
+    private static final String PHOTO_SUFFIX_SQUARE = "_sq";
+    private static final String PHOTO_SUFFIX_LARGE_SQUARE = "_q";
+    private static final String PHOTO_SUFFIX_THUMB = "_t";
+    private static final String PHOTO_SUFFIX_SMALL = "_s";
+    private static final String PHOTO_SUFFIX_SMALL_320 = "_n";
+    private static final String PHOTO_SUFFIX_MEDIUM = "_m";
+    private static final String PHOTO_SUFFIX_MEDIUM_640 = "_z";
+    private static final String PHOTO_SUFFIX_MEDIUM_800 = "_c";
+    private static final String PHOTO_SUFFIX_LARGE = "_l";
+    private static final String PHOTO_SUFFIX_LARGE_1600 = "_h";
+    private static final String PHOTO_SUFFIX_LARGE_2048 = "_k";
+    private static final String PHOTO_SUFFIX_ORIGINAL = "_o";
+
     private PhotoUtils() {
         super();
     }
@@ -109,18 +122,18 @@ public final class PhotoUtils {
         // Size-objects created from them, which are used to override
         // the Url-generation.
         List<Size> sizes = new ArrayList<Size>();
-        addSize(sizes, photoElement, "url_sq", Size.SQUARE);
-        addSize(sizes, photoElement, "url_q", Size.LARGE_SQUARE);
-        addSize(sizes, photoElement, "url_t", Size.THUMB);
-        addSize(sizes, photoElement, "url_s", Size.SMALL);
-        addSize(sizes, photoElement, "url_n", Size.SMALL_320);
-        addSize(sizes, photoElement, "url_m", Size.MEDIUM);
-        addSize(sizes, photoElement, "url_z", Size.MEDIUM_640);
-        addSize(sizes, photoElement, "url_c", Size.MEDIUM_800);
-        addSize(sizes, photoElement, "url_l", Size.LARGE);
-        addSize(sizes, photoElement, "url_h", Size.LARGE_1600);
-        addSize(sizes, photoElement, "url_k", Size.LARGE_2048);
-        addSize(sizes, photoElement, "url_o", Size.ORIGINAL);
+        addSize(sizes, photoElement, PHOTO_SUFFIX_SQUARE, Size.SQUARE);
+        addSize(sizes, photoElement, PHOTO_SUFFIX_LARGE_SQUARE, Size.LARGE_SQUARE);
+        addSize(sizes, photoElement, PHOTO_SUFFIX_THUMB, Size.THUMB);
+        addSize(sizes, photoElement, PHOTO_SUFFIX_SMALL, Size.SMALL);
+        addSize(sizes, photoElement, PHOTO_SUFFIX_SMALL_320, Size.SMALL_320);
+        addSize(sizes, photoElement, PHOTO_SUFFIX_MEDIUM, Size.MEDIUM);
+        addSize(sizes, photoElement, PHOTO_SUFFIX_MEDIUM_640, Size.MEDIUM_640);
+        addSize(sizes, photoElement, PHOTO_SUFFIX_MEDIUM_800, Size.MEDIUM_800);
+        addSize(sizes, photoElement, PHOTO_SUFFIX_LARGE, Size.LARGE);
+        addSize(sizes, photoElement, PHOTO_SUFFIX_LARGE_1600, Size.LARGE_1600);
+        addSize(sizes, photoElement, PHOTO_SUFFIX_LARGE_2048, Size.LARGE_2048);
+        addSize(sizes, photoElement, PHOTO_SUFFIX_ORIGINAL, Size.ORIGINAL);
         
         if (sizes.size() > 0) {
             photo.setSizes(sizes);
@@ -298,12 +311,20 @@ public final class PhotoUtils {
         return photo;
     }
 
-    private static void addSize(final List<Size> sizes, final JSONObject photoElement, final String optString, final int sizeLabel) {
-        String urlTmp = photoElement.optString(optString);
+    private static void addSize(final List<Size> sizes, final JSONObject photoElement, final String keySuffix, final int sizeLabel) {
+        String urlTmp = photoElement.optString("url" + keySuffix);
         if (urlTmp.startsWith("http")) {
             Size sizeT = new Size();
             sizeT.setLabel(sizeLabel);
             sizeT.setSource(urlTmp);
+
+            if (photoElement.has("width" + keySuffix)) {
+                sizeT.setWidth(photoElement.optInt("width" + keySuffix, 0));
+            }
+
+            if (photoElement.has("height" + keySuffix)) {
+                sizeT.setHeight(photoElement.optInt("height" + keySuffix, 0));
+            }
             sizes.add(sizeT);
         }
     }
