@@ -376,7 +376,14 @@ public class PhotosetsInterface {
 		photoset.setFarm(photosetElement.optString("farm", null));
 		photoset.setPhotoCount(photosetElement.optString("photos", null));
 
-		photoset.setTitle(JSONUtils.getChildValue(photosetElement, "title"));
+		if (photosetElement.has("title")) {
+			Object titleObj = photosetElement.get("title");
+			if (titleObj instanceof String) {
+				photoset.setTitle((String)titleObj);
+			} else {
+				photoset.setTitle(JSONUtils.getChildValue(photosetElement, "title"));
+			}
+		}
 		photoset.setDescription(JSONUtils.getChildValue(photosetElement,
 				"description"));
 		photoset.setPrimaryPhoto(primaryPhoto);
