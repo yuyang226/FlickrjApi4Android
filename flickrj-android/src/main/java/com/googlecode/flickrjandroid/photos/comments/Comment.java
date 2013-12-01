@@ -13,6 +13,8 @@ public class Comment {
     String id;
     String author;
     String authorName;
+    int iconServer;
+    int iconFarm;
     Date dateCreate;
     String permaLink;
     String text;
@@ -44,6 +46,34 @@ public class Comment {
      */
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
+    }
+    /**
+     * @return the iconserver of the author of the comment
+     */
+    public int getIconServer() {
+        return iconServer;
+    }
+    /**
+     * Sets the commment author iconserver.
+     * Not to be called from user code. Will be set by querying flickr.
+     * @param authorName
+     */
+    public void setIconServer(int iconServer) {
+        this.iconServer = iconServer;
+    }
+    /**
+     * @return the iconfarm of the author of the comment
+     */
+    public int getIconFarm() {
+        return iconFarm;
+    }
+    /**
+     * Sets the commment author iconfarm.
+     * Not to be called from user code. Will be set by querying flickr.
+     * @param authorName
+     */
+    public void setIconFarm(int iconFarm) {
+        this.iconFarm = iconFarm;
     }
     /**
      * 

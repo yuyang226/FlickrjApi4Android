@@ -183,6 +183,8 @@ public class CommentsInterface {
             comment.setId(commentElement.getString("id"));
             comment.setAuthor(commentElement.getString("author"));
             comment.setAuthorName(commentElement.getString("authorname"));
+            comment.setIconServer(commentElement.getInt("iconserver"));
+            comment.setIconFarm(commentElement.getInt("iconfarm"));
             comment.setPermaLink(commentElement.getString("permalink"));
             long unixTime = commentElement.optLong("datecreate");
             comment.setDateCreate(new Date(unixTime * 1000L));
