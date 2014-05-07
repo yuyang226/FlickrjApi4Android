@@ -58,8 +58,6 @@ public class Flickr {
     /**
      * The default endpoint host.
      */
-    public static final String DEFAULT_HOST = "www.flickr.com";
-    
     public static final String DEFAULT_API_HOST = "api.flickr.com";
 
     /**
@@ -220,7 +218,7 @@ public class Flickr {
     public Flickr(String apiKey) {
         setApiKey(apiKey);
         try {
-            setTransport(new REST(DEFAULT_HOST));
+            setTransport(new REST(DEFAULT_API_HOST));
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

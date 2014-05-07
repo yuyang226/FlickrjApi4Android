@@ -160,7 +160,7 @@ public final class PhotoUtils {
                 photo.setOwner(owner);
             }
             
-            photo.setUrl("http://flickr.com/photos/" + owner.getId() + "/"
+            photo.setUrl("https://flickr.com/photos/" + owner.getId() + "/"
                     + photo.getId());
         }
         

@@ -58,7 +58,7 @@ public class REST extends Transport {
      */
     public REST() throws ParserConfigurationException {
         setTransportType(REST);
-        setHost(Flickr.DEFAULT_HOST);
+        setHost(Flickr.DEFAULT_API_HOST);
         setPath(PATH);
         setResponseClass(RESTResponse.class);
         DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();

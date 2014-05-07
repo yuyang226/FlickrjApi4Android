@@ -45,10 +45,10 @@ public class OAuthInterface {
     public static final String PATH_OAUTH_REQUEST_TOKEN = "/services/oauth/request_token";
     public static final String PATH_OAUTH_ACCESS_TOKEN = "/services/oauth/access_token";
     public static final String PATH_REST = "/services/rest";
-    public static final String URL_REQUEST_TOKEN = "http://" + Flickr.DEFAULT_HOST + PATH_OAUTH_REQUEST_TOKEN;
-    public static final String URL_ACCESS_TOKEN = "http://" + Flickr.DEFAULT_HOST + PATH_OAUTH_ACCESS_TOKEN;
+    public static final String URL_REQUEST_TOKEN = "https://" + Flickr.DEFAULT_API_HOST + PATH_OAUTH_REQUEST_TOKEN;
+    public static final String URL_ACCESS_TOKEN = "https://" + Flickr.DEFAULT_API_HOST + PATH_OAUTH_ACCESS_TOKEN;
 
-    public static final String URL_REST = "http://" + Flickr.DEFAULT_HOST + PATH_REST;
+    public static final String URL_REST = "https://" + Flickr.DEFAULT_API_HOST + PATH_REST;
 
     public static final String PARAM_OAUTH_CONSUMER_KEY = "oauth_consumer_key";
     public static final String PARAM_OAUTH_TOKEN = "oauth_token";
@@ -202,7 +202,7 @@ public class OAuthInterface {
         int port = oauthTransport.getPort();
         String path = "/services/oauth/authorize";
 
-        return UrlUtilities.buildUrl(Flickr.DEFAULT_HOST, port, path, parameters);
+        return UrlUtilities.buildUrl(Flickr.DEFAULT_API_HOST, port, path, parameters);
     }
 
 }

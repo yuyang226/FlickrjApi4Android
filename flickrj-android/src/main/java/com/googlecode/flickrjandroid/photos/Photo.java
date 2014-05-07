@@ -703,7 +703,7 @@ public class Photo implements Serializable {
 
     private StringBuffer _getBaseImageUrl() {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("http://farm");
+        buffer.append("https://farm");
         buffer.append(getFarm());
         buffer.append(".static.flickr.com/");
         buffer.append(getServer());
