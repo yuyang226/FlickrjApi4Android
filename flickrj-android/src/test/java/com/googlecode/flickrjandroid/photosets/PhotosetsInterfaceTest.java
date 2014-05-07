@@ -43,7 +43,7 @@ public class PhotosetsInterfaceTest extends AbstractFlickrTest {
 		Photoset photoset = f.getPhotosetsInterface().getInfo(CHARLES_PHOTO_SET_ID);
 		assertNotNull(photoset);
 		assertEquals(CHARLES_PHOTO_SET_ID, photoset.getId());
-		assertTrue( photoset.getPhotoCount() > 60 );
+		assertTrue( photoset.getPhotoCount() > 50 );
 	}
 	
 	@Test
