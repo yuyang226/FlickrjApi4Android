@@ -30,7 +30,7 @@ public abstract class Transport {
     protected Class<?> responseClass;
     private String path;
     private String host;
-    private int port = 80;
+    private int port = 443;
 
     public String getHost() {
         return host;

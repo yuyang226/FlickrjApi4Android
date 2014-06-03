@@ -43,9 +43,9 @@ import com.googlecode.flickrjandroid.util.StringUtilities;
  */
 public class Uploader {
     public static final String UPLOAD_PATH = "/services/upload/";
-    public static final String URL_UPLOAD = "http://" + Flickr.DEFAULT_API_HOST + UPLOAD_PATH;
+    public static final String URL_UPLOAD = "https://" + Flickr.DEFAULT_API_HOST + UPLOAD_PATH;
     public static final String REPLACE_PATH = "/services/replace/";
-    public static final String URL_REPLACE = "http://" + Flickr.DEFAULT_API_HOST + REPLACE_PATH;
+    public static final String URL_REPLACE = "https://" + Flickr.DEFAULT_API_HOST + REPLACE_PATH;
     private String apiKey;
     private String sharedSecret;
     private Transport transport;

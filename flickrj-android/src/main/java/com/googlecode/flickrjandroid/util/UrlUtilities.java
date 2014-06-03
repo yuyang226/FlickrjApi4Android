@@ -37,7 +37,7 @@ public class UrlUtilities {
         // AuthUtilities.addAuthToken(parameters);
 
         StringBuffer buffer = new StringBuffer();
-        buffer.append("http://");
+        buffer.append("https://");
         buffer.append(host);
         if (port > 0 & port != 80) {
             buffer.append(":");
@@ -76,7 +76,7 @@ public class UrlUtilities {
 
     public static URL buildPostUrl(String host, int port, String path) throws MalformedURLException {
         StringBuffer buffer = new StringBuffer();
-        buffer.append("http://");
+        buffer.append("https://");
         buffer.append(host);
         if (port > 0) {
             buffer.append(":");
@@ -129,9 +129,9 @@ public class UrlUtilities {
         /**
          * The default-URL, if the iconServer equals 0.
          */
-        String iconUrl = "http://www.flickr.com/images/buddyicon.jpg";
+        String iconUrl = "https://www.flickr.com/images/buddyicon.jpg";
         if (iconServer > 0) {
-            iconUrl = "http://farm"
+            iconUrl = "https://farm"
             + iconFarm + ".static.flickr.com/"
             + iconServer + "/buddyicons/"
             + id + ".jpg";
