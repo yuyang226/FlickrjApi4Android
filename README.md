@@ -9,6 +9,7 @@ It resolves the following issues that currently exist in FlickrJ:
 4. Completely re-written with JSON response format.  
 5. Now built by Maven instead of Ant.  
 6. Added some fuctions missings in the original FlickrJ, such as GalleryInterface and CollectionInterface.  
+7. Use https by default for all API requests(thanks to Paul Bourke): http://code.flickr.net/2014/04/30/flickr-api-going-ssl-only-on-june-27th-2014/. Please use version 2.1.0+
 
 This project is now available on both [Google Code](http://code.google.com/p/flickrj-android/) and [GitHub](https://github.com/yuyang226/FlickrjApi4Android).
 
