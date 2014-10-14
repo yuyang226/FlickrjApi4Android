@@ -45,7 +45,7 @@ public class SearchParameters {
     private String machineTagMode;
     private String latitude;
     private String longitude;
-    private int radius = -1;
+    private double radius = -1;
     private String radiusUnits;
     private boolean hasGeo = false;
     private boolean inCommons = false;
@@ -453,7 +453,7 @@ public class SearchParameters {
             parameters.add(new Parameter("lon", lon));
         }
 
-        int radius = getRadius();
+        double radius = getRadius();
         if (radius > 0) {
             parameters.add(new Parameter("radius", radius));
         }
@@ -582,7 +582,7 @@ public class SearchParameters {
         latitude = lat;
     }
 
-    public void setRadius(int r) {
+    public void setRadius(double r) {
         radius = r;
     }
 
@@ -602,7 +602,7 @@ public class SearchParameters {
         return longitude;
     }
 
-    public int getRadius() {
+    public double getRadius() {
         return radius;
     }
 
