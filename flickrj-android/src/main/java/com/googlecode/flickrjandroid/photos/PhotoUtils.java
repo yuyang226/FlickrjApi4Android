@@ -61,7 +61,7 @@ public final class PhotoUtils {
                 photo.setId(payloadElement.getString("id"));
                 photo.setSecret(payloadElement.getString("secret"));
                 photo.setTitle(payloadElement.getString("title"));
-                photo.setFarm(payloadElement.getString("farm"));
+                photo.setFarm(Integer.toString(payloadElement.getInt("farm")));
                 photo.setUrl(payloadElement.getString("url"));
                 photoContext.setPreviousPhoto(photo);
             } else if (tagName.equals("nextphoto")) {
@@ -69,7 +69,7 @@ public final class PhotoUtils {
                 photo.setId(payloadElement.getString("id"));
                 photo.setSecret(payloadElement.getString("secret"));
                 photo.setTitle(payloadElement.getString("title"));
-                photo.setFarm(payloadElement.getString("farm"));
+                photo.setFarm(Integer.toString(payloadElement.getInt("farm")));
                 photo.setUrl(payloadElement.getString("url"));
                 photoContext.setNextPhoto(photo);
             }
@@ -91,7 +91,7 @@ public final class PhotoUtils {
         photo.setPlaceId(photoElement.optString("place_id", null));
         photo.setSecret(photoElement.getString("secret"));
         photo.setServer(photoElement.getString("server"));
-        photo.setFarm(photoElement.getString("farm"));
+        photo.setFarm(Integer.toString(photoElement.getInt("farm")));
         photo.setRotation(photoElement.optString("rotation", null));
         photo.setFavorite("1".equals(photoElement.optString("isfavorite")));
         photo.setPrimary(photoElement.optString("isprimary", null));
@@ -175,9 +175,9 @@ public final class PhotoUtils {
                 "description"));
 
         // here the flags are set, if the photo is read by getInfo().
-        photo.setPublicFlag("1".equals(photoElement.optString("ispublic")));
-        photo.setFriendFlag("1".equals(photoElement.optString("isfriend")));
-        photo.setFamilyFlag("1".equals(photoElement.optString("isfamily")));
+        photo.setPublicFlag(photoElement.optInt("ispublic", 0) == 1);
+        photo.setFriendFlag(photoElement.optInt("isfriend", 0) == 1);
+        photo.setFamilyFlag(photoElement.optInt("isfamily", 0) == 1);
 
         // Parse either photo by getInfo, or from list
         /*
