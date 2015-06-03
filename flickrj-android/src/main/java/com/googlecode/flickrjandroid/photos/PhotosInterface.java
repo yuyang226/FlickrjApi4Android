@@ -441,7 +441,7 @@ public class PhotosInterface {
             JSONObject exifElement = exifElements.getJSONObject(i);
             Exif exif = new Exif();
             exif.setTagspace(exifElement.getString("tagspace"));
-            exif.setTagspaceId(exifElement.getString("tagspaceid"));
+            exif.setTagspaceId(Integer.toString(exifElement.getInt("tagspaceid")));
             exif.setTag(exifElement.getString("tag"));
             exif.setLabel(exifElement.getString("label"));
             exif.setRaw(JSONUtils.getChildValue(exifElement, "raw"));
